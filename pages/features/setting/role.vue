@@ -6,7 +6,7 @@
   >
     <mdb-card-body>
       <div class="d-flex justify-content-start">
-        <mdb-btn color="cyan" rounded @click="$_settingRole_showNewRoleModal">
+        <mdb-btn color="cyan" rounded @click="$_showNewModal">
           <mdb-icon icon="plus" class="mr-1" />新增角色
         </mdb-btn>
       </div>
@@ -31,20 +31,20 @@
 
     <!-- 删除确认 -->
     <ConfirmDelete
-      :show-modal="showConfirmDelete"
-      :delete-content="deleteContent"
-      @confirmYes="$_settingRole_deleteRoleConfirmYes"
-      @confirmNo="showConfirmDelete = false"
+      :show-modal="showDeleteModal"
+      :delete-content="deleteModalContent"
+      @confirmYes="$_deleteConfirmYes"
+      @confirmNo="showDeleteModal = false"
     />
     <!-- /.删除确认 -->
 
     <!-- 新增/编辑 --->
     <RoleEdit
-      :show-modal="showEditRole"
-      :new-or-edit="newOrEditRole"
-      :role-name.sync="roleNameToEdit"
-      @confirmYes="$_settingRole_editRoleConfirmYes"
-      @confirmNo="showEditRole = false"
+      :show-modal="showEditModal"
+      :new-or-edit="newOrEdit"
+      :role-name.sync="nameToEdit"
+      @confirmYes="$_editConfirmYes"
+      @confirmNo="showEditModal = false"
     />
     <!-- ./新增/编辑 --->
   </mdb-card>
@@ -55,7 +55,7 @@ import { mdbBtn, mdbCard, mdbCardBody, mdbDatatable, mdbIcon } from 'mdbvue'
 import $ from 'jquery'
 import { mapActions, mapMutations, mapGetters, mapState } from 'vuex'
 
-import ConfirmDelete from '~/components/confirm-delete'
+import ConfirmDelete from '~/components/confirm-delete-modal'
 import RoleEdit from '~/components/user/role-edit'
 
 export default {
@@ -74,18 +74,18 @@ export default {
   data() {
     return {
       pageName: '角色设置',
-      showConfirmDelete: false,
-      deleteContent: '',
-      showEditRole: false,
-      newOrEditRole: '',
-      roleNameToEdit: '',
-      selectedRole: {},
+      showDeleteModal: false,
+      deleteModalContent: '',
+      showEditModal: false,
+      newOrEdit: '',
+      nameToEdit: '',
+      selected: {},
       refreshTable: true
     }
   },
 
   computed: {
-    ...mapGetters('user', ['getRoleById', 'getRoleByName']),
+    ...mapGetters('user', ['getRoleById']),
     ...mapState('app-info', ['title', 'subTitle']),
     ...mapState('user', ['allRoles']),
 
@@ -93,7 +93,7 @@ export default {
     roleTableData() {
       const columns = [
         {
-          label: '用户名',
+          label: '角色名称',
           field: 'name'
         },
         {
@@ -110,15 +110,15 @@ export default {
         const { createTime, isDelete, roleId, roleName } = role
         if (isDelete === 1) {
           const operation = `
-              <div class="d-flex">
-              <button class="btn btn-indigo btn-sm btn-rounded" data-opt="edit" data-role-id="${roleId}">
+            <div class="d-flex">
+              <button class="btn btn-indigo btn-sm btn-rounded" data-opt="edit" data-id="${roleId}">
                 <i class="fas fa-edit mr-1"></i>编辑
               </button>
-              <button class="btn btn-pink btn-sm btn-rounded" data-opt="delete" data-role-id="${roleId}">
+              <button class="btn btn-pink btn-sm btn-rounded" data-opt="delete" data-id="${roleId}">
                 <i class="far fa-trash-alt mr-1"></i>删除
               </button>
             </div>
-            `
+          `
           rows.push({
             id: roleId,
             name: roleName,
@@ -131,24 +131,20 @@ export default {
     }
   },
 
-  async asyncData({ store }) {
-    await store.dispatch('user/getAllRoles')
-  },
-
   mounted() {
     this.setNaviBreadcrumb({
       naviBreadcrumb: [this.subTitle, '系统设置', this.pageName]
     })
 
     // 使用jQuery来响应DataTable内的button click
-    this.$_settingRole_attachTableButtonEvent()
+    this.$_attachTableButtonEvent()
   },
 
   methods: {
     ...mapMutations(['setNaviBreadcrumb']),
     ...mapActions('user', ['addRole', 'deleteRole', 'editRole']),
 
-    async $_settingRole_showMessage(result, refreshTable = true) {
+    async $_showMessage(result, refreshTable = true) {
       if (result.code === 1) {
         this.$notify.success({
           message: result.msg,
@@ -161,7 +157,7 @@ export default {
           this.refreshTable = true
           // 重新绑定button click
           await this.$nextTick()
-          this.$_settingRole_attachTableButtonEvent()
+          this.$_attachTableButtonEvent()
         }
       } else {
         this.$notify.error({
@@ -171,52 +167,52 @@ export default {
       }
     },
 
-    async $_settingRole_deleteRoleConfirmYes() {
-      this.showConfirmDelete = false
-      const { roleId } = this.selectedRole
+    async $_deleteConfirmYes() {
+      this.showDeleteModal = false
+      const { roleId } = this.selected
       const result = await this.deleteRole(roleId)
-      this.$_settingRole_showMessage(result)
+      this.$_showMessage(result)
     },
 
-    async $_settingRole_editRoleConfirmYes() {
-      this.showEditRole = false
-      const { roleId } = this.selectedRole
+    async $_editConfirmYes() {
+      this.showEditModal = false
+      const { roleId } = this.selected
       const result =
-        this.newOrEditRole === 'new'
-          ? await this.addRole(this.roleNameToEdit)
-          : await this.editRole({ roleId, roleName: this.roleNameToEdit })
-      this.$_settingRole_showMessage(result)
+        this.newOrEdit === 'new'
+          ? await this.addRole(this.nameToEdit)
+          : await this.editRole({ roleId, roleName: this.nameToEdit })
+      this.$_showMessage(result)
     },
 
-    $_settingRole_showNewRoleModal() {
-      this.newOrEditRole = 'new'
-      this.roleNameToEdit = ''
-      this.showEditRole = true
+    $_showNewModal() {
+      this.newOrEdit = 'new'
+      this.nameToEdit = ''
+      this.showEditModal = true
     },
 
-    $_settingRole_showEditRoleModal() {
-      const { roleName } = this.selectedRole
-      this.newOrEditRole = 'edit'
-      this.roleNameToEdit = roleName
-      this.showEditRole = true
+    $_showEditModal() {
+      const { roleName } = this.selected
+      this.newOrEdit = 'edit'
+      this.nameToEdit = roleName
+      this.showEditModal = true
     },
 
-    $_settingRole_showDeleteRoleConfirmModal() {
-      const { roleName } = this.selectedRole
-      this.deleteContent = roleName
-      this.showConfirmDelete = true
+    $_showDeleteConfirmModal() {
+      const { roleName } = this.selected
+      this.deleteModalContent = roleName
+      this.showDeleteModal = true
     },
 
-    $_settingRole_attachTableButtonEvent() {
+    $_attachTableButtonEvent() {
       $('tbody').on('click', 'td button', (event) => {
         const operation = $(event.currentTarget).data('opt')
-        const roleId = $(event.currentTarget).data('roleId')
-        this.selectedRole = this.getRoleById(roleId)
+        const roleId = $(event.currentTarget).data('id')
+        this.selected = this.getRoleById(roleId)
 
         if (operation === 'delete') {
-          this.$_settingRole_showDeleteRoleConfirmModal()
+          this.$_showDeleteConfirmModal()
         } else if (operation === 'edit') {
-          this.$_settingRole_showEditRoleModal()
+          this.$_showEditModal()
         }
       })
     }

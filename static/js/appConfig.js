@@ -2,41 +2,44 @@ export const appConfig = {
   app: {
     logo: '',
     title: '生态环境GIS数据',
-    subTitle: '共享交换服务平台'
+    subTitle: '共享交换服务平台',
+    apiUrl: 'http://39.98.134.198:18091'
   },
   pageComponents: {
     sideNavbarItems: [
+      {
+        name: '系统设置',
+        icon: 'cogs',
+        subItems: [
+          {
+            name: '角色设置',
+            to: 'features-setting-role'
+          },
+          {
+            name: '污染源类型',
+            to: 'features-setting-pollutant-source-type'
+          },
+          {
+            name: '管控级别',
+            to: 'features-setting-control-level'
+          },
+          {
+            name: '城市',
+            to: 'features-setting-city'
+          },
+          {
+            name: '保护区类型',
+            to: 'features-setting-reserves-type'
+          }
+        ]
+      },
       {
         name: '空间数据管理',
         icon: 'layer-group',
         subItems: [
           {
-            name: '空气监测点',
-            to: 'features-spatial-data-air'
-          },
-          {
-            name: '污染源监控点',
-            to: 'features-spatial-data-pollutant-source'
-          },
-          {
-            name: '水质断面监控点',
-            to: 'features-spatial-data-water'
-          },
-          {
-            name: '土壤采样点',
-            to: 'features-spatial-data-soil'
-          },
-          {
-            name: '污染地块',
-            to: 'features-spatial-data-polluted-plot'
-          },
-          {
-            name: '噪声监测点',
-            to: 'features-spatial-data-noise'
-          },
-          {
-            name: '重点放射辐射监测点',
-            to: 'features-spatial-data-radiation'
+            name: '重点污染源企业',
+            to: 'features-spatial-data-pollutant-source-enterprise'
           }
         ]
       },
@@ -112,8 +115,8 @@ export const appConfig = {
       }
     ]
   },
-  arcgis_api: 'http://localhost:8090/arcgis_js_api_4/',
   map: {
+    arcgis_api: 'http://47.110.60.109:8090/arcgis_js_api_4',
     initial_camera: {
       position: [113.705643, 30.055232, 500000],
       heading: 0,

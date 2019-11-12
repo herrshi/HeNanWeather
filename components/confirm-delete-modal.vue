@@ -35,7 +35,7 @@ import {
   mdbModalHeader
 } from 'mdbvue'
 export default {
-  name: 'ConfirmDelete',
+  name: 'ConfirmDeleteModal',
 
   components: {
     mdbBtn,

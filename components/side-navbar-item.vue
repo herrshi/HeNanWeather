@@ -1,13 +1,42 @@
 <template>
-  $END$
+  <mdb-side-nav-cat :name="name" :icon="icon">
+    <mdb-side-nav-item
+      v-for="(subItem, index) in subItems"
+      :key="index"
+      :to="{ name: subItem.to }"
+      >{{ subItem.name }}
+    </mdb-side-nav-item>
+  </mdb-side-nav-cat>
 </template>
 
 <script>
-  export default {
-    name: 'side-navbar-item'
+import { mdbSideNavCat, mdbSideNavItem } from 'mdbvue'
+
+export default {
+  name: 'SideNavbarItem',
+
+  components: {
+    mdbSideNavCat,
+    mdbSideNavItem
+  },
+
+  props: {
+    name: {
+      type: String,
+      default: ''
+    },
+    icon: {
+      type: String,
+      default: 'chevron-right'
+    },
+    subItems: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   }
+}
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
