@@ -38,7 +38,7 @@ import {
 import { mapState, mapMutations } from 'vuex'
 import PageComponents from '~/api/page-components'
 import FeatureCardItem from '~/components/feature-card-item'
-import Map from '~/components/map'
+import Map from '~/components/map/map'
 
 export default {
   components: {

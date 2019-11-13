@@ -1,18 +1,34 @@
 <template>
-  <div id="MapDiv" class="v-100 h-100"></div>
+  <div id="MapDiv" class="v-100 h-100">
+    <div id="divWidgets">
+      <div id="divOverlay">
+        <Overlay ref="widgetOverlay" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
 import { loadCss, loadModules } from 'esri-loader'
 import { appConfig } from '~/static/js/appConfig'
+import Overlay from '~/components/map/Overlay'
 
 export default {
   name: 'Map',
+  components: { Overlay },
+
   data() {
     return {
       view: null,
       map: null
+    }
+  },
+
+  provide() {
+    return {
+      getMap: this.$_map_getMap,
+      getView: this.$_map_getView
     }
   },
 
@@ -26,11 +42,11 @@ export default {
   },
 
   methods: {
-    ...mapMutations('map', ['setUpdating']),
+    ...mapMutations('map', ['setUpdating', 'startUpdating', 'add_overlays']),
     ...mapActions('map', ['getInitialCamera']),
 
     async $_map_loadMap() {
-      this.setUpdating({ updating: true })
+      this.startUpdating()
 
       loadCss(`${appConfig.map.arcgis_api}/esri/themes/light-blue/main.css`)
       const [BaseMap, TileLayer, Map, SceneView] = await loadModules(
@@ -78,6 +94,45 @@ export default {
       if (this.initialCamera) {
         this.view.camera = this.initialCamera
       }
+
+      // setTimeout(() => {
+      //   this.$emit('mapInitialized')
+      // }, 3000)
+      this.$emit('mapInitialized')
+    },
+
+    $_map_getMap() {
+      return new Promise((resolve) => {
+        if (this.map) {
+          resolve(this.map)
+        } else {
+          const interval = setInterval(() => {
+            if (this.map) {
+              clearInterval(interval)
+              resolve(this.map)
+            }
+          }, 50)
+        }
+      })
+    },
+
+    $_map_getView() {
+      return new Promise((resolve) => {
+        if (this.view) {
+          resolve(this.view)
+        } else {
+          const interval = setInterval(() => {
+            if (this.view) {
+              clearInterval(interval)
+              resolve(this.view)
+            }
+          }, 50)
+        }
+      })
+    },
+
+    addOverlays(params) {
+      this.$refs.widgetOverlay.addOverlays(params)
     }
   }
 }

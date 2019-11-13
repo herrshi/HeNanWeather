@@ -10,7 +10,7 @@ const mutations = {
 
 const getters = {
   showLoading: (state) => {
-    return state.map.updating
+    return state.map.updating || state['business-data'].fetching
   }
 }
 

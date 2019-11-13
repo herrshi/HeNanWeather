@@ -171,7 +171,11 @@ export default {
     await store.dispatch('base-data/getAllControlLevels')
     await store.dispatch('base-data/getAllCities')
     await store.dispatch('base-data/getAllReservesTypes')
-
+    await store.dispatch('business-data/getAllPollutantSourceEnterprises', {
+      // isPage: 'NO'
+      page: 1,
+      limit: 100
+    })
     return {
       sideNavbarItems: PageComponents.getSideNavbarItems()
     }

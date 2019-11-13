@@ -42,6 +42,10 @@ const getters = {
     return state.cities.find((city) => String(city.cityId) === String(cityId))
   },
 
+  getCityByCode: (state) => (cityCode) => {
+    return state.cities.find((city) => city.cityCode === cityCode)
+  },
+
   getReservesTypeByCode: (state) => (typeCode) => {
     return state.reservesTypes.find(
       (type) => String(type.typeCode) === String(typeCode)
