@@ -1,23 +1,25 @@
 <template>
-  <mdb-card color="white" style="color: black !important;" class="h-100 v-100">
+  <mdb-card color="white" style="color: black !important;" class="h-100 w-100">
     <mdb-card-body class="p-2">
-      <mdb-row class="h-100 v-100">
-        <mdb-col>
-          <mdb-card class="h-100 v-100">
+      <mdb-row class="h-100 w-100">
+        <mdb-col class="pr-1">
+          <mdb-card class="h-100 w-100">
             <mdb-card-body class="p-0">
               <Map
                 ref="pollutant_source_enterprise_map"
-                @mapInitialized="$_mapInitialized"
+                theme="light"
+                @mapInitialized="$_map_initialized"
+                @mapPopupTriggerAction="$_map_popup_trigger_action"
               />
             </mdb-card-body>
           </mdb-card>
         </mdb-col>
 
-        <mdb-col>
-          <mdb-card class="h-100 v-100">
-            <mdb-card-body>
+        <mdb-col class="pr-0">
+          <mdb-card class="h-100 w-100">
+            <mdb-card-body class="p-0">
               <div class="d-flex justify-content-start">
-                <mdb-btn color="cyan" rounded @click="$_mapInitialized">
+                <mdb-btn color="cyan" rounded>
                   <mdb-icon icon="plus" class="mr-1" />新增{{ pageName }}
                 </mdb-btn>
               </div>
@@ -37,7 +39,9 @@
                 scroll-y
                 bordered
                 hover
+                focus
                 class="m-2"
+                @selectRow="$_datatable_rowSelected"
               />
             </mdb-card-body>
           </mdb-card>
@@ -57,7 +61,7 @@ import {
   mdbRow,
   mdbDatatable
 } from 'mdbvue'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import Map from '~/components/map/map'
 export default {
   name: 'PollutantSourceEnterprise',
@@ -76,6 +80,7 @@ export default {
   data() {
     return {
       pageName: '重点污染源企业',
+      overlayType: 'PollutantSourceEnterprise',
       refreshTable: true
     }
   },
@@ -83,11 +88,6 @@ export default {
   computed: {
     ...mapState('app-info', ['title', 'subTitle']),
     ...mapState('business-data', ['pollutantSourceEnterprises']),
-    ...mapGetters('base-data', [
-      'getPollutantSourceTypeByCode',
-      'getControlLevelByCode',
-      'getCityByCode'
-    ]),
 
     tableData() {
       const columns = [
@@ -111,22 +111,20 @@ export default {
       const rows = []
       this.pollutantSourceEnterprises.forEach((enterprise) => {
         const {
-          // id,
+          id,
           name,
-          controlLevelCode,
-          pollutantSourceTypeCode,
-          cityCode,
+          controlLevelName,
+          pollutantSourceTypeName,
+          cityName,
           isDelete
         } = enterprise
         if (isDelete === 1) {
           rows.push({
+            id,
             name,
-            controlLevelName: this.getControlLevelByCode(controlLevelCode)
-              .levelName,
-            pollutantSourceTypeName: this.getPollutantSourceTypeByCode(
-              pollutantSourceTypeCode
-            ).typeName,
-            cityName: this.getCityByCode(cityCode).cityName
+            controlLevelName,
+            pollutantSourceTypeName,
+            cityName
           })
         }
       })
@@ -143,10 +141,10 @@ export default {
   methods: {
     ...mapMutations(['setNaviBreadcrumb']),
 
-    $_mapInitialized() {
+    $_addEnterprisesToMap() {
       const overlays = this.pollutantSourceEnterprises.map((enterprise) => ({
         id: enterprise.id,
-        type: 'PollutantSourceEnterprise',
+        type: this.overlayType,
         geometry: { type: 'point', x: enterprise.x, y: enterprise.y },
         attributes: enterprise
       }))
@@ -156,10 +154,63 @@ export default {
         width: '24px',
         height: '35px'
       }
+      const defaultPopupTemplate = {
+        title: '{name}',
+        content: [
+          {
+            type: 'fields',
+            fieldInfos: [
+              {
+                fieldName: 'cityName',
+                label: '所在城市'
+              },
+              {
+                fieldName: 'controlLevelName',
+                label: '管控级别'
+              },
+              {
+                fieldName: 'pollutantSourceTypeName',
+                label: '污染源类型'
+              }
+            ]
+          }
+        ],
+        actions: [
+          {
+            title: `编辑${this.pageName}`,
+            id: 'EditPollutantSourceEnterprise',
+            className: 'esri-icon-edit'
+          },
+          {
+            title: `删除${this.pageName}`,
+            id: 'DeletePollutantSourceEnterprise',
+            className: 'esri-icon-trash'
+          }
+        ]
+      }
       this.$refs.pollutant_source_enterprise_map.addOverlays({
         overlays,
-        defaultSymbol
+        defaultSymbol,
+        defaultPopupTemplate
       })
+    },
+
+    $_map_initialized() {
+      this.$_addEnterprisesToMap()
+    },
+
+    $_datatable_rowSelected(index) {
+      const { rows } = this.tableData
+      const { id } = rows[index]
+      this.$refs.pollutant_source_enterprise_map.findOverlay({
+        id,
+        type: this.overlayType,
+        zoom: 15
+      })
+    },
+
+    $_map_popup_trigger_action(event) {
+      console.log(event)
     }
   }
 }

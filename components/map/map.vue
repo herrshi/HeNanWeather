@@ -18,6 +18,13 @@ export default {
   name: 'Map',
   components: { Overlay },
 
+  props: {
+    theme: {
+      type: String,
+      default: ''
+    }
+  },
+
   data() {
     return {
       view: null,
@@ -33,7 +40,15 @@ export default {
   },
 
   computed: {
-    ...mapState('map', ['initialCamera'])
+    ...mapState('map', ['initialCamera']),
+
+    themeCss() {
+      if (this.theme === '') {
+        return `${appConfig.map.arcgis_api}/esri/main.css`
+      } else {
+        return `${appConfig.map.arcgis_api}/esri/themes/${this.theme}/main.css`
+      }
+    }
   },
 
   mounted() {
@@ -48,13 +63,14 @@ export default {
     async $_map_loadMap() {
       this.startUpdating()
 
-      loadCss(`${appConfig.map.arcgis_api}/esri/themes/light-blue/main.css`)
-      const [BaseMap, TileLayer, Map, SceneView] = await loadModules(
+      loadCss(this.themeCss)
+      const [BaseMap, TileLayer, Map, SceneView, Home] = await loadModules(
         [
           'esri/Basemap',
           'esri/layers/TileLayer',
           'esri/Map',
-          'esri/views/SceneView'
+          'esri/views/SceneView',
+          'esri/widgets/Home'
         ],
         {
           url: `${appConfig.map.arcgis_api}/init.js`
@@ -73,6 +89,7 @@ export default {
       this.view = new SceneView({
         container: 'MapDiv',
         map: this.map,
+        camera: this.initialCamera,
         qualityProfile: 'high',
         environment: {
           lighting: {
@@ -85,20 +102,33 @@ export default {
           }
         }
       })
-      this.view.ui.remove('attribution')
+
+      const { ui } = this.view
+      ui.remove('attribution')
+
+      const homeWidget = new Home({
+        view: this.view
+      })
+      ui.add(homeWidget, 'top-left')
+
       this.view.watch('updating', () => {
         this.setUpdating({ updating: this.view.updating })
       })
 
-      await this.view.when()
-      if (this.initialCamera) {
-        this.view.camera = this.initialCamera
-      }
+      // popup上action button点击事件
+      this.view.popup.on('trigger-action', (event) =>
+        this.$emit('mapPopupTriggerAction', {
+          actionId: event.action.id,
+          selectedGraphic: this.view.popup.selectedFeature
+        })
+      )
 
-      // setTimeout(() => {
-      //   this.$emit('mapInitialized')
-      // }, 3000)
-      this.$emit('mapInitialized')
+      await this.view.when()
+
+      setTimeout(() => {
+        this.$emit('mapInitialized')
+      }, 2000)
+      // this.$emit('mapInitialized')
     },
 
     $_map_getMap() {
@@ -118,7 +148,7 @@ export default {
 
     $_map_getView() {
       return new Promise((resolve) => {
-        if (this.view) {
+        if (this.view.spatialReference) {
           resolve(this.view)
         } else {
           const interval = setInterval(() => {
@@ -133,6 +163,10 @@ export default {
 
     addOverlays(params) {
       this.$refs.widgetOverlay.addOverlays(params)
+    },
+
+    findOverlay(params) {
+      this.$refs.widgetOverlay.findOverlay(params)
     }
   }
 }
