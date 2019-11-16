@@ -116,7 +116,7 @@ export const appConfig = {
     ]
   },
   map: {
-    arcgis_api: 'http://47.110.60.109:8090/arcgis_js_api_4',
+    arcgis_api: 'http://localhost:8090/arcgis_js_api_4',
     initial_camera: {
       position: [113.705643, 30.055232, 500000],
       heading: 0,

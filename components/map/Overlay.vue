@@ -43,7 +43,7 @@ export default {
         this.isWebMercator = spatialReference.isWebMercator
       }
 
-      this.overlayLayer.removeAll()
+      // this.overlayLayer.removeAll()
 
       const [Graphic, webMercatorUtils] = await loadModules([
         'esri/Graphic',
@@ -73,6 +73,20 @@ export default {
         code: 1,
         message: `成功添加${overlays.length}个覆盖物`
       }
+    },
+
+    deleteOverlays(params) {
+      const { type, ids } = params
+      const removeGraphics = this.overlayLayer.graphics.filter((graphic) => {
+        if (!ids) {
+          return graphic.type === type
+        } else if (!type) {
+          return ids.includes(graphic.id)
+        } else {
+          return graphic.type === type && ids.includes(graphic.id)
+        }
+      })
+      this.overlayLayer.removeMany(removeGraphics)
     },
 
     async findOverlay({
@@ -107,7 +121,10 @@ export default {
           geometry.type === 'point' ? geometry : geometry.extent.center
         // 居中
         if (centerResult) {
-          await this.view.goTo({ center: centerPoint, zoom })
+          await this.view.goTo(
+            { center: centerPoint, zoom },
+            { speedFactor: 3 }
+          )
         }
         // 显示popup
         if (showPopup) {

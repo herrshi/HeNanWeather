@@ -1,8 +1,8 @@
 <template>
   <div class="flexible-content" :style="flexibleContentStyle">
+    <!-- Navbar -->
     <mdb-navbar
-      dark
-      color="indigo"
+      color="info"
       position="top"
       expand="large"
       :toggler="false"
@@ -24,7 +24,7 @@
               slot="toggle"
               tag="a"
               nav-link
-              color="indigo"
+              color="info"
               waves-fixed
             >
               <mdb-icon icon="user" class="mr-1" />{{ userName }}
@@ -42,7 +42,9 @@
       </mdb-navbar-toggler>
     </mdb-navbar>
     <!--/.Navbar-->
-    <div class="indigo-skin">
+
+    <!-- SideNavbar -->
+    <div class="light-blue-skin">
       <mdb-side-nav
         slim
         :is-collapsed="collapse"
@@ -68,6 +70,8 @@
         </mdb-side-nav-nav>
       </mdb-side-nav>
     </div>
+    <!-- /.SideNavbar -->
+
     <div :style="contentStyle" class="page-content">
       <view-wrapper>
         <mdb-mask

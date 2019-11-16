@@ -1,10 +1,14 @@
 <template>
-  <div id="MapDiv" class="v-100 h-100">
+  <div class="w-100 h-100">
     <div id="divWidgets">
       <div id="divOverlay">
         <Overlay ref="widgetOverlay" />
       </div>
+      <div v-if="widgets && widgets.includes('LayerList')" id="divLayerList">
+        <LayerList />
+      </div>
     </div>
+    <div id="MapDiv" class="w-100 h-100"></div>
   </div>
 </template>
 
@@ -13,15 +17,23 @@ import { mapActions, mapMutations, mapState } from 'vuex'
 import { loadCss, loadModules } from 'esri-loader'
 import { appConfig } from '~/static/js/appConfig'
 import Overlay from '~/components/map/Overlay'
+import LayerList from '~/components/map/layer-list'
 
 export default {
   name: 'Map',
-  components: { Overlay },
+  components: { LayerList, Overlay },
 
   props: {
     theme: {
       type: String,
       default: ''
+    },
+
+    widgets: {
+      type: [String],
+      default: () => {
+        return []
+      }
     }
   },
 
@@ -64,12 +76,20 @@ export default {
       this.startUpdating()
 
       loadCss(this.themeCss)
-      const [BaseMap, TileLayer, Map, SceneView, Home] = await loadModules(
+      const [
+        BaseMap,
+        TileLayer,
+        Map,
+        SceneView,
+        Expand,
+        Home
+      ] = await loadModules(
         [
           'esri/Basemap',
           'esri/layers/TileLayer',
           'esri/Map',
           'esri/views/SceneView',
+          'esri/widgets/Expand',
           'esri/widgets/Home'
         ],
         {
@@ -89,18 +109,7 @@ export default {
       this.view = new SceneView({
         container: 'MapDiv',
         map: this.map,
-        camera: this.initialCamera,
-        qualityProfile: 'high',
-        environment: {
-          lighting: {
-            directShadowsEnabled: true,
-            ambientOcclusionEnabled: true
-          },
-          starsEnabled: false,
-          atmosphere: {
-            quality: 'high'
-          }
-        }
+        camera: this.initialCamera
       })
 
       const { ui } = this.view
@@ -110,6 +119,16 @@ export default {
         view: this.view
       })
       ui.add(homeWidget, 'top-left')
+
+      if (this.widgets.includes('LayerList')) {
+        const expandLayerList = new Expand({
+          view: this.view,
+          name: 'LayerList',
+          content: document.getElementById('divLayerList'),
+          expandIconClass: 'esri-icon-layer-list'
+        })
+        ui.add(expandLayerList, 'bottom-right')
+      }
 
       this.view.watch('updating', () => {
         this.setUpdating({ updating: this.view.updating })
@@ -163,6 +182,10 @@ export default {
 
     addOverlays(params) {
       this.$refs.widgetOverlay.addOverlays(params)
+    },
+
+    deleteOverlays(params) {
+      this.$refs.widgetOverlay.deleteOverlays(params)
     },
 
     findOverlay(params) {
