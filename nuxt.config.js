@@ -23,7 +23,11 @@ export default {
   /*
    ** Global CSS
    */
-  css: ['bootstrap-css-only/css/bootstrap.min.css', 'mdbvue/build/css/mdb.css'],
+  css: [
+    'bootstrap-css-only/css/bootstrap.min.css',
+    'mdbvue/lib/css/mdb.min.css',
+    '@fortawesome/fontawesome-free/css/all.min.css'
+  ],
   /*
    ** Plugins to load before mounting the App
    */
@@ -51,9 +55,13 @@ export default {
      ** You can extend webpack config here
      */
     extend(config, ctx) {},
-    transpile: ['mdbvue']
+    transpile: ['mdbvue/lib/components']
   },
   router: {
     // base: process.env.NODE_ENV === 'production' ? '/HeNanWeather' : '/'
+  },
+  env: {
+    baseUrl: process.env.BASE_URL,
+    buildEnv: process.env.BUILD_ENV
   }
 }

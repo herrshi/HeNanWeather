@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 import {
   mdbBreadcrumb,
   mdbBreadcrumbItem,
@@ -114,7 +114,6 @@ import {
   ViewWrapper,
   waves
 } from 'mdbvue'
-import PageComponents from '~/api/page-components'
 import SideNavbarItem from '~/components/side-navbar-item'
 import Loader from '~/components/loader'
 
@@ -155,10 +154,14 @@ export default {
   },
 
   computed: {
-    ...mapState('app-info', ['title', 'subTitle']),
+    ...mapState('app-info', ['appConfig']),
     ...mapState('user', ['userName']),
     ...mapState(['naviBreadcrumb']),
     ...mapGetters(['showLoading']),
+
+    sideNavbarItems() {
+      return this.appConfig.pageComponents.sideNavbarItems
+    },
 
     contentStyle() {
       return `height: 100vh; margin-left: ${this.collapse ? 60 : 240}px`
@@ -170,6 +173,7 @@ export default {
   },
 
   async asyncData({ store }) {
+    await store.dispatch('app-info/getAppConfig')
     await store.dispatch('user/getAllRoles')
     await store.dispatch('base-data/getAllPollutantSourceTypes')
     await store.dispatch('base-data/getAllControlLevels')
@@ -178,11 +182,25 @@ export default {
     await store.dispatch('business-data/getAllPollutantSourceEnterprises', {
       // isPage: 'NO'
       page: 1,
-      limit: 100
+      limit: 400
     })
-    return {
-      sideNavbarItems: PageComponents.getSideNavbarItems()
-    }
+    await store.dispatch(
+      'business-data/getAllSurfaceWaterSurveillanceStations',
+      { isPage: 'NO' }
+    )
+    await store.dispatch('business-data/getAllAirQualitySurveillanceStations', {
+      isPage: 'NO'
+    })
+  },
+
+  mounted() {
+    this.setNaviBreadcrumb({
+      naviBreadcrumb: [this.appConfig.app.subTitle]
+    })
+  },
+
+  methods: {
+    ...mapMutations(['setNaviBreadcrumb'])
   }
 }
 </script>

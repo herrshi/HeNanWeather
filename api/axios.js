@@ -1,8 +1,16 @@
 import axios from 'axios'
-import { appConfig } from '~/static/js/appConfig'
+
+let apiUrl = ''
+if (process.env.buildEnv === 'test') {
+  apiUrl = 'http://47.110.60.109:18091'
+} else if (process.env.buildEnv === 'prod_ali') {
+  apiUrl = 'http://47.110.60.109:18091'
+} else if (process.env.buildEnv === 'prod') {
+  apiUrl = 'http://10.41.109.91:18091'
+}
 
 const axiosInstance = axios.create({
-  baseURL: appConfig.app.apiUrl
+  baseURL: apiUrl
 })
 
 const axiosGet = async (url, params = null) => {

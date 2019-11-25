@@ -1,7 +1,11 @@
 <template>
   <mdb-card color="white" style="color: black !important;" class="h-100 w-100">
     <mdb-card-body class="p-0">
-      <Map ref="main_map" theme="light" :widgets="['LayerList']" />
+      <Map
+        ref="main_map"
+        theme="light"
+        :widgets="['LayerList', 'NearbySearch']"
+      />
     </mdb-card-body>
     <!--    <mdb-sliding-card :show="show">-->
     <!--      <mdb-card-body class="p-0" style="height: 100vh">-->
@@ -36,8 +40,6 @@ import {
   // mdbSlidingCard
 } from 'mdbvue'
 import { mapState, mapMutations } from 'vuex'
-// import PageComponents from '~/api/page-components'
-// import FeatureCardItem from '~/components/feature-card-item'
 import Map from '~/components/map/map'
 
 export default {
@@ -58,17 +60,11 @@ export default {
   },
 
   computed: {
-    ...mapState('app-info', ['title', 'subTitle'])
+    ...mapState('app-info', ['appConfig'])
   },
 
-  // asyncData({ params }) {
-  //   return {
-  //     sideNavbarItems: PageComponents.getSideNavbarItems()
-  //   }
-  // },
-
   mounted() {
-    this.setNaviBreadcrumb({ naviBreadcrumb: [this.subTitle] })
+    this.setNaviBreadcrumb({ naviBreadcrumb: [this.appConfig.subTitle] })
   },
 
   methods: {

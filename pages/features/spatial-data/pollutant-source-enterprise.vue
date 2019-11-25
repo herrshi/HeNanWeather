@@ -2,14 +2,14 @@
   <mdb-card color="white" style="color: black !important;" class="h-100 w-100">
     <mdb-card-body class="p-2">
       <mdb-row class="h-100 w-100">
-        <mdb-col class="pr-1">
+        <mdb-col class="pr-1 pl-0">
           <mdb-card class="h-100 w-100">
             <mdb-card-body class="p-0">
               <Map
                 ref="pollutant_source_enterprise_map"
-                theme="light"
                 @mapInitialized="$_map_initialized"
                 @mapPopupTriggerAction="$_map_popup_trigger_action"
+                theme="light"
               />
             </mdb-card-body>
           </mdb-card>
@@ -26,14 +26,14 @@
 
               <mdb-datatable
                 v-if="refreshTable"
+                :data="tableData"
+                :tfoot="false"
+                :sorting="false"
                 max-height="50vh"
                 showing-text="显示"
                 entries-title=""
                 no-found-message="无符合记录"
                 search-placeholder="搜索"
-                :data="tableData"
-                :tfoot="false"
-                :sorting="false"
                 arrows
                 striped
                 scroll-y
@@ -86,7 +86,7 @@ export default {
   },
 
   computed: {
-    ...mapState('app-info', ['title', 'subTitle']),
+    ...mapState('app-info', ['appConfig']),
     ...mapState('business-data', ['pollutantSourceEnterprises']),
 
     tableData() {
@@ -134,7 +134,11 @@ export default {
 
   mounted() {
     this.setNaviBreadcrumb({
-      naviBreadcrumb: [this.subTitle, '空间数据管理', this.pageName]
+      naviBreadcrumb: [
+        this.appConfig.app.subTitle,
+        '空间数据管理',
+        this.pageName
+      ]
     })
   },
 

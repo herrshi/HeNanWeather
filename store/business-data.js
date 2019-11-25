@@ -2,7 +2,10 @@ import { axiosGet } from '~/api/axios'
 
 const state = () => ({
   fetching: false,
-  pollutantSourceEnterprises: []
+  pollutantSourceEnterprises: [],
+  surfaceWaterSurveillanceStations: [],
+  airQualitySurveillanceStations: [],
+  businessDataMap: new Map()
 })
 
 const mutations = {
@@ -16,15 +19,27 @@ const mutations = {
 
   setAllPollutantSourceEnterprises(state, { enterprises }) {
     state.pollutantSourceEnterprises = enterprises
+    state.businessDataMap.set('PollutantSourceEnterprise', enterprises)
+  },
+
+  setAllSurfaceWaterSurveillanceStations(state, { stations }) {
+    state.surfaceWaterSurveillanceStations = stations
+    state.businessDataMap.set('SurfaceWaterSurveillanceStation', stations)
+  },
+
+  setAllAirQualitySurveillanceStations(state, { stations }) {
+    state.airQualitySurveillanceStations = stations
+    state.businessDataMap.set('AirQualitySurveillanceStation', stations)
   }
+}
+
+const getters = {
+  getBusinessData: (state) => (dataType) => state.businessDataMap.get(dataType)
 }
 
 const actions = {
   /** 重点污染源企业 **/
-  async getAllPollutantSourceEnterprises(
-    { commit, rootGetters },
-    { isPage, page, limit }
-  ) {
+  async getAllPollutantSourceEnterprises({ commit }, { isPage, page, limit }) {
     commit('startRefreshData')
     const result = await axiosGet('/emphasisSourcePollutionCompany/find_page', {
       isPage,
@@ -38,51 +53,118 @@ const actions = {
           objectId,
           x,
           y,
-          controlLevel,
-          sourcePositionType,
-          sysCity,
+          property: controlLevelName,
+          type: pollutantSourceTypeName,
+          cityName,
           isDelete
         } = enterprise
-
-        const controlLevelCode = controlLevel.attentiondegreeCode
-        const controlLevelName = rootGetters['base-data/getControlLevelByCode'](
-          controlLevelCode
-        ).levelName
-
-        const pollutantSourceTypeCode = sourcePositionType.typeCode
-        // eslint-disable-next-line standard/computed-property-even-spacing
-        const pollutantSourceTypeName = rootGetters[
-          'base-data/getPollutantSourceTypeByCode'
-        ](pollutantSourceTypeCode).typeName
-
-        const cityCode = sysCity.cityCode
-        const cityName = rootGetters['base-data/getCityByCode'](cityCode)
-          .cityName
 
         return {
           name,
           id: objectId,
-          x,
-          y,
-          controlLevelCode,
+          geometry: { type: 'point', x, y },
           controlLevelName,
-          pollutantSourceTypeCode,
           pollutantSourceTypeName,
-          cityCode,
           cityName,
-          isDelete
+          isDelete,
+          type: '重点污染源企业'
         }
       })
       commit('setAllPollutantSourceEnterprises', { enterprises })
     }
     commit('stopFetchingData')
-  }
+  },
   /** /.重点污染源企业 **/
+
+  /** 地表水监测站点 **/
+  async getAllSurfaceWaterSurveillanceStations(
+    { commit },
+    { isPage, page, limit }
+  ) {
+    commit('startRefreshData')
+    const result = await axiosGet('/section/find_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const stations = result.data.map((station) => {
+        const {
+          siteName: name,
+          siteId: id,
+          cityName,
+          waterBasin: riverSystem,
+          waterSyste: river,
+          siteTypeNa: stationTypeName,
+          property: boundary,
+          siteAuthor: controlLevelName,
+          x,
+          y,
+          createTime
+        } = station
+        return {
+          name,
+          id,
+          cityName,
+          geometry: { type: 'point', x, y },
+          createTime,
+          controlLevelName,
+          riverSystem,
+          river,
+          stationTypeName,
+          boundary,
+          type: '地表水'
+        }
+      })
+      commit('setAllSurfaceWaterSurveillanceStations', { stations })
+    }
+    commit('stopFetchingData')
+  },
+  /** /.地表水监测站点 **/
+
+  /** 重点区域空气监测站点 **/
+  async getAllAirQualitySurveillanceStations(
+    { commit },
+    { isPage, page, limit }
+  ) {
+    commit('startRefreshData')
+    const result = await axiosGet('area_site/find_area_site_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const stations = result.data.map((station) => {
+        const {
+          siteName: name,
+          siteId: id,
+          cityName,
+          siteTypeNa: stationTypeName,
+          status,
+          x,
+          y
+        } = station
+
+        return {
+          name,
+          id,
+          cityName,
+          stationTypeName,
+          status: status === 0 ? '在线' : '离线',
+          geometry: { type: 'point', x, y },
+          type: '空气'
+        }
+      })
+      commit('setAllAirQualitySurveillanceStations', { stations })
+    }
+    commit('stopFetchingData')
+  }
 }
 
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }

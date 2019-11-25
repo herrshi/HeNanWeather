@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Home :title="title" :sub-title="subTitle" />
+    <Home :title="appConfig.app.title" :sub-title="appConfig.app.subTitle" />
   </div>
 </template>
 
@@ -16,7 +16,11 @@ export default {
   },
 
   computed: {
-    ...mapState('app-info', ['title', 'subTitle'])
+    ...mapState('app-info', ['appConfig'])
+  },
+
+  async asyncData({ store }) {
+    await store.dispatch('app-info/getAppConfig')
   }
 }
 </script>

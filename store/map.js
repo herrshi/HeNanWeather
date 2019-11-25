@@ -1,10 +1,11 @@
 // import _ from 'lodash'
-import mapApi from '~/api/map'
+// import mapApi from '~/api/map'
 
 const state = () => ({
   updating: false,
   initialCamera: null,
-  overlays: []
+  overlayGraphics: [],
+  businessLayerMap: new Map()
 })
 
 const mutations = {
@@ -24,39 +25,35 @@ const mutations = {
     state.initialCamera = camera
   },
 
-  addOverlays(
-    state,
-    { overlays, defaultSymbol, defaultVisible = true, defaultButtons }
-  ) {
-    overlays.forEach((overlay) => {
-      // 混合默认属性和单独属性
-      if (!overlay.symbol) {
-        overlay.symbol = defaultSymbol
-      }
-      if (!overlay.buttons) {
-        overlay.buttons = defaultButtons
-      }
-      if (overlay.visible === undefined) {
-        overlay.visible = defaultVisible
+  addOverlayGraphics(state, { graphics }) {
+    state.overlayGraphics = state.overlayGraphics.concat(graphics)
+  },
+
+  addBusinessLayer(state, { type, layer }) {
+    state.businessLayerMap.set(type, layer)
+  }
+}
+
+const getters = {
+  businessLayer: (state) => (dataType) => state.businessLayerMap.get(dataType),
+
+  visibleBusinessLayer: (state) => {
+    const layers = []
+    state.businessLayerMap.forEach((layer) => {
+      if (layer.visible) {
+        layers.push(layer)
       }
     })
-
-    // const newArray = overlays.concat(state.overlays)
-    // state.overlays = _.uniqBy(newArray, (overlay) => overlay.id && overlay.type)
-    state.overlays = overlays
+    return layers
   }
 }
 
-const actions = {
-  getInitialCamera({ commit }) {
-    const camera = mapApi.getInitialCamera()
-    commit('setInitialCamera', { camera })
-  }
-}
+const actions = {}
 
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }

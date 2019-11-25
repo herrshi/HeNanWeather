@@ -84,7 +84,7 @@ export default {
   },
 
   computed: {
-    ...mapState('app-info', ['title', 'subTitle']),
+    ...mapState('app-info', ['appConfig']),
     ...mapState('base-data', ['cities']),
     ...mapGetters('base-data', ['getCityById']),
 
@@ -131,7 +131,7 @@ export default {
 
   mounted() {
     this.setNaviBreadcrumb({
-      naviBreadcrumb: [this.subTitle, '系统设置', this.pageName]
+      naviBreadcrumb: [this.appConfig.subTitle, '系统设置', this.pageName]
     })
     this.$_attachTableButtonEvent()
   },

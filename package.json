@@ -1,12 +1,14 @@
 {
-  "name": "nuxt-test",
+  "name": "henan-weather",
   "version": "1.0.0",
   "description": "My groovy Nuxt.js project",
   "author": "herrshi",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
+    "dev": "cross-env BASE_URL=http://localhost:18088 BUILD_ENV=test nuxt",
+    "build_local": "cross-env BASE_URL=http://localhost:18088 BUILD_ENV=test nuxt build",
+    "build_ali": "cross-env BASE_URL=http://47.110.60.109:18088 BUILD_ENV=prod_ali nuxt build",
+    "build_production": "cross-env BASE_URL=http://10.41.109.91:18089 BUILD_ENV=prod nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
@@ -15,11 +17,12 @@
   "config": {
     "nuxt": {
       "host": "0.0.0.0",
-      "port": "8080"
+      "port": "18088"
     }
   },
   "dependencies": {
-    "nuxt": "^2.0.0"
+    "core-js": "^2.6.5",
+    "nuxt": "^2.10.2"
   },
   "devDependencies": {
     "@nuxtjs/axios": "^5.8.0",
@@ -29,18 +32,19 @@
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",
-    "eslint": "^6.1.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.7.1",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-lodash": "^6.0.0",
-    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-plugin-nuxt": "^0.5.0",
     "eslint-plugin-prettier": "^3.0.1",
     "esri-loader": "^2.12.0",
     "jest": "^24.1.0",
     "jquery": "^3.4.1",
     "lodash": "^4.17.15",
     "mdbvue": "git+https://oauth2:ygnd4kdbH-XQXWHyTjkN@git.mdbootstrap.com/mdb/vue/vu-pro.git",
-    "prettier": "^1.16.4",
+    "prettier": "^1.19.1",
     "vue-jest": "^4.0.0-0",
-    "vuex": "^3.1.1"
+    "vuex": "^3.1.2"
   }
 }

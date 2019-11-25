@@ -1,0 +1,430 @@
+{
+  "app": {
+    "logo": "",
+    "title": "生态环境GIS数据",
+    "subTitle": "共享交换服务平台"
+  },
+  "pageComponents": {
+    "sideNavbarItems": [
+      {
+        "name": "系统设置",
+        "icon": "cogs",
+        "subItems": [
+          {
+            "name": "角色设置",
+            "to": "features-setting-role"
+          },
+          {
+            "name": "污染源类型",
+            "to": "features-setting-pollutant-source-type"
+          },
+          {
+            "name": "管控级别",
+            "to": "features-setting-control-level"
+          },
+          {
+            "name": "城市",
+            "to": "features-setting-city"
+          },
+          {
+            "name": "保护区类型",
+            "to": "features-setting-reserves-type"
+          }
+        ]
+      },
+      {
+        "name": "空间数据管理",
+        "icon": "layer-group",
+        "subItems": [
+          {
+            "name": "重点污染源企业",
+            "to": "features-spatial-data-pollutant-source-enterprise"
+          }
+        ]
+      },
+      {
+        "name": "空气质量及大气污染专题",
+        "icon": "cloud-meatball",
+        "subItems": [
+          {
+            "name": "空气质量实时图",
+            "to": "features-air-pollution-air-quality"
+          },
+          {
+            "name": "环境空气小时报",
+            "to": "features-air-pollution-air-hour"
+          },
+          {
+            "name": "环境空气日报",
+            "to": "features-air-pollution-air-day"
+          },
+          {
+            "name": "大气污染防治",
+            "to": "features-air-pollution-pollution-control"
+          },
+          {
+            "name": "其他专题",
+            "to": "features-air-pollution-other-theme"
+          }
+        ]
+      },
+      {
+        "name": "水环境质量及污染专题",
+        "icon": "water",
+        "subItems": [
+          {
+            "name": "水质状况",
+            "to": "features-water-pollution-water-quality"
+          },
+          {
+            "name": "水质监测因子",
+            "to": "features-water-pollution-water-factor"
+          },
+          {
+            "name": "水污染防治",
+            "to": "features-water-pollution-pollution-control"
+          },
+          {
+            "name": "其他专题",
+            "to": "features-water-pollution-other-theme"
+          }
+        ]
+      },
+      {
+        "name": "土壤污染专题",
+        "icon": "leaf",
+        "subItems": [
+          {
+            "name": "土壤污染评价",
+            "to": "features-soil-pollution-pollution-evaluation"
+          },
+          {
+            "name": "土壤污染趋势",
+            "to": "features-soil-pollution-pollution-trend"
+          },
+          {
+            "name": "土壤污染防治",
+            "to": "features-soil-pollution-pollution-control"
+          },
+          {
+            "name": "其他专题",
+            "to": "features-soil-pollution-other-theme"
+          }
+        ]
+      }
+    ],
+    "layerList": [
+      {
+        "name": "重点区域空气监测站点",
+        "buttonName": "空气",
+        "dataType": "AirQualitySurveillanceStation",
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "unique-value",
+          "field": "status",
+          "defaultSymbol": {
+            "type": "picture-marker",
+            "url": "/images/GangDianSp-grey.png",
+            "width": "24px",
+            "height": "35px",
+            "yoffset": "18px"
+          },
+          "uniqueValueInfos": [
+            {
+              "value": "在线",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/GangDianSp-red.png",
+                "width": "24px",
+                "height": "35px",
+                "yoffset": "18px"
+              }
+            }
+          ]
+        },
+        "popupTemplate": {
+          "title": "{stationName}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "name",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "stationTypeName",
+                  "label": "站点类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },
+      {
+        "name": "地表水监测站点",
+        "buttonName": "地表水",
+        "dataType": "SurfaceWaterSurveillanceStation",
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "boundary",
+            "type": "string"
+          },
+          {
+            "name": "riverSystem",
+            "type": "string"
+          },
+          {
+            "name": "river",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "controlLevelName",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/GangDianSp-red.png",
+            "width": "24px",
+            "height": "35px",
+            "yoffset": "18px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "controlLevelName",
+                  "label": "管控级别"
+                },
+                {
+                  "fieldName": "boundary",
+                  "label": "监管边界"
+                },
+                {
+                  "fieldName": "riverSystem",
+                  "label": "水系"
+                },
+                {
+                  "fieldName": "river",
+                  "label": "河流"
+                },
+                {
+                  "fieldName": "stationTypeName",
+                  "label": "站点类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },
+      {
+        "name": "重点污染源企业",
+        "buttonName": "重点污染源",
+        "dataType": "PollutantSourceEnterprise",
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "controlLevelName",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "pollutantSourceTypeName",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/GangDianSp-red.png",
+            "width": "24px",
+            "height": "35px",
+            "yoffset": "18px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "controlLevelName",
+                  "label": "管控级别"
+                },
+                {
+                  "fieldName": "pollutantSourceTypeName",
+                  "label": "污染源类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },
+      {
+        "name": "医疗固废监测站点",
+        "buttonName": "医疗固废",
+        "dataType": "MedicalWasteSurveillanceStation",
+        "active": false
+      },
+      {
+        "name": "辐射源监测站点",
+        "buttonName": "辐射源",
+        "dataType": "RadiationSourceSurveillanceStation",
+        "active": false
+      },
+      {
+        "name": "放射源监测站点",
+        "buttonName": "放射源",
+        "dataType": "RadioactiveSourceSurveillanceStation",
+        "active": false
+      },
+      {
+        "name": "噪声监测站点",
+        "buttonName": "噪声",
+        "dataType": "NoiseSurveillanceStation",
+        "active": false
+      },
+      {
+        "name": "土壤地块监测站点",
+        "buttonName": "土壤",
+        "dataType": "SoilSurveillanceStation",
+        "active": false
+      },
+      {
+        "name": "机动车尾气监测站点",
+        "buttonName": "尾气",
+        "dataType": "VehicleExhaustSurveillanceStation",
+        "active": false
+      }
+    ]
+  },
+  "map": {
+    "arcgis_api": "http://localhost:8090/arcgis_js_api_4",
+    "proxy": "http://localhost:8090/proxy/proxy.jsp",
+    "properties": {
+      "center": [113.624213, 34.743306],
+      "zoom": 8
+    },
+    "basemaps": [
+      {
+        "label": "矢量图",
+        "url": "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer",
+        "type": "tiled",
+        "visible": true
+      }
+    ],
+    "operationalLayers": []
+  }
+}
