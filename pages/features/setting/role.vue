@@ -12,10 +12,10 @@
       </div>
       <mdb-datatable
         v-if="refreshTable"
-        max-height="50vh"
         :data="roleTableData"
         :tfoot="false"
         :sorting="false"
+        max-height="50vh"
         arrows
         scroll-y
         fixed

@@ -1,37 +1,29 @@
 <template>
-  <div class="classic-form-page">
-    <view-wrapper>
-      <mdb-mask
-        overlay="indigo-strong"
-        class="d-flex justify-content-center align-items-center"
-      >
-        <mdb-container>
-          <mdb-row>
-            <div
-              class="white-text text-center text-md-left col-md-6 mt-xl-5 mb-5 animated fadeInLeft"
-            >
-              <h1 class="h1-responsive font-weight-bold">
-                {{ title }}
-              </h1>
-              <h1 class="h1-responsive font-weight-bold">
-                {{ subTitle }}
-              </h1>
-              <hr class="hr-light animated fadeInLeft" />
-              <h6 class="mb-4 animated fadeInLeft">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem
-                repellendus quasi fuga nesciunt dolorum nulla magnam veniam
-                sapiente, fugiat! Commodi sequi non animi ea dolor molestiae,
-                quisquam iste, maiores. Nulla.
-              </h6>
-            </div>
-            <mdb-col md="6" xl="5" class="mb-4 animated fadeInRight">
-              <Login @login-result="$_home_login_result" />
-            </mdb-col>
-          </mdb-row>
-        </mdb-container>
-      </mdb-mask>
-    </view-wrapper>
-  </div>
+  <mdb-view>
+    <mdb-mask
+      overlay="indigo-strong"
+      class="d-flex justify-content-center align-items-center"
+    >
+      <mdb-container>
+        <mdb-row>
+          <div
+            class="white-text text-center text-md-left col-md-6 mt-xl-5 mb-5 animated fadeInLeft"
+          >
+            <h1 class="h1-responsive font-weight-bold">
+              {{ title }}
+            </h1>
+            <hr class="hr-light animated fadeInLeft" />
+            <h1 class="h1-responsive font-weight-bold">
+              {{ subTitle }}
+            </h1>
+          </div>
+          <mdb-col md="6" xl="5" class="mb-4 animated fadeInRight">
+            <Login @login-result="$_home_login_result" />
+          </mdb-col>
+        </mdb-row>
+      </mdb-container>
+    </mdb-mask>
+  </mdb-view>
 </template>
 
 <script>
@@ -41,7 +33,7 @@ import {
   mdbCol,
   // mdbNavbar,
   // mdbNavbarToggler,
-  ViewWrapper,
+  mdbView,
   mdbMask
   // mdbNavbarBrand
 } from 'mdbvue'
@@ -56,7 +48,7 @@ export default {
     mdbCol,
     // mdbNavbar,
     // mdbNavbarToggler,
-    ViewWrapper,
+    mdbView,
     mdbMask
     // mdbNavbarBrand
   },
@@ -94,7 +86,7 @@ export default {
 </script>
 
 <style scoped>
-.classic-form-page .view {
+.view {
   background-image: url('~assets/images/89.jpg');
   background-repeat: no-repeat;
   background-size: cover;
@@ -102,16 +94,26 @@ export default {
   height: 100vh;
 }
 
-.classic-form-page .gradient {
+.gradient {
+  background: -moz-linear-gradient(
+    45deg,
+    rgba(42, 27, 161, 0.7),
+    rgba(29, 210, 177, 0.7) 100%
+  );
   background: -webkit-linear-gradient(
     45deg,
-    rgba(0, 0, 0, 0.7),
-    rgba(72, 15, 144, 0.4) 100%
+    rgba(42, 27, 161, 0.7),
+    rgba(29, 210, 177, 0.7) 100%
+  );
+  background: -o-linear-gradient(
+    45deg,
+    rgba(42, 27, 161, 0.7),
+    rgba(29, 210, 177, 0.7) 100%
   );
   background: linear-gradient(
     45deg,
-    rgba(0, 0, 0, 0.7),
-    rgba(72, 15, 144, 0.4) 100%
+    rgba(42, 27, 161, 0.7),
+    rgba(29, 210, 177, 0.7) 100%
   );
 }
 

@@ -34,7 +34,12 @@ const mutations = {
 }
 
 const getters = {
-  getBusinessData: (state) => (dataType) => state.businessDataMap.get(dataType)
+  getBusinessData: (state) => (dataType) => state.businessDataMap.get(dataType),
+
+  getAirStation: (state) => (stationId) => {
+    const stations = state.businessDataMap.get('AirQualitySurveillanceStation')
+    return stations.find((station) => station.id === stationId)
+  }
 }
 
 const actions = {

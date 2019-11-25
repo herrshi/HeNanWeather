@@ -158,9 +158,12 @@ export default {
       // popup上action button点击事件
       popup.on('trigger-action', (event) => {
         const { selectedFeature } = popup
-        if (event.action.id === 'NearbySearch') {
-          this.$_nearbySearch({ center: selectedFeature.geometry })
+        switch (event.action.id) {
+          case 'NearbySearch':
+            this.$_nearbySearch({ center: selectedFeature.geometry })
+            break
         }
+
         this.$emit('mapPopupTriggerAction', {
           actionId: event.action.id,
           selectedGraphic: selectedFeature

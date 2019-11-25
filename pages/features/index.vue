@@ -3,59 +3,38 @@
     <mdb-card-body class="p-0">
       <Map
         ref="main_map"
-        theme="light"
         :widgets="['LayerList', 'NearbySearch']"
+        @mapPopupTriggerAction="$_map_popupTriggerAction"
+        theme="light"
+      />
+
+      <station-detail
+        :show-modal="showDetailModal"
+        :station-id="detailStationId"
+        @closeDetail="showDetailModal = false"
       />
     </mdb-card-body>
-    <!--    <mdb-sliding-card :show="show">-->
-    <!--      <mdb-card-body class="p-0" style="height: 100vh">-->
-    <!--        <Map theme="light" />-->
-    <!--      </mdb-card-body>-->
-    <!--    </mdb-sliding-card>-->
-    <!--    <mdb-card-body>-->
-    <!--      <mdb-card-group deck class="m-5">-->
-    <!--        <feature-card-item-->
-    <!--          v-for="(navbarItem, index) in sideNavbarItems"-->
-    <!--          :key="index"-->
-    <!--          v-bind="navbarItem"-->
-    <!--        />-->
-    <!--      </mdb-card-group>-->
-    <!--      <mdb-btn-fixed-->
-    <!--        color="light-blue"-->
-    <!--        :icon="show ? 'angle-double-down' : 'angle-double-up'"-->
-    <!--        :bottom="10"-->
-    <!--        :right="10"-->
-    <!--        @click.native.prevent="show = !show"-->
-    <!--      />-->
-    <!--    </mdb-card-body>-->
   </mdb-card>
 </template>
 
 <script>
-import {
-  // mdbBtnFixed,
-  mdbCard,
-  mdbCardBody
-  // mdbCardGroup,
-  // mdbSlidingCard
-} from 'mdbvue'
+import { mdbCard, mdbCardBody } from 'mdbvue'
 import { mapState, mapMutations } from 'vuex'
 import Map from '~/components/map/map'
+import StationDetail from '~/components/map/station-detail'
 
 export default {
   components: {
+    StationDetail,
     Map,
-    // FeatureCardItem,
-    // mdbBtnFixed,
     mdbCard,
     mdbCardBody
-    // mdbCardGroup,
-    // mdbSlidingCard
   },
 
   data() {
     return {
-      show: true
+      showDetailModal: false,
+      detailStationId: ''
     }
   },
 
@@ -68,7 +47,14 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['setNaviBreadcrumb'])
+    ...mapMutations(['setNaviBreadcrumb']),
+
+    $_map_popupTriggerAction(event) {
+      if (event.actionId === 'Detail') {
+        this.detailStationId = event.selectedGraphic.getAttribute('id')
+        this.showDetailModal = true
+      }
+    }
   }
 }
 </script>

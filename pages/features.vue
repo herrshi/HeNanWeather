@@ -1,21 +1,31 @@
 <template>
-  <div class="flexible-content" :style="flexibleContentStyle">
+  <div :style="flexibleContentStyle" class="flexible-content">
     <!-- Navbar -->
     <mdb-navbar
-      color="info"
-      position="top"
-      expand="large"
       :toggler="false"
       :style="navbarStyle"
+      color="indigo"
+      position="top"
+      expand="large"
     >
       <mdb-navbar-brand :to="{ name: 'features' }">
-        <mdb-breadcrumb>
-          <mdb-breadcrumb-item
-            v-for="(item, index) in naviBreadcrumb"
-            :key="index"
-            >{{ item }}</mdb-breadcrumb-item
-          >
-        </mdb-breadcrumb>
+        <div class="d-flex">
+          <img
+            src="~/assets/images/logo1.png"
+            alt="logo"
+            height="30"
+            class="mr-3"
+          />
+          <img src="~/assets/images/logo2.png" alt="logo" height="30" />
+        </div>
+
+        <!--        <mdb-breadcrumb>-->
+        <!--          <mdb-breadcrumb-item-->
+        <!--            v-for="(item, index) in naviBreadcrumb"-->
+        <!--            :key="index"-->
+        <!--            >{{ item }}</mdb-breadcrumb-item-->
+        <!--          >-->
+        <!--        </mdb-breadcrumb>-->
       </mdb-navbar-brand>
       <mdb-navbar-toggler>
         <mdb-navbar-nav right>
@@ -24,7 +34,7 @@
               slot="toggle"
               tag="a"
               nav-link
-              color="info"
+              color="indigo"
               waves-fixed
             >
               <mdb-icon icon="user" class="mr-1" />{{ userName }}
@@ -46,9 +56,9 @@
     <!-- SideNavbar -->
     <div class="light-blue-skin">
       <mdb-side-nav
-        slim
         :is-collapsed="collapse"
         :break-width="0"
+        slim
         side-nav-class="sn-bg-1"
         mask="strong"
       >
@@ -59,12 +69,12 @@
             v-bind="navbarItem"
           />
           <mdb-side-nav-item
+            :is-collapsed="collapse"
+            @toggle="collapse = !collapse"
             icon="angle-double-left"
             open-icon="angle-double-right"
             fixed
             toggler
-            :is-collapsed="collapse"
-            @toggle="collapse = !collapse"
             >隐藏
           </mdb-side-nav-item>
         </mdb-side-nav-nav>
@@ -73,7 +83,7 @@
     <!-- /.SideNavbar -->
 
     <div :style="contentStyle" class="page-content">
-      <view-wrapper>
+      <mdb-view>
         <mdb-mask
           overlay="indigo-strong"
           class="d-flex justify-content-center align-items-center"
@@ -86,7 +96,7 @@
             <nuxt-child />
           </mdb-container>
         </mdb-mask>
-      </view-wrapper>
+      </mdb-view>
       <Loader v-if="showLoading" class="float-right" />
     </div>
   </div>
@@ -95,8 +105,8 @@
 <script>
 import { mapState, mapMutations, mapGetters } from 'vuex'
 import {
-  mdbBreadcrumb,
-  mdbBreadcrumbItem,
+  // mdbBreadcrumb,
+  // mdbBreadcrumbItem,
   mdbContainer,
   mdbDropdown,
   mdbDropdownItem,
@@ -111,7 +121,7 @@ import {
   mdbSideNav,
   mdbSideNavNav,
   mdbSideNavItem,
-  ViewWrapper,
+  mdbView,
   waves
 } from 'mdbvue'
 import SideNavbarItem from '~/components/side-navbar-item'
@@ -123,8 +133,8 @@ export default {
   components: {
     Loader,
     SideNavbarItem,
-    mdbBreadcrumb,
-    mdbBreadcrumbItem,
+    // mdbBreadcrumb,
+    // mdbBreadcrumbItem,
     mdbContainer,
     mdbDropdown,
     mdbDropdownItem,
@@ -139,7 +149,7 @@ export default {
     mdbSideNav,
     mdbSideNavNav,
     mdbSideNavItem,
-    ViewWrapper
+    mdbView
   },
 
   mixins: [waves],

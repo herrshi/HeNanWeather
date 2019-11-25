@@ -1,8 +1,8 @@
 {
   "app": {
     "logo": "",
-    "title": "生态环境GIS数据",
-    "subTitle": "共享交换服务平台"
+    "title": "河南省生态环境",
+    "subTitle": "综合管理平台"
   },
   "pageComponents": {
     "sideNavbarItems": [
@@ -190,6 +190,11 @@
             }
           ],
           "actions": [
+            {
+              "title": "详细信息",
+              "id": "Detail",
+              "className": "esri-icon-table"
+            },
             {
               "title": "周边搜索",
               "id": "NearbySearch",
