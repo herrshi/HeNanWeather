@@ -8,10 +8,16 @@
         theme="light"
       />
 
-      <station-detail
-        :show-modal="showDetailModal"
-        :station-id="detailStationId"
-        @closeDetail="showDetailModal = false"
+      <air-station-detail
+        :show-modal="showAirStationDetailModal"
+        :station-id="detailAirStationId"
+        @closeDetail="showAirStationDetailModal = false"
+      />
+
+      <water-station-detail
+        :show-modal="showWaterStationDetailModal"
+        :station-id="detailWaterStationId"
+        @closeDetail="showWaterStationDetailModal = false"
       />
     </mdb-card-body>
   </mdb-card>
@@ -21,11 +27,13 @@
 import { mdbCard, mdbCardBody } from 'mdbvue'
 import { mapState, mapMutations } from 'vuex'
 import Map from '~/components/map/map'
-import StationDetail from '~/components/map/station-detail'
+import AirStationDetail from '~/components/map/air-station-detail'
+import WaterStationDetail from '~/components/map/water-station-detail'
 
 export default {
   components: {
-    StationDetail,
+    AirStationDetail,
+    WaterStationDetail,
     Map,
     mdbCard,
     mdbCardBody
@@ -33,8 +41,10 @@ export default {
 
   data() {
     return {
-      showDetailModal: false,
-      detailStationId: ''
+      showAirStationDetailModal: false,
+      showWaterStationDetailModal: false,
+      detailAirStationId: '',
+      detailWaterStationId: ''
     }
   },
 
@@ -50,9 +60,16 @@ export default {
     ...mapMutations(['setNaviBreadcrumb']),
 
     $_map_popupTriggerAction(event) {
-      if (event.actionId === 'Detail') {
-        this.detailStationId = event.selectedGraphic.getAttribute('id')
-        this.showDetailModal = true
+      switch (event.actionId) {
+        case 'DetailAir':
+          this.detailAirStationId = event.selectedGraphic.getAttribute('id')
+          this.showAirStationDetailModal = true
+          break
+
+        case 'DetailWater':
+          this.detailWaterStationId = event.selectedGraphic.getAttribute('id')
+          this.showWaterStationDetailModal = true
+          break
       }
     }
   }

@@ -5,21 +5,25 @@
       :class="showNearbySearch ? 'pl-0 pr-1' : 'pl-0 pr-0'"
     >
       <div id="divWidgets">
-        <div v-if="false" id="divOverlay">
+        <div id="divOverlay" v-if="false">
           <Overlay ref="widgetOverlay" />
         </div>
-        <div v-if="widgets && widgets.includes('LayerList')" id="divLayerList">
-          <LayerList ref="widgetLayerList" />
+
+        <div id="divLayerList" v-if="widgets && widgets.includes('LayerList')">
+          <layer-list ref="widgetLayerList" />
         </div>
+
         <div
-          v-if="widgets && widgets.includes('NearbySearch')"
-          id="divNearbySearch"
-        ></div>
+          id="divFeatureEditor"
+          v-if="widgets && widgets.includes('FeatureEditor')"
+        >
+          <feature-editor />
+        </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
     </mdb-col>
 
-    <mdb-col v-show="showNearbySearch">
+    <mdb-col v-show="showNearbySearch" class="pr-0">
       <NearbySearch ref="widgetNearbySearch" />
     </mdb-col>
   </mdb-row>
@@ -29,15 +33,18 @@
 import { mapMutations, mapState } from 'vuex'
 import { loadCss, loadModules } from 'esri-loader'
 import { mdbCol, mdbRow } from 'mdbvue'
-// import Overlay from '~/components/map/widgets/overlay'
+import Overlay from '~/components/map/widgets/overlay'
 import LayerList from '~/components/map/widgets/layer-list'
 import NearbySearch from '~/components/map/widgets/nearby-search'
+import FeatureEditor from '~/components/map/widgets/feature-editor'
 
 export default {
   name: 'Map',
   components: {
+    FeatureEditor,
     mdbCol,
     mdbRow,
+    Overlay,
     NearbySearch,
     LayerList
   },
@@ -170,8 +177,6 @@ export default {
         })
       })
 
-      await this.view.when()
-
       if (this.widgets.includes('LayerList')) {
         const expandLayerList = new Expand({
           view: this.view,
@@ -183,6 +188,19 @@ export default {
         })
         ui.add(expandLayerList, 'bottom-right')
       }
+
+      if (this.widgets.includes('FeatureEditor')) {
+        const expandFeatureEditor = new Expand({
+          view: this.view,
+          name: 'FeatureEditor',
+          content: document.getElementById('divFeatureEditor'),
+          expandIconClass: 'esri-icon-table',
+          expanded: true
+        })
+        ui.add(expandFeatureEditor, 'bottom-right')
+      }
+
+      await this.view.when()
 
       setTimeout(() => {
         this.$emit('mapInitialized')
@@ -229,6 +247,7 @@ export default {
     // todo 改为state
     $_hideNearbySearch() {
       this.showNearbySearch = false
+      this.$refs.widgetLayerList.resetLayers()
     },
 
     closePopup() {

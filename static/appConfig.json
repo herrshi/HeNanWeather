@@ -37,8 +37,28 @@
         "icon": "layer-group",
         "subItems": [
           {
+            "name": "重点区域空气监测站点",
+            "to": "features-spatial-data-air-quality"
+          },
+          {
             "name": "重点污染源企业",
             "to": "features-spatial-data-pollutant-source-enterprise"
+          },
+          {
+            "name": "地表水监测站点",
+            "to": "features-spatial-data-surface-water"
+          },
+          {
+            "name": "医疗固废监测站点",
+            "to": "features-spatial-data-medical-waste"
+          },
+          {
+            "name": "辐射源监测站点",
+            "to": "features-spatial-data-radiation-source"
+          },
+          {
+            "name": "土壤污染地块",
+            "to": "features-spatial-data-soil-pollutant-area"
           }
         ]
       },
@@ -154,7 +174,7 @@
           "field": "status",
           "defaultSymbol": {
             "type": "picture-marker",
-            "url": "/images/GangDianSp-grey.png",
+            "url": "/images/GangDianSp-blue.png",
             "width": "24px",
             "height": "35px",
             "yoffset": "18px"
@@ -164,7 +184,7 @@
               "value": "在线",
               "symbol": {
                 "type": "picture-marker",
-                "url": "/images/GangDianSp-red.png",
+                "url": "/images/GangDianSp-blue.png",
                 "width": "24px",
                 "height": "35px",
                 "yoffset": "18px"
@@ -173,13 +193,13 @@
           ]
         },
         "popupTemplate": {
-          "title": "{stationName}",
+          "title": "{name}",
           "content": [
             {
               "type": "fields",
               "fieldInfos": [
                 {
-                  "fieldName": "name",
+                  "fieldName": "cityName",
                   "label": "所在城市"
                 },
                 {
@@ -192,7 +212,7 @@
           "actions": [
             {
               "title": "详细信息",
-              "id": "Detail",
+              "id": "DetailAir",
               "className": "esri-icon-table"
             },
             {
@@ -254,10 +274,10 @@
           "type": "simple",
           "symbol": {
             "type": "picture-marker",
-            "url": "/images/GangDianSp-red.png",
-            "width": "24px",
-            "height": "35px",
-            "yoffset": "18px"
+            "url": "/images/icon_fbd_blue.png",
+            "width": "33px",
+            "height": "43px",
+            "yoffset": "22px"
           }
         },
         "popupTemplate": {
@@ -294,6 +314,11 @@
             }
           ],
           "actions": [
+            {
+              "title": "详细信息",
+              "id": "DetailWater",
+              "className": "esri-icon-table"
+            },
             {
               "title": "周边搜索",
               "id": "NearbySearch",
@@ -381,25 +406,214 @@
         "name": "医疗固废监测站点",
         "buttonName": "医疗固废",
         "dataType": "MedicalWasteSurveillanceStation",
-        "active": false
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/icon_gis_red_baojing.png",
+            "width": "33px",
+            "height": "43px",
+            "yoffset": "22px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "stationTypeName",
+                  "label": "站点类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
       },
       {
         "name": "辐射源监测站点",
         "buttonName": "辐射源",
         "dataType": "RadiationSourceSurveillanceStation",
-        "active": false
-      },
-      {
-        "name": "放射源监测站点",
-        "buttonName": "放射源",
-        "dataType": "RadioactiveSourceSurveillanceStation",
-        "active": false
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/icon_gis_blue_baojing.png",
+            "width": "33px",
+            "height": "43px",
+            "yoffset": "22px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "stationTypeName",
+                  "label": "站点类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
       },
       {
         "name": "噪声监测站点",
         "buttonName": "噪声",
         "dataType": "NoiseSurveillanceStation",
-        "active": false
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/GangDianSp-red.png",
+            "width": "24px",
+            "height": "35px",
+            "yoffset": "18px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{stationName}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "name",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "stationTypeName",
+                  "label": "站点类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
       },
       {
         "name": "土壤地块监测站点",
@@ -416,8 +630,7 @@
     ]
   },
   "map": {
-    "arcgis_api": "http://localhost:8090/arcgis_js_api_4",
-    "proxy": "http://localhost:8090/proxy/proxy.jsp",
+    "arcgis_api": "http://47.110.60.109:8090/arcgis_js_api_4",
     "properties": {
       "center": [113.624213, 34.743306],
       "zoom": 8

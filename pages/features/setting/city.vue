@@ -6,21 +6,20 @@
   >
     <mdb-card-body>
       <div class="d-flex justify-content-start">
-        <mdb-btn color="cyan" rounded @click="$_showNewModal">
+        <mdb-btn @click="$_showNewModal" color="cyan" size="sm" rounded>
           <mdb-icon icon="plus" class="mr-1" />新增{{ pageName }}
         </mdb-btn>
       </div>
 
       <mdb-datatable
         v-if="refreshTable"
+        :data="tableData"
+        :tfoot="false"
         max-height="50vh"
         showing-text="显示"
         entries-title="每页显示"
         no-found-message="无符合记录"
         search-placeholder="搜索"
-        :data="tableData"
-        :tfoot="false"
-        :sorting="false"
         arrows
         scroll-y
         fixed

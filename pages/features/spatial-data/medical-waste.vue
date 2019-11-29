@@ -24,7 +24,7 @@
 <script>
 import { mdbCard, mdbCardBody, mdbDatatable } from 'mdbvue'
 export default {
-  name: 'PollutantSourceEnterprise',
+  name: 'MedicalWaste',
 
   components: {
     mdbCard,
@@ -35,45 +35,22 @@ export default {
   asyncData({ store }) {
     const columns = [
       {
-        label: '企业名称',
+        label: '站点名称',
         field: 'name'
       },
       {
-        label: '管控级别',
-        field: 'controlLevelName'
-      },
-      {
-        label: '污染源类型',
-        field: 'pollutantSourceTypeName'
-      },
-      {
-        label: '所属城市',
+        label: '所在城市',
         field: 'cityName'
+      },
+      {
+        label: '站点类型',
+        field: 'stationTypeName'
       }
     ]
-    // const rows = []
     const rows = store.getters['business-data/getBusinessData'](
-      'PollutantSourceEnterprise'
+      'MedicalWasteSurveillanceStation'
     )
-    // enterprises.forEach((enterprise) => {
-    //   const {
-    //     id,
-    //     name,
-    //     controlLevelName,
-    //     pollutantSourceTypeName,
-    //     cityName,
-    //     isDelete
-    //   } = enterprise
-    //   if (isDelete === 1) {
-    //     rows.push({
-    //       id,
-    //       name,
-    //       controlLevelName,
-    //       pollutantSourceTypeName,
-    //       cityName
-    //     })
-    //   }
-    // })
+
     return {
       tableData: { columns, rows }
     }

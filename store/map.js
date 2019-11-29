@@ -40,9 +40,17 @@ const getters = {
   visibleBusinessLayer: (state) => {
     const layers = []
     state.businessLayerMap.forEach((layer) => {
-      if (layer.visible) {
+      if (layer.visible && layer.source.length > 0) {
         layers.push(layer)
       }
+    })
+    return layers
+  },
+
+  allBusinessLayer: (state) => {
+    const layers = []
+    state.businessLayerMap.forEach((layer) => {
+      if (layer.source.length > 0) layers.push(layer)
     })
     return layers
   }

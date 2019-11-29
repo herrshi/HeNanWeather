@@ -8,11 +8,11 @@
       <span slot="tip">{{ layerConfig.name }}</span>
       <mdb-btn
         slot="reference"
+        :active="layerConfig.active"
+        @click="$_toggleButton(layerConfig)"
         rounded
         size="sm"
         color="primary"
-        :active="layerConfig.active"
-        @click="$_toggleButton(layerConfig)"
       >
         {{ layerConfig.buttonName }}
       </mdb-btn>
@@ -36,12 +36,7 @@ export default {
     mdbTooltip
   },
 
-  data() {
-    return {}
-  },
-
   computed: {
-    ...mapState('business-data', ['pollutantSourceEnterprises']),
     ...mapState('app-info', ['appConfig']),
     ...mapGetters('business-data', ['getBusinessData']),
     ...mapGetters('map', ['businessLayer']),
@@ -84,7 +79,7 @@ export default {
       } = layerConfig
 
       const features = this.getBusinessData(dataType)
-      if (!features) {
+      if (!features || features.length === 0) {
         return null
       }
       const graphics = features.map((feature, index) => {
@@ -112,6 +107,16 @@ export default {
       if (layer) {
         layer.visible = active
       }
+    },
+
+    resetLayers() {
+      this.layerListConfig.forEach((layerConfig) => {
+        const { dataType, active } = layerConfig
+        const layer = this.businessLayer(dataType)
+        if (layer) {
+          layer.visible = active
+        }
+      })
     }
   }
 }
@@ -119,6 +124,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 900px;
+  width: 800px;
 }
 </style>

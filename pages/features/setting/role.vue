@@ -6,7 +6,7 @@
   >
     <mdb-card-body>
       <div class="d-flex justify-content-start">
-        <mdb-btn color="cyan" rounded @click="$_showNewModal">
+        <mdb-btn @click="$_showNewModal" color="cyan" size="sm" rounded>
           <mdb-icon icon="plus" class="mr-1" />新增角色
         </mdb-btn>
       </div>
@@ -14,7 +14,6 @@
         v-if="refreshTable"
         :data="roleTableData"
         :tfoot="false"
-        :sorting="false"
         max-height="50vh"
         arrows
         scroll-y

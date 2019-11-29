@@ -1,35 +1,31 @@
 import { axiosGet } from '~/api/axios'
+import WaterStationApi from '~/api/WaterStation'
 
 const state = () => ({
   fetching: false,
   pollutantSourceEnterprises: [],
   surfaceWaterSurveillanceStations: [],
   airQualitySurveillanceStations: [],
-  businessDataMap: new Map()
+  businessDataMap: new Map(),
+
+  waterMonitoringFactorMap: new Map()
 })
 
 const mutations = {
-  startRefreshData(state) {
+  startFetchData(state) {
     state.fetching = true
   },
 
-  stopFetchingData(state) {
+  stopFetchData(state) {
     state.fetching = false
   },
 
-  setAllPollutantSourceEnterprises(state, { enterprises }) {
-    state.pollutantSourceEnterprises = enterprises
-    state.businessDataMap.set('PollutantSourceEnterprise', enterprises)
+  setBusinessData(state, { dataType, data }) {
+    state.businessDataMap.set(dataType, data)
   },
 
-  setAllSurfaceWaterSurveillanceStations(state, { stations }) {
-    state.surfaceWaterSurveillanceStations = stations
-    state.businessDataMap.set('SurfaceWaterSurveillanceStation', stations)
-  },
-
-  setAllAirQualitySurveillanceStations(state, { stations }) {
-    state.airQualitySurveillanceStations = stations
-    state.businessDataMap.set('AirQualitySurveillanceStation', stations)
+  setWaterMonitoringFactor(state, { factorName, factorInfo }) {
+    state.waterMonitoringFactorMap.set(factorName, factorInfo)
   }
 }
 
@@ -45,17 +41,19 @@ const getters = {
 const actions = {
   /** 重点污染源企业 **/
   async getAllPollutantSourceEnterprises({ commit }, { isPage, page, limit }) {
-    commit('startRefreshData')
+    commit('startFetchData')
     const result = await axiosGet('/emphasisSourcePollutionCompany/find_page', {
       isPage,
       page,
       limit
     })
     if (result.code === 1) {
-      const enterprises = result.data.map((enterprise) => {
+      const filter = result.data.filter((station) => station.isDelete === 1)
+      const enterprises = filter.map((enterprise) => {
         const {
           name,
           objectId,
+          psCode,
           x,
           y,
           property: controlLevelName,
@@ -66,7 +64,8 @@ const actions = {
 
         return {
           name,
-          id: objectId,
+          id: psCode,
+          objectId,
           geometry: { type: 'point', x, y },
           controlLevelName,
           pollutantSourceTypeName,
@@ -75,9 +74,12 @@ const actions = {
           type: '重点污染源企业'
         }
       })
-      commit('setAllPollutantSourceEnterprises', { enterprises })
+      commit('setBusinessData', {
+        dataType: 'PollutantSourceEnterprise',
+        data: enterprises
+      })
     }
-    commit('stopFetchingData')
+    commit('stopFetchData')
   },
   /** /.重点污染源企业 **/
 
@@ -86,17 +88,19 @@ const actions = {
     { commit },
     { isPage, page, limit }
   ) {
-    commit('startRefreshData')
+    commit('startFetchData')
     const result = await axiosGet('/section/find_page', {
       isPage,
       page,
       limit
     })
     if (result.code === 1) {
-      const stations = result.data.map((station) => {
+      const filter = result.data.filter((station) => station.isDelete === 1)
+      const stations = filter.map((station) => {
         const {
+          objectId,
           siteName: name,
-          siteId: id,
+          siteNo: id,
           cityName,
           waterBasin: riverSystem,
           waterSyste: river,
@@ -108,6 +112,7 @@ const actions = {
           createTime
         } = station
         return {
+          objectId,
           name,
           id,
           cityName,
@@ -118,12 +123,15 @@ const actions = {
           river,
           stationTypeName,
           boundary,
-          type: '地表水'
+          type: '地表水监测站'
         }
       })
-      commit('setAllSurfaceWaterSurveillanceStations', { stations })
+      commit('setBusinessData', {
+        dataType: 'SurfaceWaterSurveillanceStation',
+        data: stations
+      })
     }
-    commit('stopFetchingData')
+    commit('stopFetchData')
   },
   /** /.地表水监测站点 **/
 
@@ -132,15 +140,17 @@ const actions = {
     { commit },
     { isPage, page, limit }
   ) {
-    commit('startRefreshData')
+    commit('startFetchData')
     const result = await axiosGet('area_site/find_area_site_page', {
       isPage,
       page,
       limit
     })
     if (result.code === 1) {
-      const stations = result.data.map((station) => {
+      const filter = result.data.filter((station) => station.isDelete === 1)
+      const stations = filter.map((station) => {
         const {
+          objectId,
           siteName: name,
           siteId: id,
           cityName,
@@ -151,18 +161,162 @@ const actions = {
         } = station
 
         return {
+          objectId,
           name,
           id,
           cityName,
           stationTypeName,
           status: status === 0 ? '在线' : '离线',
           geometry: { type: 'point', x, y },
-          type: '空气'
+          type: '空气监测站'
         }
       })
-      commit('setAllAirQualitySurveillanceStations', { stations })
+      commit('setBusinessData', {
+        dataType: 'AirQualitySurveillanceStation',
+        data: stations
+      })
     }
-    commit('stopFetchingData')
+    commit('stopFetchData')
+  },
+  /** /.重点区域空气监测站点 **/
+
+  /** 医疗固废 **/
+  async getAllMedicalWasteSurveillanceStation(
+    { commit },
+    { isPage, page, limit }
+  ) {
+    commit('startFetchData')
+    const result = await axiosGet('medicalSolidWaste/find_area_site_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const filter = result.data.filter((station) => station.isDelete === 1)
+      const stations = filter.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteId: id,
+          cityName,
+          siteTypeNa: stationTypeName,
+          x,
+          y
+        } = station
+
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          stationTypeName,
+          geometry: { type: 'point', x, y },
+          type: '医疗固废监测站'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'MedicalWasteSurveillanceStation',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+  /** /.医疗固废 **/
+
+  /** 辐射源 **/
+  async getAllRadiationSourceSurveillanceStations(
+    { commit },
+    { isPage, page, limit }
+  ) {
+    commit('startFetchData')
+    const result = await axiosGet('radiationSourceSite/find_area_site_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const filter = result.data.filter((station) => station.isDelete === 1)
+      const stations = filter.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteId: id,
+          cityName,
+          siteTypeNa: stationTypeName,
+          x,
+          y
+        } = station
+
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          stationTypeName,
+          geometry: { type: 'point', x, y },
+          type: '辐射源监测站'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'RadiationSourceSurveillanceStation',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+  /** /.辐射源 **/
+
+  /** 噪声 **/
+  async getAllNoiseSurveillanceStations({ commit }, { isPage, page, limit }) {
+    commit('startFetchData')
+    const result = await axiosGet('noisePollutionSite/find_area_site_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const stations = result.data.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteId: id,
+          cityName,
+          siteTypeNa: stationTypeName,
+          x,
+          y
+        } = station
+
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          stationTypeName,
+          geometry: { type: 'point', x, y },
+          type: '辐射源'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'NoiseSurveillanceStation',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+  /** /.噪声 **/
+
+  /** 地表水监测因子基础信息 */
+  async getWaterMonitorFactorInfos({ commit }) {
+    const result = await WaterStationApi.getMonitorFactoringInfo()
+    if (result) {
+      result.forEach((monitoringFactor) => {
+        const { ID, NAME, UNIT, LOWLIMIT, HIGHLIMIT } = monitoringFactor
+        commit('setWaterMonitoringFactor', {
+          factorName: ID,
+          factorInfo: { name: NAME, unit: UNIT, low: LOWLIMIT, high: HIGHLIMIT }
+        })
+      })
+    }
   }
 }
 

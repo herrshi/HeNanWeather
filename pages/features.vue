@@ -3,10 +3,11 @@
     <!-- Navbar -->
     <mdb-navbar
       :toggler="false"
-      :style="navbarStyle"
       color="indigo"
       position="top"
       expand="large"
+      dark
+      style="z-index: 1045"
     >
       <mdb-navbar-brand :to="{ name: 'features' }">
         <div class="d-flex">
@@ -41,6 +42,9 @@
             </mdb-dropdown-toggle>
             <mdb-dropdown-menu right>
               <mdb-dropdown-item>
+                省监测中心综合科
+              </mdb-dropdown-item>
+              <mdb-dropdown-item>
                 <mdb-icon icon="list-alt" class="black-text mr-1" />我的服务
               </mdb-dropdown-item>
               <mdb-dropdown-item :to="{ name: 'index' }">
@@ -61,6 +65,7 @@
         slim
         side-nav-class="sn-bg-1"
         mask="strong"
+        side-nav-style="top: 50px"
       >
         <mdb-side-nav-nav>
           <side-navbar-item
@@ -103,7 +108,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from 'vuex'
+import { mapActions, mapState, mapMutations, mapGetters } from 'vuex'
 import {
   // mdbBreadcrumb,
   // mdbBreadcrumbItem,
@@ -190,9 +195,9 @@ export default {
     await store.dispatch('base-data/getAllCities')
     await store.dispatch('base-data/getAllReservesTypes')
     await store.dispatch('business-data/getAllPollutantSourceEnterprises', {
-      // isPage: 'NO'
-      page: 1,
-      limit: 400
+      isPage: 'NO'
+      // page: 1,
+      // limit: 400
     })
     await store.dispatch(
       'business-data/getAllSurfaceWaterSurveillanceStations',
@@ -201,16 +206,37 @@ export default {
     await store.dispatch('business-data/getAllAirQualitySurveillanceStations', {
       isPage: 'NO'
     })
+    await store.dispatch(
+      'business-data/getAllMedicalWasteSurveillanceStation',
+      {
+        isPage: 'NO'
+      }
+    )
+    await store.dispatch(
+      'business-data/getAllRadiationSourceSurveillanceStations',
+      {
+        isPage: 'NO'
+      }
+    )
+    await store.dispatch('business-data/getAllNoiseSurveillanceStations', {
+      isPage: 'NO'
+    })
+    await store.dispatch('business-data/getWaterMonitorFactorInfos')
   },
 
   mounted() {
     this.setNaviBreadcrumb({
       naviBreadcrumb: [this.appConfig.app.subTitle]
     })
+    const userId = this.$route.query.userId
+    if (userId) {
+      this.getUserInfo(userId)
+    }
   },
 
   methods: {
-    ...mapMutations(['setNaviBreadcrumb'])
+    ...mapMutations(['setNaviBreadcrumb']),
+    ...mapActions('user', ['getUserInfo'])
   }
 }
 </script>
