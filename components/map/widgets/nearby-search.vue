@@ -5,7 +5,8 @@
         <mdb-col class="pr-0">
           <mdb-input
             id="checkbox1"
-            v-model="airQuality"
+            v-model="airQualityChecked"
+            @change="$_filterDatatable"
             type="checkbox"
             label="空气监测站"
           />
@@ -13,17 +14,20 @@
         <mdb-col class="pr-0">
           <mdb-input
             id="checkbox2"
-            v-model="surfaceWater"
+            v-model="surfaceWaterChecked"
+            @change="$_filterDatatable"
             type="checkbox"
             label="地表水监测站"
           />
         </mdb-col>
       </mdb-row>
+
       <mdb-row>
         <mdb-col class="pr-0">
           <mdb-input
             id="checkbox3"
-            v-model="pollutantSourceEnterprise"
+            v-model="pollutantSourceEnterpriseChecked"
+            @change="$_filterDatatable"
             type="checkbox"
             label="重点污染源"
           />
@@ -31,17 +35,20 @@
         <mdb-col class="pr-0">
           <mdb-input
             id="checkbox4"
-            v-model="medicalWaste"
+            v-model="medicalWasteChecked"
+            @change="$_filterDatatable"
             type="checkbox"
             label="医疗固废监测站"
           />
         </mdb-col>
       </mdb-row>
+
       <mdb-row>
         <mdb-col class="pr-0">
           <mdb-input
             id="checkbox5"
-            v-model="radiationSource"
+            v-model="radiationSourceChecked"
+            @change="$_filterDatatable"
             type="checkbox"
             label="辐射监测站"
           />
@@ -91,6 +98,8 @@ import {
   mdbRow,
   mdbCol
 } from 'mdbvue'
+import WaterStationApi from '~/api/WaterStation'
+
 export default {
   name: 'NearbySearch',
 
@@ -131,11 +140,11 @@ export default {
 
       queryResults: [],
 
-      airQuality: true,
-      medicalWaste: true,
-      pollutantSourceEnterprise: true,
-      radiationSource: true,
-      surfaceWater: true
+      airQualityChecked: true,
+      medicalWasteChecked: true,
+      pollutantSourceEnterpriseChecked: true,
+      radiationSourceChecked: true,
+      surfaceWaterChecked: true
     }
   },
 
@@ -148,23 +157,23 @@ export default {
     ])
   },
 
-  watch: {
-    airQuality() {
-      this.$_filterDatatable()
-    },
-    medicalWaste() {
-      this.$_filterDatatable()
-    },
-    pollutantSourceEnterprise() {
-      this.$_filterDatatable()
-    },
-    radiationSource() {
-      this.$_filterDatatable()
-    },
-    surfaceWater() {
-      this.$_filterDatatable()
-    }
-  },
+  // watch: {
+  //   airQualityChecked() {
+  //     this.$_filterDatatable()
+  //   },
+  //   medicalWasteChecked() {
+  //     this.$_filterDatatable()
+  //   },
+  //   pollutantSourceEnterpriseChecked() {
+  //     this.$_filterDatatable()
+  //   },
+  //   radiationSourceChecked() {
+  //     this.$_filterDatatable()
+  //   },
+  //   surfaceWaterChecked() {
+  //     this.$_filterDatatable()
+  //   }
+  // },
 
   async created() {
     this.map = await this.getMap()
@@ -178,7 +187,7 @@ export default {
   },
 
   methods: {
-    async nearbySearch({ center, types }) {
+    async nearbySearch({ sourceGraphic, types }) {
       this.tableData.rows = []
       this.graphicsLayer.removeAll()
 
@@ -190,7 +199,7 @@ export default {
       )
 
       const centerGraphic = new Graphic({
-        geometry: center,
+        geometry: sourceGraphic.geometry,
         symbol: {
           type: 'simple-marker',
           style: 'circle',
@@ -199,7 +208,11 @@ export default {
         }
       })
 
-      const buffer = geometryEngine.geodesicBuffer(center, 10000, 'meters')
+      const buffer = geometryEngine.geodesicBuffer(
+        sourceGraphic.geometry,
+        20000,
+        'meters'
+      )
       // if (this.view.spatialReference.isWebMercator) {
       //   buffer = webMercatorUtils.webMercatorToGeographic(buffer)
       // }
@@ -216,10 +229,10 @@ export default {
       })
       this.graphicsLayer.addMany([centerGraphic, bufferGraphic])
       await this.view.goTo(buffer)
-      this.$_bufferSearch(buffer, types)
+      this.$_bufferSearch(buffer, types, sourceGraphic)
     },
 
-    async $_bufferSearch(buffer, types) {
+    async $_bufferSearch(buffer, types, sourceGraphic) {
       let searchLayers = []
       if (!types || types.length === 0) {
         searchLayers = this.allBusinessLayer
@@ -242,17 +255,49 @@ export default {
         query.geometry = buffer
         // query.unit = 'meters'
         const response = await layerView.queryFeatures(query)
-        features = features.concat(response.features)
+        const { features: queryFeatures } = response
+        if (
+          sourceGraphic.layer.label === '地表水监测站点' &&
+          layer.label === '重点污染源企业'
+        ) {
+          const result = await this.$_filterPollutantSource(
+            sourceGraphic.getAttribute('id'),
+            queryFeatures
+          )
+          if (result.data) {
+            let where = ''
+            if (result.data.length === 0) {
+              where = '1 <> 1'
+            } else {
+              result.data.forEach((data) => {
+                const { psCode } = data
+                where += `id==${psCode} or`
+              })
+              where = where.substr(0, where.length - 3)
+            }
+            console.log(where)
 
-        // filter the layer
-        layerView.effect = {
-          filter: {
-            geometry: buffer,
-            spatialRelationship: 'contains'
-          },
-          excludedEffect: 'grayscale(100%) opacity(30%)'
+            layerView.effect = {
+              filter: {
+                where
+              },
+              excludedEffect: 'grayscale(100%) opacity(30%)'
+            }
+            this.highlightHandlers.push(layerView)
+          }
+        } else {
+          features = features.concat(queryFeatures)
+
+          // filter the layer
+          layerView.effect = {
+            filter: {
+              geometry: buffer,
+              spatialRelationship: 'contains'
+            },
+            excludedEffect: 'grayscale(100%) opacity(30%)'
+          }
+          this.highlightHandlers.push(layerView)
         }
-        this.highlightHandlers.push(layerView)
       }
       this.queryResults = features.map((feature) => ({
         id: feature.getAttribute('id'),
@@ -260,6 +305,15 @@ export default {
         name: feature.getAttribute('name')
       }))
       await this.$_filterDatatable()
+    },
+
+    /** 当搜索地表水周边的重点污染源时，需要对重点污染源进一步过滤 **/
+    $_filterPollutantSource(waterStationId, queryFeatures) {
+      let ids = ''
+      queryFeatures.forEach((graphic) => {
+        ids += graphic.getAttribute('id') + ','
+      })
+      return WaterStationApi.getRelatedPollutantSource(waterStationId, ids)
     },
 
     $_datatable_rowSelected(index) {},
@@ -275,19 +329,20 @@ export default {
       this.highlightHandlers = []
     },
 
+    /** 根据图层类型checkbox筛选结果 **/
     async $_filterDatatable() {
       this.tableData.rows = this.queryResults.filter((rowData) => {
         switch (rowData.dataType) {
           case '重点污染源企业':
-            return this.pollutantSourceEnterprise
+            return this.pollutantSourceEnterpriseChecked
           case '地表水监测站':
-            return this.surfaceWater
+            return this.surfaceWaterChecked
           case '空气监测站':
-            return this.airQuality
+            return this.airQualityChecked
           case '医疗固废监测站':
-            return this.medicalWaste
+            return this.medicalWasteChecked
           case '辐射源监测站':
-            return this.radiationSource
+            return this.radiationSourceChecked
           default:
             return true
         }

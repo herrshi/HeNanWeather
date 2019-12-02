@@ -138,7 +138,7 @@
         "name": "重点区域空气监测站点",
         "buttonName": "空气",
         "dataType": "AirQualitySurveillanceStation",
-        "active": false,
+        "active": true,
         "fields": [
           {
             "name": "FID",
@@ -616,10 +616,55 @@
         }
       },
       {
-        "name": "土壤地块监测站点",
+        "name": "土壤污染地块",
         "buttonName": "土壤",
-        "dataType": "SoilSurveillanceStation",
-        "active": false
+        "dataType": "SoilPollutantArea",
+        "active": false,
+        "geometryType": "polygon",
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "simple-fill",
+            "color": [244, 67, 54, 0.3],
+            "style": "solid",
+            "outline": {
+              "color": "#ff5722",
+              "width": 2
+            }
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
       },
       {
         "name": "机动车尾气监测站点",
@@ -630,7 +675,7 @@
     ]
   },
   "map": {
-    "arcgis_api": "http://47.110.60.109:8090/arcgis_js_api_4",
+    "arcgis_api": "http://localhost:8090/arcgis_js_api_4",
     "properties": {
       "center": [113.624213, 34.743306],
       "zoom": 8

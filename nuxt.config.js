@@ -31,7 +31,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/mdbvue-notifications'],
+  plugins: ['~/plugins/mdbvue-notifications', '~/plugins/auth'],
   /*
    ** Nuxt.js dev-modules
    */

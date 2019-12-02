@@ -71,6 +71,7 @@ export default {
         }
       )
       const {
+        name,
         dataType,
         renderer,
         popupTemplate,
@@ -89,6 +90,7 @@ export default {
       })
       return new FeatureLayer({
         objectIdField: 'FID',
+        label: name,
         source: graphics,
         outFields: ['*'],
         visible: active,

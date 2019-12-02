@@ -2,6 +2,7 @@
   <div :style="flexibleContentStyle" class="flexible-content">
     <!-- Navbar -->
     <mdb-navbar
+      v-if="!mapOnly"
       :toggler="false"
       color="indigo"
       position="top"
@@ -9,7 +10,7 @@
       dark
       style="z-index: 1045"
     >
-      <mdb-navbar-brand :to="{ name: 'features' }">
+      <mdb-navbar-brand :to="{ name: 'features', query: { userId } }">
         <div class="d-flex">
           <img
             src="~/assets/images/logo1.png"
@@ -58,7 +59,7 @@
     <!--/.Navbar-->
 
     <!-- SideNavbar -->
-    <div class="light-blue-skin">
+    <div v-if="!mapOnly" class="light-blue-skin">
       <mdb-side-nav
         :is-collapsed="collapse"
         :break-width="0"
@@ -93,11 +94,7 @@
           overlay="indigo-strong"
           class="d-flex justify-content-center align-items-center"
         >
-          <mdb-container
-            fluid
-            class="px-0"
-            style="height: 100vh; padding-top: 55px; padding-bottom: 0"
-          >
+          <mdb-container fluid class="px-0 h-100 pb-0">
             <nuxt-child />
           </mdb-container>
         </mdb-mask>
@@ -170,8 +167,8 @@ export default {
 
   computed: {
     ...mapState('app-info', ['appConfig']),
-    ...mapState('user', ['userName']),
-    ...mapState(['naviBreadcrumb']),
+    ...mapState('user', ['userName', 'userId']),
+    ...mapState(['naviBreadcrumb', 'mapOnly']),
     ...mapGetters(['showLoading']),
 
     sideNavbarItems() {
@@ -179,7 +176,9 @@ export default {
     },
 
     contentStyle() {
-      return `height: 100vh; margin-left: ${this.collapse ? 60 : 240}px`
+      return `height: 100vh;
+      padding-top: ${this.mapOnly ? 0 : 55}px;
+      margin-left: ${this.mapOnly ? 0 : this.collapse ? 60 : 240}px`
     },
 
     navbarStyle() {
@@ -221,6 +220,7 @@ export default {
     await store.dispatch('business-data/getAllNoiseSurveillanceStations', {
       isPage: 'NO'
     })
+    await store.dispatch('business-data/getAllSoilPollutantArea')
     await store.dispatch('business-data/getWaterMonitorFactorInfos')
   },
 

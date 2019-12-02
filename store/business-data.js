@@ -305,6 +305,12 @@ const actions = {
   },
   /** /.噪声 **/
 
+  /** 土壤污染地块 **/
+  getAllSoilPollutantArea({ commit }) {
+    commit('setBusinessData', { dataType: 'SoilPollutantArea', data: [] })
+  },
+  /** /.土壤污染地块 **/
+
   /** 地表水监测因子基础信息 */
   async getWaterMonitorFactorInfos({ commit }) {
     const result = await WaterStationApi.getMonitorFactoringInfo()

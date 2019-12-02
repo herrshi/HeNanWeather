@@ -17,7 +17,7 @@
           id="divFeatureEditor"
           v-if="widgets && widgets.includes('FeatureEditor')"
         >
-          <feature-editor />
+          <feature-editor :widget-config="widgetConfig" />
         </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
@@ -40,6 +40,7 @@ import FeatureEditor from '~/components/map/widgets/feature-editor'
 
 export default {
   name: 'Map',
+
   components: {
     FeatureEditor,
     mdbCol,
@@ -60,6 +61,11 @@ export default {
       default: () => {
         return []
       }
+    },
+
+    widgetConfig: {
+      type: Object,
+      default: () => ({})
     }
   },
 
@@ -167,7 +173,9 @@ export default {
         const { selectedFeature } = popup
         switch (event.action.id) {
           case 'NearbySearch':
-            this.$_nearbySearch({ center: selectedFeature.geometry })
+            this.$_nearbySearch({
+              sourceGraphic: selectedFeature
+            })
             break
         }
 
@@ -184,7 +192,7 @@ export default {
           content: document.getElementById('divLayerList'),
           expandIconClass: 'esri-icon-layer-list',
           expandTooltip: '图层列表',
-          expanded: false
+          expanded: true
         })
         ui.add(expandLayerList, 'bottom-right')
       }
@@ -208,10 +216,10 @@ export default {
       // this.$emit('mapInitialized')
     },
 
-    $_nearbySearch({ center, types = null } = {}) {
+    $_nearbySearch({ sourceGraphic, types = null } = {}) {
       this.showNearbySearch = true
       this.view.popup.close()
-      this.$refs.widgetNearbySearch.nearbySearch({ center, types })
+      this.$refs.widgetNearbySearch.nearbySearch({ sourceGraphic, types })
     },
 
     $_getMap() {

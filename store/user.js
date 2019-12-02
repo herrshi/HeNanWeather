@@ -15,6 +15,10 @@ const mutations = {
     state.userName = userName
   },
 
+  setUserId(state, { userId }) {
+    state.userId = userId
+  },
+
   setUserName(state, { userName }) {
     state.userName = userName
   },
@@ -52,6 +56,7 @@ const actions = {
   },
 
   async getUserInfo({ commit }, userId) {
+    commit('setUserId', { userId })
     try {
       const response = await axiosGet('/user/find_user_by_id', { id: userId })
       if (response) {
