@@ -3,7 +3,7 @@
     <mdb-side-nav-item
       v-for="(subItem, index) in subItems"
       :key="index"
-      :to="{ name: subItem.to }"
+      :to="{ name: subItem.to, query: { userId } }"
       >{{ subItem.name }}
     </mdb-side-nav-item>
   </mdb-side-nav-cat>
@@ -28,6 +28,10 @@ export default {
     icon: {
       type: String,
       default: 'chevron-right'
+    },
+    userId: {
+      type: String,
+      default: ''
     },
     subItems: {
       type: Array,

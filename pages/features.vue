@@ -73,6 +73,7 @@
             v-for="(navbarItem, index) in sideNavbarItems"
             :key="index"
             v-bind="navbarItem"
+            :user-id="userId"
           />
           <mdb-side-nav-item
             :is-collapsed="collapse"
