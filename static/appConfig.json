@@ -59,6 +59,10 @@
           {
             "name": "土壤污染地块",
             "to": "features-spatial-data-soil-pollutant-area"
+          },
+          {
+            "name": "保护区",
+            "to": "features-spatial-data-reserve"
           }
         ]
       },
@@ -67,24 +71,16 @@
         "icon": "cloud-meatball",
         "subItems": [
           {
-            "name": "空气质量实时图",
-            "to": "features-air-pollution-air-quality"
+            "name": "空气质量实时图"
           },
           {
-            "name": "环境空气小时报",
-            "to": "features-air-pollution-air-hour"
+            "name": "环境空气日报"
           },
           {
-            "name": "环境空气日报",
-            "to": "features-air-pollution-air-day"
+            "name": "环境空气周报"
           },
           {
-            "name": "大气污染防治",
-            "to": "features-air-pollution-pollution-control"
-          },
-          {
-            "name": "其他专题",
-            "to": "features-air-pollution-other-theme"
+            "name": "环境空气月报"
           }
         ]
       },
@@ -136,6 +132,7 @@
     "layerList": [
       {
         "name": "重点区域空气监测站点",
+        "geometryType": "point",
         "buttonName": "空气",
         "dataType": "AirQualitySurveillanceStation",
         "active": true,
@@ -225,6 +222,7 @@
       },
       {
         "name": "地表水监测站点",
+        "geometryType": "point",
         "buttonName": "地表水",
         "dataType": "SurfaceWaterSurveillanceStation",
         "active": false,
@@ -329,6 +327,7 @@
       },
       {
         "name": "重点污染源企业",
+        "geometryType": "point",
         "buttonName": "重点污染源",
         "dataType": "PollutantSourceEnterprise",
         "active": false,
@@ -404,6 +403,7 @@
       },
       {
         "name": "医疗固废监测站点",
+        "geometryType": "point",
         "buttonName": "医疗固废",
         "dataType": "MedicalWasteSurveillanceStation",
         "active": false,
@@ -475,6 +475,7 @@
       },
       {
         "name": "辐射源监测站点",
+        "geometryType": "point",
         "buttonName": "辐射源",
         "dataType": "RadiationSourceSurveillanceStation",
         "active": false,
@@ -546,6 +547,7 @@
       },
       {
         "name": "噪声监测站点",
+        "geometryType": "point",
         "buttonName": "噪声",
         "dataType": "NoiseSurveillanceStation",
         "active": false,
@@ -596,7 +598,7 @@
               "type": "fields",
               "fieldInfos": [
                 {
-                  "fieldName": "name",
+                  "fieldName": "cityName",
                   "label": "所在城市"
                 },
                 {
@@ -628,35 +630,166 @@
           },
           {
             "name": "name",
+            "alias": "地块名称",
             "type": "string"
+          },
+          {
+            "name": "siteCode",
+            "alias": "地块编码",
+            "type": "string"
+          },
+          {
+            "name": "levelName",
+            "alias": "管控类型",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "levelName_domain",
+              "codedValues": [
+                {
+                  "name": "国控",
+                  "code": "国控"
+                },
+                {
+                  "name": "省控",
+                  "code": "省控"
+                },
+                {
+                  "name": "市控",
+                  "code": "市控"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cityCode",
+            "alias": "城市名称",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "cityName_domain",
+              "codedValues": [
+                {
+                  "name": "郑州市",
+                  "code": "410100000"
+                },
+                {
+                  "name": "洛阳市",
+                  "code": "410300000"
+                },
+                {
+                  "name": "开封市",
+                  "code": "410200000"
+                },
+                {
+                  "name": "安阳市",
+                  "code": "410500000"
+                },
+                {
+                  "name": "许昌市",
+                  "code": "411000000"
+                },
+                {
+                  "name": "新乡市",
+                  "code": "410700000"
+                },
+                {
+                  "name": "漯河市",
+                  "code": "411100000"
+                },
+                {
+                  "name": "商丘市",
+                  "code": "411400000"
+                },
+                {
+                  "name": "信阳市",
+                  "code": "411500000"
+                },
+                {
+                  "name": "南阳市",
+                  "code": "411300000"
+                },
+                {
+                  "name": "焦作市",
+                  "code": "410800000"
+                },
+                {
+                  "name": "三门峡市",
+                  "code": "411200000"
+                },
+                {
+                  "name": "鹤壁市",
+                  "code": "410600000"
+                },
+                {
+                  "name": "平顶山市",
+                  "code": "410400000"
+                },
+                {
+                  "name": "周口市",
+                  "code": "411600000"
+                },
+                {
+                  "name": "驻马店市",
+                  "code": "411700000"
+                },
+                {
+                  "name": "濮阳市",
+                  "code": "410900000"
+                },
+                {
+                  "name": "济源市",
+                  "code": "419001000"
+                }
+              ]
+            }
           },
           {
             "name": "id",
-            "type": "string"
-          },
-          {
-            "name": "cityName",
-            "type": "string"
+            "alias": "编号",
+            "type": "string",
+            "editable": false
           },
           {
             "name": "type",
-            "type": "string"
+            "type": "string",
+            "defaultValue": "土壤污染地块",
+            "editable": false
           }
         ],
         "renderer": {
           "type": "simple",
           "symbol": {
             "type": "simple-fill",
-            "color": [244, 67, 54, 0.3],
+            "color": [255, 152, 0, 0.7],
             "style": "solid",
             "outline": {
-              "color": "#ff5722",
-              "width": 2
+              "color": "#e65100",
+              "width": 1
             }
           }
         },
         "popupTemplate": {
           "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "siteCode",
+                  "label": "地块编码"
+                },
+                {
+                  "fieldName": "cityCode",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "levelName",
+                  "label": "管控类型"
+                }
+              ]
+            }
+          ],
           "actions": [
             {
               "title": "周边搜索",
@@ -667,10 +800,186 @@
         }
       },
       {
-        "name": "机动车尾气监测站点",
-        "buttonName": "尾气",
-        "dataType": "VehicleExhaustSurveillanceStation",
-        "active": false
+        "name": "保护区",
+        "buttonName": "保护区",
+        "dataType": "Reserve",
+        "active": false,
+        "geometryType": "polygon",
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "alias": "保护区名称",
+            "type": "string"
+          },
+          {
+            "name": "siteCode",
+            "alias": "保护区编码",
+            "type": "string"
+          },
+          {
+            "name": "levelName",
+            "alias": "管控类型",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "levelName_domain",
+              "codedValues": [
+                {
+                  "name": "国控",
+                  "code": "国控"
+                },
+                {
+                  "name": "省控",
+                  "code": "省控"
+                },
+                {
+                  "name": "市控",
+                  "code": "市控"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cityCode",
+            "alias": "城市名称",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "cityName_domain",
+              "codedValues": [
+                {
+                  "name": "郑州市",
+                  "code": "410100000"
+                },
+                {
+                  "name": "洛阳市",
+                  "code": "410300000"
+                },
+                {
+                  "name": "开封市",
+                  "code": "410200000"
+                },
+                {
+                  "name": "安阳市",
+                  "code": "410500000"
+                },
+                {
+                  "name": "许昌市",
+                  "code": "411000000"
+                },
+                {
+                  "name": "新乡市",
+                  "code": "410700000"
+                },
+                {
+                  "name": "漯河市",
+                  "code": "411100000"
+                },
+                {
+                  "name": "商丘市",
+                  "code": "411400000"
+                },
+                {
+                  "name": "信阳市",
+                  "code": "411500000"
+                },
+                {
+                  "name": "南阳市",
+                  "code": "411300000"
+                },
+                {
+                  "name": "焦作市",
+                  "code": "410800000"
+                },
+                {
+                  "name": "三门峡市",
+                  "code": "411200000"
+                },
+                {
+                  "name": "鹤壁市",
+                  "code": "410600000"
+                },
+                {
+                  "name": "平顶山市",
+                  "code": "410400000"
+                },
+                {
+                  "name": "周口市",
+                  "code": "411600000"
+                },
+                {
+                  "name": "驻马店市",
+                  "code": "411700000"
+                },
+                {
+                  "name": "濮阳市",
+                  "code": "410900000"
+                },
+                {
+                  "name": "济源市",
+                  "code": "419001000"
+                }
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "alias": "编号",
+            "type": "string",
+            "editable": false
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "defaultValue": "保护区",
+            "editable": false
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "simple-fill",
+            "color": [76, 175, 80, 0.7],
+            "style": "solid",
+            "outline": {
+              "color": "#0d47a1",
+              "width": 1
+            }
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "siteCode",
+                  "label": "地块编码"
+                },
+                {
+                  "fieldName": "cityCode",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "levelName",
+                  "label": "管控类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
       }
     ]
   },

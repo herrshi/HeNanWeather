@@ -1,4 +1,4 @@
-import { axiosGet } from '~/api/axios'
+import { axiosGet, axiosPost } from '~/api/axios'
 import WaterStationApi from '~/api/WaterStation'
 
 const state = () => ({
@@ -30,17 +30,12 @@ const mutations = {
 }
 
 const getters = {
-  getBusinessData: (state) => (dataType) => state.businessDataMap.get(dataType),
-
-  getAirStation: (state) => (stationId) => {
-    const stations = state.businessDataMap.get('AirQualitySurveillanceStation')
-    return stations.find((station) => station.id === stationId)
-  }
+  getBusinessData: (state) => (dataType) => state.businessDataMap.get(dataType)
 }
 
 const actions = {
   /** 重点污染源企业 **/
-  async getAllPollutantSourceEnterprises({ commit }, { isPage, page, limit }) {
+  async getAllPollutantSourceEnterprise({ commit }, { isPage, page, limit }) {
     commit('startFetchData')
     const result = await axiosGet('/emphasisSourcePollutionCompany/find_page', {
       isPage,
@@ -84,7 +79,7 @@ const actions = {
   /** /.重点污染源企业 **/
 
   /** 地表水监测站点 **/
-  async getAllSurfaceWaterSurveillanceStations(
+  async getAllSurfaceWaterSurveillanceStation(
     { commit },
     { isPage, page, limit }
   ) {
@@ -136,7 +131,7 @@ const actions = {
   /** /.地表水监测站点 **/
 
   /** 重点区域空气监测站点 **/
-  async getAllAirQualitySurveillanceStations(
+  async getAllAirQualitySurveillanceStation(
     { commit },
     { isPage, page, limit }
   ) {
@@ -224,7 +219,7 @@ const actions = {
   /** /.医疗固废 **/
 
   /** 辐射源 **/
-  async getAllRadiationSourceSurveillanceStations(
+  async getAllRadiationSourceSurveillanceStation(
     { commit },
     { isPage, page, limit }
   ) {
@@ -267,7 +262,7 @@ const actions = {
   /** /.辐射源 **/
 
   /** 噪声 **/
-  async getAllNoiseSurveillanceStations({ commit }, { isPage, page, limit }) {
+  async getAllNoiseSurveillanceStation({ commit }, { isPage, page, limit }) {
     commit('startFetchData')
     const result = await axiosGet('noisePollutionSite/find_area_site_page', {
       isPage,
@@ -275,27 +270,29 @@ const actions = {
       limit
     })
     if (result.code === 1) {
-      const stations = result.data.map((station) => {
-        const {
-          objectId,
-          siteName: name,
-          siteId: id,
-          cityName,
-          siteTypeNa: stationTypeName,
-          x,
-          y
-        } = station
+      const stations = result.data
+        .filter((station) => station.isDelete === 1)
+        .map((station) => {
+          const {
+            objectId,
+            siteName: name,
+            siteId: id,
+            cityName,
+            siteTypeNa: stationTypeName,
+            x,
+            y
+          } = station
 
-        return {
-          objectId,
-          name,
-          id,
-          cityName,
-          stationTypeName,
-          geometry: { type: 'point', x, y },
-          type: '辐射源'
-        }
-      })
+          return {
+            objectId,
+            name,
+            id,
+            cityName,
+            stationTypeName,
+            geometry: { type: 'point', x, y },
+            type: '噪声监测站点'
+          }
+        })
       commit('setBusinessData', {
         dataType: 'NoiseSurveillanceStation',
         data: stations
@@ -305,11 +302,196 @@ const actions = {
   },
   /** /.噪声 **/
 
+  /** 保护区 **/
+  async getAllReserve({ commit }, { isPage, page, limit }) {
+    commit('startFetchData')
+
+    const result = await axiosGet('reserve/find_reserve_data', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const reserves = result.data
+        .filter((station) => station.isDelete === 1)
+        .map((area) => {
+          const {
+            id,
+            cityName,
+            cityCode,
+            siteName: name,
+            siteCode,
+            property,
+            pointList
+          } = area
+          const geometry = pointList.includes('rings')
+            ? JSON.parse(pointList)
+            : null
+          if (geometry) {
+            geometry.type = 'polygon'
+          }
+          return {
+            id,
+            cityName,
+            cityCode,
+            name,
+            siteCode,
+            levelName: property || '省控',
+            geometry,
+            type: '保护区'
+          }
+        })
+      commit('setBusinessData', {
+        dataType: 'Reserve',
+        data: reserves
+      })
+    }
+
+    commit('stopFetchData')
+  },
+
+  async addReserve({ commit, dispatch }, { graphic }) {
+    commit('startFetchData')
+
+    const { cityCode, name, levelName, siteCode } = graphic.attributes
+    const result = await axiosPost('reserve/add_reserve', {
+      cityCode,
+      siteName: name,
+      siteCode,
+      property: levelName,
+      pointList: JSON.stringify(graphic.geometry.toJSON())
+    })
+    if (result.code === 1) dispatch('getAllReserve', { isPage: 'NO' })
+    commit('stopFetchData')
+    return result
+  },
+
+  async updateReserve({ commit, dispatch }, { graphic }) {
+    commit('startFetchData')
+
+    const { id, cityCode, name, levelName, siteCode } = graphic.attributes
+    const result = await axiosPost('reserve/update_reserve', {
+      id,
+      cityCode,
+      siteName: name,
+      siteCode,
+      property: levelName,
+      pointList: JSON.stringify(graphic.geometry.toJSON())
+    })
+    if (result.code === 1) dispatch('getAllReserve', { isPage: 'NO' })
+    commit('stopFetchData')
+    return result
+  },
+
+  async deleteReserve({ commit, dispatch }, { id }) {
+    commit('startFetchData')
+
+    const result = await axiosPost('reserve/delete_reserve', { id })
+    if (result.code === 1) dispatch('getAllReserve', { isPage: 'NO' })
+    commit('stopFetchData')
+    return result
+  },
+  /** /.保护区 **/
+
   /** 土壤污染地块 **/
-  getAllSoilPollutantArea({ commit }) {
-    commit('setBusinessData', { dataType: 'SoilPollutantArea', data: [] })
+  async getAllSoilPollutantArea({ commit }, { isPage, page, limit }) {
+    commit('startFetchData')
+
+    const result = await axiosGet('soil/find_soil_data', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const areas = result.data
+        .filter((station) => station.isDelete === 1)
+        .map((area) => {
+          const {
+            id,
+            cityName,
+            cityCode,
+            siteName: name,
+            siteCode,
+            property,
+            pointList
+          } = area
+          const geometry = pointList.includes('rings')
+            ? JSON.parse(pointList)
+            : null
+          if (geometry) {
+            geometry.type = 'polygon'
+          }
+          return {
+            id,
+            cityName,
+            cityCode,
+            name,
+            siteCode,
+            levelName: property || '省控',
+            geometry,
+            type: '土壤污染地块'
+          }
+        })
+      commit('setBusinessData', {
+        dataType: 'SoilPollutantArea',
+        data: areas
+      })
+    }
+
+    commit('stopFetchData')
+  },
+
+  async addSoilPollutantArea({ commit, dispatch }, { graphic }) {
+    commit('startFetchData')
+
+    const { cityCode, name, levelName, siteCode } = graphic.attributes
+    const result = await axiosPost('soil/add_soil', {
+      cityCode,
+      siteName: name,
+      siteCode,
+      property: levelName,
+      pointList: JSON.stringify(graphic.geometry.toJSON())
+    })
+    if (result.code === 1) dispatch('getAllSoilPollutantArea', { isPage: 'NO' })
+    commit('stopFetchData')
+    return result
+  },
+
+  async updateSoilPollutantArea({ commit, dispatch }, { graphic }) {
+    commit('startFetchData')
+
+    const { id, cityCode, name, levelName, siteCode } = graphic.attributes
+    const result = await axiosPost('soil/update_soil', {
+      id,
+      cityCode,
+      siteName: name,
+      siteCode,
+      property: levelName,
+      pointList: JSON.stringify(graphic.geometry.toJSON())
+    })
+    if (result.code === 1) dispatch('getAllSoilPollutantArea', { isPage: 'NO' })
+    commit('stopFetchData')
+    return result
+  },
+
+  async deleteSoilPollutantArea({ commit, dispatch }, { id }) {
+    commit('startFetchData')
+
+    const result = await axiosPost('soil/delete_soil', { id })
+    if (result.code === 1) dispatch('getAllSoilPollutantArea', { isPage: 'NO' })
+    commit('stopFetchData')
+    return result
   },
   /** /.土壤污染地块 **/
+
+  /** 机动车尾气 **/
+  getAllVehicleExhaustSurveillanceStation({ commit }) {
+    commit('setBusinessData', {
+      dataType: 'VehicleExhaustSurveillanceStation',
+      data: []
+    })
+  },
+  /** /.机动车尾气 **/
 
   /** 地表水监测因子基础信息 */
   async getWaterMonitorFactorInfos({ commit }) {

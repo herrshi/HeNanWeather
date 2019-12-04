@@ -32,7 +32,7 @@ export default {
     mdbDatatable
   },
 
-  asyncData({ store }) {
+  async asyncData({ store }) {
     const columns = [
       {
         label: '企业名称',
@@ -51,29 +51,17 @@ export default {
         field: 'cityName'
       }
     ]
-    // const rows = []
-    const rows = store.getters['business-data/getBusinessData'](
+    let rows = store.getters['business-data/getBusinessData'](
       'PollutantSourceEnterprise'
     )
-    // enterprises.forEach((enterprise) => {
-    //   const {
-    //     id,
-    //     name,
-    //     controlLevelName,
-    //     pollutantSourceTypeName,
-    //     cityName,
-    //     isDelete
-    //   } = enterprise
-    //   if (isDelete === 1) {
-    //     rows.push({
-    //       id,
-    //       name,
-    //       controlLevelName,
-    //       pollutantSourceTypeName,
-    //       cityName
-    //     })
-    //   }
-    // })
+    if (!rows) {
+      await store.dispatch('business-data/getAllPollutantSourceEnterprise', {
+        isPage: 'NO'
+      })
+      rows = store.getters['business-data/getBusinessData'](
+        'PollutantSourceEnterprise'
+      )
+    }
     return {
       tableData: { columns, rows }
     }

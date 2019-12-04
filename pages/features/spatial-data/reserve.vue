@@ -3,7 +3,7 @@
     <mdb-card-body class="p-0">
       <Map
         :widgets="['FeatureEditor']"
-        :widget-config="{ FeatureEditor: { dataType: 'SoilPollutantArea' } }"
+        :widget-config="{ FeatureEditor: { dataType: 'Reserve' } }"
         theme="light"
       />
     </mdb-card-body>
@@ -13,18 +13,13 @@
 <script>
 import { mdbCard, mdbCardBody } from 'mdbvue'
 import Map from '~/components/map/map'
-
 export default {
-  name: 'SoilPollutantArea',
+  name: 'Reserve',
 
   components: {
     Map,
     mdbCard,
     mdbCardBody
-  },
-
-  data() {
-    return {}
   }
 }
 </script>

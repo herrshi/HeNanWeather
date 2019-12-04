@@ -48,7 +48,7 @@
               <mdb-dropdown-item>
                 <mdb-icon icon="list-alt" class="black-text mr-1" />我的服务
               </mdb-dropdown-item>
-              <mdb-dropdown-item :to="{ name: 'index' }">
+              <mdb-dropdown-item href="http://10.41.109.69:8080/hb/">
                 <mdb-icon icon="sign-out-alt" class="black-text mr-1" />登出
               </mdb-dropdown-item>
             </mdb-dropdown-menu>
@@ -187,41 +187,39 @@ export default {
     }
   },
 
-  async asyncData({ store }) {
+  async fetch({ store }) {
     await store.dispatch('app-info/getAppConfig')
     await store.dispatch('user/getAllRoles')
     await store.dispatch('base-data/getAllPollutantSourceTypes')
     await store.dispatch('base-data/getAllControlLevels')
     await store.dispatch('base-data/getAllCities')
     await store.dispatch('base-data/getAllReservesTypes')
-    await store.dispatch('business-data/getAllPollutantSourceEnterprises', {
-      isPage: 'NO'
-      // page: 1,
-      // limit: 400
-    })
-    await store.dispatch(
-      'business-data/getAllSurfaceWaterSurveillanceStations',
-      { isPage: 'NO' }
-    )
-    await store.dispatch('business-data/getAllAirQualitySurveillanceStations', {
-      isPage: 'NO'
-    })
-    await store.dispatch(
-      'business-data/getAllMedicalWasteSurveillanceStation',
-      {
-        isPage: 'NO'
-      }
-    )
-    await store.dispatch(
-      'business-data/getAllRadiationSourceSurveillanceStations',
-      {
-        isPage: 'NO'
-      }
-    )
-    await store.dispatch('business-data/getAllNoiseSurveillanceStations', {
-      isPage: 'NO'
-    })
-    await store.dispatch('business-data/getAllSoilPollutantArea')
+    // await store.dispatch('business-data/getAllPollutantSourceEnterprise', {
+    //   isPage: 'NO'
+    // })
+    // await store.dispatch(
+    //   'business-data/getAllSurfaceWaterSurveillanceStation',
+    //   { isPage: 'NO' }
+    // )
+    // await store.dispatch('business-data/getAllAirQualitySurveillanceStation', {
+    //   isPage: 'NO'
+    // })
+    // await store.dispatch(
+    //   'business-data/getAllMedicalWasteSurveillanceStation',
+    //   {
+    //     isPage: 'NO'
+    //   }
+    // )
+    // await store.dispatch(
+    //   'business-data/getAllRadiationSourceSurveillanceStation',
+    //   {
+    //     isPage: 'NO'
+    //   }
+    // )
+    // await store.dispatch('business-data/getAllNoiseSurveillanceStation', {
+    //   isPage: 'NO'
+    // })
+    // await store.dispatch('business-data/getAllSoilPollutantArea')
     await store.dispatch('business-data/getWaterMonitorFactorInfos')
   },
 

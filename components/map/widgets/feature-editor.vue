@@ -4,15 +4,17 @@
       <mdb-tbl>
         <mdb-tbl-head>
           <tr>
-            <th>编号</th>
-            <th>名称</th>
+            <th v-for="(field, index) in tableHeader" :key="index">
+              {{ field.alias }}
+            </th>
           </tr>
         </mdb-tbl-head>
 
         <mdb-tbl-body>
-          <tr v-for="(row, id) in tableData" :key="id">
-            <td>{{ row.id }}</td>
-            <td>{{ row.name }}</td>
+          <tr v-for="row in tableData" :key="row.id">
+            <td v-for="(field, index) in tableHeader" :key="index">
+              {{ $_getDomainValue(field, row[field.name]) }}
+            </td>
           </tr>
         </mdb-tbl-body>
       </mdb-tbl>
@@ -22,7 +24,7 @@
 
 <script>
 import { loadModules } from 'esri-loader'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { mdbCard, mdbCardBody, mdbTbl, mdbTblHead, mdbTblBody } from 'mdbvue'
 
 export default {
@@ -55,7 +57,26 @@ export default {
   },
 
   computed: {
-    ...mapState('app-info', ['appConfig'])
+    ...mapState('app-info', ['appConfig']),
+    ...mapGetters('map', ['businessLayer']),
+
+    dataType() {
+      return this.widgetConfig.FeatureEditor.dataType
+    },
+
+    tableHeader() {
+      const header = []
+      if (this.featureLayer) {
+        this.featureLayer.fields.forEach((field) => {
+          const { editable, alias, name, domain } = field
+          if (editable && name !== this.featureLayer.objectIdField) {
+            header.push({ name, alias, domain })
+          }
+        })
+      }
+
+      return header
+    }
   },
 
   async created() {
@@ -65,41 +86,37 @@ export default {
   },
 
   methods: {
+    $_getDomainValue(field, rowValue) {
+      if (!field.domain) {
+        return rowValue
+      } else {
+        const codedValue = field.domain.codedValues.find(
+          (codedValue) => codedValue.code === rowValue
+        )
+        if (codedValue) {
+          return codedValue.name
+        } else {
+          return rowValue
+        }
+      }
+    },
+
     async $_createFeatureLayer() {
-      const [FeatureLayer, Editor, Expand] = await loadModules(
-        [
-          'esri/layers/FeatureLayer',
-          'esri/widgets/Editor',
-          'esri/widgets/Expand'
-        ],
+      const [Editor, Expand] = await loadModules(
+        ['esri/widgets/Editor', 'esri/widgets/Expand'],
         {
           url: `${this.appConfig.map.arcgis_api}/init.js`
         }
       )
-      this.featureLayer = new FeatureLayer({
-        objectIdField: 'FID',
-        source: [],
-        geometryType: 'polygon',
-        outFields: ['*'],
-        title: '土壤污染区域',
-        fields: [
-          {
-            name: 'FID',
-            alias: 'FID',
-            type: 'oid'
-          },
-          {
-            name: 'name',
-            alias: '名称',
-            type: 'string'
-          },
-          {
-            name: 'id',
-            alias: '编号',
-            type: 'string'
-          }
-        ]
-      })
+      this.featureLayer = this.businessLayer(this.dataType)
+      if (!this.featureLayer) {
+        return
+      }
+      this.featureLayer.visible = true
+
+      const featureSet = await this.featureLayer.queryFeatures()
+      this.tableData = featureSet.features.map((graphic) => graphic.attributes)
+
       this.featureLayer.on('edits', (event) => {
         const { addedFeatures, deletedFeatures, updatedFeatures } = event
         if (addedFeatures.length > 0) this.$_featureAdded(addedFeatures)
@@ -123,49 +140,98 @@ export default {
 
     async $_featureAdded(features) {
       const featureSet = await this.featureLayer.queryFeatures()
-      features.forEach((feature) => {
-        const { objectId } = feature
-        const graphic = featureSet.features.find(
-          (graphic) =>
-            graphic.getAttribute(this.featureLayer.objectIdField) === objectId
+      const feature = features[0]
+      const { objectId } = feature
+      const graphic = featureSet.features.find(
+        (graphic) =>
+          graphic.getAttribute(this.featureLayer.objectIdField) === objectId
+      )
+      if (graphic) {
+        this.tableData.push(graphic.attributes)
+        const result = await this.$store.dispatch(
+          `business-data/add${this.dataType}`,
+          { graphic }
         )
-        if (graphic) {
-          const { id, name } = graphic.attributes
-          this.tableData.push({ id, name, objectId })
+        if (result.code === 1) {
+          this.$notify.success({
+            message: '新增成功',
+            position: 'top right',
+            timeOut: 5000
+          })
+        } else {
+          this.$notify.error({
+            message: '新增失败: ' + result.msg,
+            position: 'top right',
+            timeOut: 5000
+          })
         }
-      })
+      }
     },
 
     async $_featureUpdated(features) {
       const featureSet = await this.featureLayer.queryFeatures()
-      features.forEach((feature) => {
-        const { objectId } = feature
-        const graphic = featureSet.features.find(
-          (graphic) =>
-            graphic.getAttribute(this.featureLayer.objectIdField) === objectId
-        )
-        if (graphic) {
-          const { id, name } = graphic.attributes
+      const feature = features[0]
 
-          const row = this.tableData.find((row) => row.objectId === objectId)
-          if (row) {
-            row.id = id
-            row.name = name
-          }
+      const { objectId } = feature
+      const graphic = featureSet.features.find(
+        (graphic) =>
+          graphic.getAttribute(this.featureLayer.objectIdField) === objectId
+      )
+      if (graphic) {
+        this.tableData = featureSet.features.map(
+          (graphic) => graphic.attributes
+        )
+        const result = await this.$store.dispatch(
+          `business-data/update${this.dataType}`,
+          { graphic }
+        )
+        if (result.code === 1) {
+          this.$notify.success({
+            message: '编辑成功',
+            position: 'top right',
+            timeOut: 5000
+          })
+        } else {
+          this.$notify.error({
+            message: '编辑失败: ' + result.msg,
+            position: 'top right',
+            timeOut: 5000
+          })
         }
-      })
+      }
     },
 
-    $_featureDeleted(features) {
-      features.forEach((feature) => {
-        const { objectId } = feature
-        const index = this.tableData.findIndex(
-          (row) => row.objectId === objectId
+    async $_featureDeleted(features) {
+      const featureSet = await this.featureLayer.queryFeatures()
+      const feature = features[0]
+
+      console.log(feature)
+      const { objectId } = feature
+      const row = this.tableData.find(
+        (row) => row[this.featureLayer.objectIdField] === objectId
+      )
+      if (row) {
+        this.tableData = featureSet.features.map(
+          (graphic) => graphic.attributes
         )
-        if (index > -1) {
-          this.tableData.splice(index, 1)
+        const result = await this.$store.dispatch(
+          `business-data/delete${this.dataType}`,
+          { id: row.id }
+        )
+        if (result.code === 1) {
+          this.$notify.success({
+            message: '删除成功',
+            position: 'top right',
+            timeOut: 5000
+          })
+        } else {
+          this.$notify.error({
+            message: '删除失败: ' + result.msg,
+            position: 'top right',
+            timeOut: 5000
+          })
         }
-      })
+      }
     }
   }
 }
@@ -173,7 +239,7 @@ export default {
 
 <style scoped>
 .card {
-  width: 300px;
+  width: 600px;
   height: 300px;
 }
 </style>

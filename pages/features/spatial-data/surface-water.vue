@@ -32,7 +32,7 @@ export default {
     mdbDatatable
   },
 
-  asyncData({ store }) {
+  async asyncData({ store }) {
     const columns = [
       {
         label: '站点名称',
@@ -63,9 +63,18 @@ export default {
         field: 'river'
       }
     ]
-    const rows = store.getters['business-data/getBusinessData'](
+    let rows = store.getters['business-data/getBusinessData'](
       'SurfaceWaterSurveillanceStation'
     )
+    if (!rows) {
+      await store.dispatch(
+        'business-data/getAllSurfaceWaterSurveillanceStation',
+        { isPage: 'NO' }
+      )
+      rows = store.getters['business-data/getBusinessData'](
+        'SurfaceWaterSurveillanceStation'
+      )
+    }
     return {
       tableData: { columns, rows }
     }

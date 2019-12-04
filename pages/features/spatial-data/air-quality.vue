@@ -32,7 +32,7 @@ export default {
     mdbDatatable
   },
 
-  asyncData({ store }) {
+  async asyncData({ store }) {
     const columns = [
       {
         label: '站点名称',
@@ -47,9 +47,19 @@ export default {
         field: 'stationTypeName'
       }
     ]
-    const rows = store.getters['business-data/getBusinessData'](
+
+    let rows = store.getters['business-data/getBusinessData'](
       'AirQualitySurveillanceStation'
     )
+    if (!rows) {
+      await store.dispatch(
+        'business-data/getAllAirQualitySurveillanceStation',
+        { isPage: 'NO' }
+      )
+      rows = store.getters['business-data/getBusinessData'](
+        'AirQualitySurveillanceStation'
+      )
+    }
 
     return {
       tableData: { columns, rows }

@@ -203,7 +203,7 @@ export default {
           name: 'FeatureEditor',
           content: document.getElementById('divFeatureEditor'),
           expandIconClass: 'esri-icon-table',
-          expanded: true
+          expanded: false
         })
         ui.add(expandFeatureEditor, 'bottom-right')
       }

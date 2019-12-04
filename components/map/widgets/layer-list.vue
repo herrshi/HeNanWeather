@@ -47,6 +47,8 @@ export default {
   },
 
   async mounted() {
+    this.startUpdating()
+
     const map = await this.getMap()
     // foreach中不能使用async/await
     for (let i = 0; i < this.layerListConfig.length; i++) {
@@ -57,11 +59,17 @@ export default {
         map.add(layer)
       }
     }
+
+    this.stopUpdating()
   },
 
   methods: {
     ...mapMutations('app-info', ['setLayerActive']),
-    ...mapMutations('map', ['addBusinessLayer']),
+    ...mapMutations('map', [
+      'addBusinessLayer',
+      'startUpdating',
+      'stopUpdating'
+    ]),
 
     async $_createLayer(layerConfig) {
       const [FeatureLayer, Graphic] = await loadModules(
@@ -76,22 +84,47 @@ export default {
         renderer,
         popupTemplate,
         fields,
-        active = false
+        active = false,
+        geometryType
       } = layerConfig
 
-      const features = this.getBusinessData(dataType)
+      let features = this.getBusinessData(dataType)
       if (!features || features.length === 0) {
-        return null
+        await this.$store.dispatch(`business-data/getAll${dataType}`, {
+          isPage: 'NO'
+        })
+        features = this.getBusinessData(dataType)
+        if (!features) {
+          return null
+        } else if (features.length === 0) {
+          const layer = new FeatureLayer()
+          layer.geometryType = geometryType
+          layer.source = []
+          layer.objectIdField = 'FID'
+          layer.label = name
+          layer.outFields = ['*']
+          layer.visible = active
+          layer.fields = fields
+          layer.renderer = renderer
+          layer.popupTemplate = popupTemplate
+          return layer
+        }
       }
-      const graphics = features.map((feature, index) => {
+
+      const graphics = []
+      for (let i = 0; i < features.length; i++) {
+        const feature = features[i]
         const { geometry } = feature
-        feature.FID = index
-        return new Graphic({ geometry, attributes: feature })
-      })
+        feature.FID = i
+        if (geometry) {
+          graphics.push(new Graphic({ geometry, attributes: feature }))
+        }
+      }
       return new FeatureLayer({
         objectIdField: 'FID',
         label: name,
         source: graphics,
+        geometryType,
         outFields: ['*'],
         visible: active,
         fields,
