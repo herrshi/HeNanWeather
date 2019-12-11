@@ -42,6 +42,7 @@
       :show-modal="showEditModal"
       :new-or-edit="newOrEdit"
       :role-name.sync="nameToEdit"
+      :role-id="idToEdit"
       @confirmYes="$_editConfirmYes"
       @confirmNo="showEditModal = false"
     />
@@ -54,7 +55,7 @@ import { mdbBtn, mdbCard, mdbCardBody, mdbDatatable, mdbIcon } from 'mdbvue'
 import $ from 'jquery'
 import { mapActions, mapMutations, mapGetters, mapState } from 'vuex'
 
-import ConfirmDelete from '~/components/confirm-delete-modal'
+import ConfirmDelete from '~/components/modals/confirm-delete-modal'
 import RoleEdit from '~/components/user/role-edit'
 
 export default {
@@ -78,6 +79,7 @@ export default {
       showEditModal: false,
       newOrEdit: '',
       nameToEdit: '',
+      idToEdit: '',
       selected: {},
       refreshTable: true
     }
@@ -190,9 +192,10 @@ export default {
     },
 
     $_showEditModal() {
-      const { roleName } = this.selected
+      const { roleName, roleId } = this.selected
       this.newOrEdit = 'edit'
       this.nameToEdit = roleName
+      this.idToEdit = roleId
       this.showEditModal = true
     },
 

@@ -120,6 +120,17 @@ export default {
       map: null,
       view: null,
       graphicsLayer: null,
+      sketchLayer: null,
+      geometryEngine: null,
+
+      centerGraphic: null,
+      edgeGraphic: null,
+      lineGraphic: null,
+      bufferGraphic: null,
+      labelGraphic: null,
+      sketchViewModel: null,
+
+      searchTypes: null,
 
       highlightHandlers: [],
 
@@ -157,79 +168,179 @@ export default {
     ])
   },
 
-  // watch: {
-  //   airQualityChecked() {
-  //     this.$_filterDatatable()
-  //   },
-  //   medicalWasteChecked() {
-  //     this.$_filterDatatable()
-  //   },
-  //   pollutantSourceEnterpriseChecked() {
-  //     this.$_filterDatatable()
-  //   },
-  //   radiationSourceChecked() {
-  //     this.$_filterDatatable()
-  //   },
-  //   surfaceWaterChecked() {
-  //     this.$_filterDatatable()
-  //   }
-  // },
-
   async created() {
     this.map = await this.getMap()
     this.view = await this.getView()
 
-    const [GraphicsLayer] = await loadModules(['esri/layers/GraphicsLayer'], {
-      url: `${this.appConfig.map.arcgis_api}/init.js`
-    })
+    const [GraphicsLayer, SketchViewModel, geometryEngine] = await loadModules(
+      [
+        'esri/layers/GraphicsLayer',
+        'esri/widgets/Sketch/SketchViewModel',
+        'esri/geometry/geometryEngine'
+      ],
+      {
+        url: `${this.appConfig.map.arcgis_api}/init.js`
+      }
+    )
+    this.geometryEngine = geometryEngine
     this.graphicsLayer = new GraphicsLayer()
-    this.map.add(this.graphicsLayer)
+    this.sketchLayer = new GraphicsLayer()
+    this.map.addMany([this.graphicsLayer, this.sketchLayer])
+
+    this.sketchViewModel = new SketchViewModel({
+      view: this.view,
+      layer: this.sketchLayer
+    })
+    this.sketchViewModel.on('update', this.$_onSketchMove)
   },
 
   methods: {
+    $_onSketchMove(event) {
+      const vertices = [
+        [this.centerGraphic.geometry.x, this.centerGraphic.geometry.y],
+        [this.edgeGraphic.geometry.x, this.edgeGraphic.geometry.y]
+      ]
+      this.$_calculateBuffer(vertices, event.toolEventInfo.type)
+
+      if (event.state === 'cancel' || event.state === 'complete') {
+        this.sketchViewModel.update([this.edgeGraphic], { tool: 'move' })
+      }
+    },
+
+    $_calculateBuffer(vertices, state) {
+      this.lineGraphic.geometry = {
+        type: 'polyline',
+        paths: vertices,
+        spatialReference: this.view.spatialReference
+      }
+      const length = this.geometryEngine.geodesicLength(
+        this.lineGraphic.geometry,
+        'kilometers'
+      )
+      const buffer = this.geometryEngine.geodesicBuffer(
+        this.centerGraphic.geometry,
+        length,
+        'kilometers'
+      )
+      this.bufferGraphic.geometry = buffer
+
+      this.labelGraphic.geometry = this.edgeGraphic.geometry
+      this.labelGraphic.symbol = {
+        type: 'text',
+        color: '#0d47a1',
+        text: length.toFixed(2) + '公里',
+        xoffset: 50,
+        yoffset: 10,
+        font: {
+          family: 'yahei',
+          size: 14
+        }
+      }
+
+      if (state === 'move-stop') {
+        this.$_bufferSearch(buffer, this.searchTypes, this.centerGraphic)
+      }
+    },
+
     async nearbySearch({ sourceGraphic, types }) {
+      this.searchTypes = types
       this.tableData.rows = []
       this.graphicsLayer.removeAll()
+      this.sketchLayer.removeAll()
 
-      const [Graphic, geometryEngine] = await loadModules(
-        ['esri/Graphic', 'esri/geometry/geometryEngine'],
-        {
-          url: `${this.appConfig.map.arcgis_api}/init.js`
-        }
-      )
+      const [Graphic] = await loadModules(['esri/Graphic'], {
+        url: `${this.appConfig.map.arcgis_api}/init.js`
+      })
 
-      const centerGraphic = new Graphic({
+      this.centerGraphic = new Graphic({
         geometry: sourceGraphic.geometry,
         symbol: {
           type: 'simple-marker',
           style: 'circle',
           size: 10,
-          color: [0, 255, 255, 0.5]
-        }
+          color: '#4caf50'
+        },
+        attributes: sourceGraphic.attributes
       })
 
-      const buffer = geometryEngine.geodesicBuffer(
+      const buffer = this.geometryEngine.geodesicBuffer(
         sourceGraphic.geometry,
-        20000,
-        'meters'
+        20,
+        'kilometers'
       )
-      // if (this.view.spatialReference.isWebMercator) {
-      //   buffer = webMercatorUtils.webMercatorToGeographic(buffer)
-      // }
-      const bufferGraphic = new Graphic({
+      this.bufferGraphic = new Graphic({
         geometry: buffer,
         symbol: {
           type: 'simple-fill',
           color: [150, 150, 150, 0.2],
           outline: {
-            color: '#FFEB00',
+            color: '#0d47a1',
             width: 2
           }
         }
       })
-      this.graphicsLayer.addMany([centerGraphic, bufferGraphic])
+
+      this.edgeGraphic = new Graphic({
+        geometry: {
+          type: 'point',
+          x: buffer.rings[0][0][0],
+          y: buffer.rings[0][0][1],
+          spatialReference: buffer.spatialReference
+        },
+        symbol: {
+          type: 'simple-marker',
+          style: 'square',
+          size: 20,
+          color: '#4caf50'
+        }
+      })
+
+      this.lineGraphic = new Graphic({
+        geometry: {
+          type: 'polyline',
+          paths: [
+            [sourceGraphic.geometry.x, sourceGraphic.geometry.y],
+            [buffer.rings[0][0][0], buffer.rings[0][0][1]]
+          ],
+          spatialReference: buffer.spatialReference
+        },
+        symbol: {
+          type: 'simple-line',
+          color: '#0d47a1',
+          width: 2.5
+        }
+      })
+
+      const length = this.geometryEngine.geodesicLength(
+        this.lineGraphic.geometry,
+        'kilometers'
+      )
+      this.labelGraphic = new Graphic({
+        geometry: this.edgeGraphic.geometry,
+        symbol: {
+          type: 'text',
+          color: '#0d47a1',
+          text: length.toFixed(2) + '公里',
+          xoffset: 20,
+          yoffset: 10,
+          font: {
+            family: 'yahei',
+            size: 14
+          }
+        }
+      })
+      this.graphicsLayer.addMany([
+        this.centerGraphic,
+        this.bufferGraphic,
+        this.lineGraphic,
+        this.labelGraphic
+      ])
+      this.sketchLayer.add(this.edgeGraphic)
+      setTimeout(() => {
+        this.sketchViewModel.update([this.edgeGraphic], { tool: 'move' })
+      }, 1000)
       await this.view.goTo(buffer)
-      this.$_bufferSearch(buffer, types, sourceGraphic)
+      this.$_bufferSearch(buffer, this.searchTypes, this.centerGraphic)
     },
 
     async $_bufferSearch(buffer, types, sourceGraphic) {
@@ -256,10 +367,7 @@ export default {
         // query.unit = 'meters'
         const response = await layerView.queryFeatures(query)
         const { features: queryFeatures } = response
-        if (
-          sourceGraphic.layer.label === '地表水监测站点' &&
-          layer.label === '重点污染源企业'
-        ) {
+        if (types && types.includes('PollutantSourceEnterprise')) {
           const result = await this.$_filterPollutantSource(
             sourceGraphic.getAttribute('id'),
             queryFeatures
@@ -275,7 +383,6 @@ export default {
               })
               where = where.substr(0, where.length - 3)
             }
-            console.log(where)
 
             layerView.effect = {
               filter: {
@@ -356,6 +463,7 @@ export default {
 
     $_close() {
       this.graphicsLayer.removeAll()
+      this.sketchLayer.removeAll()
       this.$_removeHighlightHandlers()
       this.hideNearbySearch()
       this.tableData.rows = []

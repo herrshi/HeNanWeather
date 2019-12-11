@@ -27,8 +27,8 @@
 import { mdbCard, mdbCardBody } from 'mdbvue'
 import { mapState, mapMutations } from 'vuex'
 import Map from '~/components/map/map'
-import AirStationDetail from '~/components/map/air-station-detail'
-import WaterStationDetail from '~/components/map/water-station-detail'
+import AirStationDetail from '~/components/modals/air-station-detail'
+import WaterStationDetail from '~/components/modals/water-station-detail'
 
 export default {
   components: {

@@ -4,7 +4,44 @@ const state = () => ({
   pollutantSourceTypes: [],
   controlLevels: [],
   cities: [],
-  reservesTypes: []
+  reservesTypes: [],
+  menuItems: [],
+
+  airQualityMonitoringFactor: [
+    {
+      text: '城市AQI',
+      value: 'CITY_AQI',
+      selected: true
+    },
+    {
+      text: 'PM10平均值',
+      value: 'PM10_VALUE_AVG'
+    },
+    {
+      text: 'SO2平均值',
+      value: 'SO2_VALUE_AVG'
+    },
+    {
+      text: 'O3平均值',
+      value: 'O3_VALUE_AVG'
+    },
+    {
+      text: 'NO2平均值',
+      value: 'NO2_VALUE_AVG'
+    },
+    {
+      text: 'CO平均值',
+      value: 'CO_VALUE_AVG'
+    },
+    {
+      text: 'PM25平均值',
+      value: 'PM25_VALUE_AVG'
+    },
+    {
+      text: 'O3H8平均值',
+      value: 'O3H8_VALUE_AVG'
+    }
+  ]
 })
 
 const mutations = {
@@ -22,6 +59,10 @@ const mutations = {
 
   setAllReservesTypes(state, { types }) {
     state.reservesTypes = types
+  },
+
+  setMenuItems(state, { items }) {
+    state.menuItems = items
   }
 }
 
@@ -224,6 +265,11 @@ const actions = {
       await dispatch('getAllReservesTypes')
     }
     return result
+  },
+
+  async getAllMenuItems({ commit }) {
+    const response = await axiosGet('/menu/get_menu_main_list')
+    commit('setMenuItems', { items: response })
   }
 }
 

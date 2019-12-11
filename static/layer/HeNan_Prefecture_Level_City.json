@@ -3,7 +3,8 @@
   "fieldAliases" : {
     "FID" : "FID",
     "Name" : "Name",
-    "Code" : "Code"
+    "Code" : "Code",
+    "value": "value"
   },
   "geometryType" : "esriGeometryPolygon",
   "spatialReference" : {
@@ -26,6 +27,11 @@
       "type" : "esriFieldTypeString",
       "alias" : "Code",
       "length" : 50
+    },
+    {
+      "name": "value",
+      "type": "esriFieldTypeSingle",
+      "alias": "value"
     }
   ],
   "features" : [
@@ -33,7 +39,8 @@
       "attributes" : {
         "FID" : 0,
         "Name" : "郑州市",
-        "Code" : "410100"
+        "Code" : "410100000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -7498,7 +7505,8 @@
       "attributes" : {
         "FID" : 1,
         "Name" : "商丘市",
-        "Code" : "411400"
+        "Code" : "411400000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -17223,7 +17231,8 @@
       "attributes" : {
         "FID" : 2,
         "Name" : "南阳市",
-        "Code" : "411300"
+        "Code" : "411300000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -30790,7 +30799,8 @@
       "attributes" : {
         "FID" : 3,
         "Name" : "开封市",
-        "Code" : "410200"
+        "Code" : "410200000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -37879,7 +37889,8 @@
       "attributes" : {
         "FID" : 4,
         "Name" : "濮阳市",
-        "Code" : "410900"
+        "Code" : "410900000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -43430,7 +43441,8 @@
       "attributes" : {
         "FID" : 5,
         "Name" : "漯河市",
-        "Code" : "411100"
+        "Code" : "411100000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -48743,7 +48755,8 @@
       "attributes" : {
         "FID" : 6,
         "Name" : "新乡市",
-        "Code" : "410700"
+        "Code" : "410700000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -56296,7 +56309,8 @@
       "attributes" : {
         "FID" : 7,
         "Name" : "平顶山市",
-        "Code" : "410400"
+        "Code" : "410400000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -63209,7 +63223,8 @@
       "attributes" : {
         "FID" : 8,
         "Name" : "许昌市",
-        "Code" : "411000"
+        "Code" : "411000000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -70754,7 +70769,8 @@
       "attributes" : {
         "FID" : 9,
         "Name" : "焦作市",
-        "Code" : "410800"
+        "Code" : "410800000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -76251,7 +76267,8 @@
       "attributes" : {
         "FID" : 10,
         "Name" : "信阳市",
-        "Code" : "411500"
+        "Code" : "411500000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -92056,7 +92073,8 @@
       "attributes" : {
         "FID" : 11,
         "Name" : "济源市",
-        "Code" : "419001"
+        "Code" : "419001000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -94617,7 +94635,8 @@
       "attributes" : {
         "FID" : 12,
         "Name" : "安阳市",
-        "Code" : "410500"
+        "Code" : "410500000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -108842,7 +108861,8 @@
       "attributes" : {
         "FID" : 13,
         "Name" : "周口市",
-        "Code" : "411600"
+        "Code" : "411600000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -119715,7 +119735,8 @@
       "attributes" : {
         "FID" : 14,
         "Name" : "驻马店市",
-        "Code" : "411700"
+        "Code" : "411700000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -130568,7 +130589,8 @@
       "attributes" : {
         "FID" : 15,
         "Name" : "三门峡市",
-        "Code" : "411200"
+        "Code" : "411200000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -141087,7 +141109,8 @@
       "attributes" : {
         "FID" : 16,
         "Name" : "洛阳市",
-        "Code" : "410300"
+        "Code" : "410300000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [
@@ -148826,7 +148849,8 @@
       "attributes" : {
         "FID" : 17,
         "Name" : "鹤壁市",
-        "Code" : "410600"
+        "Code" : "410600000",
+        "value": 0
       },
       "geometry" : {
         "rings" : [

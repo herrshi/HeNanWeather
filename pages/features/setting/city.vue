@@ -53,8 +53,8 @@
 import { mdbBtn, mdbCard, mdbCardBody, mdbDatatable, mdbIcon } from 'mdbvue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import $ from 'jquery'
-import ConfirmDelete from '~/components/confirm-delete-modal'
-import EditCityModal from '~/components/edit-city-modal'
+import ConfirmDelete from '~/components/modals/confirm-delete-modal'
+import EditCityModal from '~/components/modals/edit-city-modal'
 export default {
   name: 'City',
 

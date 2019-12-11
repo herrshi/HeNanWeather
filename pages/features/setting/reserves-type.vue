@@ -55,8 +55,8 @@
 import { mdbBtn, mdbCard, mdbCardBody, mdbDatatable, mdbIcon } from 'mdbvue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import $ from 'jquery'
-import EditBasedataModal from '~/components/edit-basedata-modal'
-import ConfirmDelete from '~/components/confirm-delete-modal'
+import EditBasedataModal from '~/components/modals/edit-basedata-modal'
+import ConfirmDelete from '~/components/modals/confirm-delete-modal'
 
 export default {
   name: 'ReservesType',

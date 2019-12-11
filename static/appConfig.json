@@ -37,7 +37,7 @@
         "icon": "layer-group",
         "subItems": [
           {
-            "name": "重点区域空气监测站点",
+            "name": "空气监测站点",
             "to": "features-spatial-data-air-quality"
           },
           {
@@ -57,6 +57,10 @@
             "to": "features-spatial-data-radiation-source"
           },
           {
+            "name": "噪声监测站点",
+            "to": "features-spatial-data-noise"
+          },
+          {
             "name": "土壤污染地块",
             "to": "features-spatial-data-soil-pollutant-area"
           },
@@ -71,16 +75,20 @@
         "icon": "cloud-meatball",
         "subItems": [
           {
-            "name": "空气质量实时图"
+            "name": "空气质量实时图",
+            "to": "features-subject-air-rt"
           },
           {
-            "name": "环境空气日报"
+            "name": "环境空气日报",
+            "to": "features-subject-air-daily"
           },
           {
-            "name": "环境空气周报"
+            "name": "环境空气周报",
+            "to": "features-subject-air-weekly"
           },
           {
-            "name": "环境空气月报"
+            "name": "环境空气月报",
+            "to": "features-subject-air-monthly"
           }
         ]
       },
@@ -89,42 +97,60 @@
         "icon": "water",
         "subItems": [
           {
-            "name": "水质状况",
-            "to": "features-water-pollution-water-quality"
+            "name": "水质类别实时图",
+            "to": "features-subject-water-rt"
           },
           {
-            "name": "水质监测因子",
-            "to": "features-water-pollution-water-factor"
+            "name": "水质类别小时报",
+            "to": "features-subject-water-hourly"
           },
           {
-            "name": "水污染防治",
-            "to": "features-water-pollution-pollution-control"
+            "name": "水质类别日报",
+            "to": "features-subject-water-daily"
           },
           {
-            "name": "其他专题",
-            "to": "features-water-pollution-other-theme"
+            "name": "水质类别月报",
+            "to": "features-subject-water-monthly"
           }
         ]
       },
       {
-        "name": "土壤污染专题",
-        "icon": "leaf",
+        "name": "噪声污染专题图",
+        "icon": "volume-up",
         "subItems": [
           {
-            "name": "土壤污染评价",
-            "to": "features-soil-pollution-pollution-evaluation"
+            "name": "噪声污染实时图",
+            "to": "features-subject-noise-rt"
           },
           {
-            "name": "土壤污染趋势",
-            "to": "features-soil-pollution-pollution-trend"
+            "name": "噪声污染小时报",
+            "to": "features-subject-noise-hourly"
           },
           {
-            "name": "土壤污染防治",
-            "to": "features-soil-pollution-pollution-control"
+            "name": "噪声污染日报",
+            "to": "features-subject-noise-daily"
           },
           {
-            "name": "其他专题",
-            "to": "features-soil-pollution-other-theme"
+            "name": "噪声污染月报",
+            "to": "features-subject-noise-monthly"
+          }
+        ]
+      },
+      {
+        "name": "固废运送车辆GPS信息",
+        "icon": "truck",
+        "subItems": [
+          {
+            "name": "固废运送车辆信息",
+            "to": "features-subject-truck-base"
+          },
+          {
+            "name": "固废运送车辆实时信息",
+            "to": "features-subject-truck-rt"
+          },
+          {
+            "name": "固废运送车辆历史轨迹",
+            "to": "features-subject-truck-hist"
           }
         ]
       }
@@ -321,6 +347,11 @@
               "title": "周边搜索",
               "id": "NearbySearch",
               "className": "esri-icon-search"
+            },
+            {
+              "title": "污染源搜索",
+              "id": "NearbySearch_Pollutant",
+              "className": "esri-icon-lightbulb"
             }
           ]
         }

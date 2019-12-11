@@ -6,7 +6,7 @@
   >
     <mdb-card-body>
       <div class="d-flex justify-content-start">
-        <mdb-btn color="cyan" @click="$_showNewModal" size="sm" rounded>
+        <mdb-btn @click="$_showNewModal" color="cyan" size="sm" rounded>
           <mdb-icon icon="plus" class="mr-1" />新增{{ pageName }}
         </mdb-btn>
       </div>
@@ -55,8 +55,8 @@
 import { mdbBtn, mdbCard, mdbCardBody, mdbDatatable, mdbIcon } from 'mdbvue'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import $ from 'jquery'
-import EditBasedataModal from '~/components/edit-basedata-modal'
-import ConfirmDelete from '~/components/confirm-delete-modal'
+import EditBasedataModal from '~/components/modals/edit-basedata-modal'
+import ConfirmDelete from '~/components/modals/confirm-delete-modal'
 
 export default {
   name: 'ControlLevel',

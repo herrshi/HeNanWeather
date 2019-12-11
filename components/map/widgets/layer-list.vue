@@ -17,6 +17,19 @@
         {{ layerConfig.buttonName }}
       </mdb-btn>
     </mdb-tooltip>
+    <!--    <mdb-tooltip material>-->
+    <!--      <span slot="tip">聚合</span>-->
+    <!--      <mdb-btn-->
+    <!--        slot="reference"-->
+    <!--        :active="isCluster"-->
+    <!--        @click="$_toggleCluster"-->
+    <!--        rounded-->
+    <!--        size="sm"-->
+    <!--        color="info"-->
+    <!--      >-->
+    <!--        聚合-->
+    <!--      </mdb-btn>-->
+    <!--    </mdb-tooltip>-->
   </mdb-btn-group>
 </template>
 
@@ -36,10 +49,16 @@ export default {
     mdbTooltip
   },
 
+  data() {
+    return {
+      isCluster: false
+    }
+  },
+
   computed: {
     ...mapState('app-info', ['appConfig']),
     ...mapGetters('business-data', ['getBusinessData']),
-    ...mapGetters('map', ['businessLayer']),
+    ...mapGetters('map', ['businessLayer', 'allBusinessLayer']),
 
     layerListConfig() {
       return this.appConfig.pageComponents.layerList
@@ -97,17 +116,18 @@ export default {
         if (!features) {
           return null
         } else if (features.length === 0) {
-          const layer = new FeatureLayer()
-          layer.geometryType = geometryType
-          layer.source = []
-          layer.objectIdField = 'FID'
-          layer.label = name
-          layer.outFields = ['*']
-          layer.visible = active
-          layer.fields = fields
-          layer.renderer = renderer
-          layer.popupTemplate = popupTemplate
-          return layer
+          return null
+          // const layer = new FeatureLayer()
+          // layer.geometryType = geometryType
+          // layer.source = []
+          // layer.objectIdField = 'FID'
+          // layer.label = name
+          // layer.outFields = ['*']
+          // layer.visible = active
+          // layer.fields = fields
+          // layer.renderer = renderer
+          // layer.popupTemplate = popupTemplate
+          // return layer
         }
       }
 
@@ -130,6 +150,17 @@ export default {
         fields,
         renderer,
         popupTemplate
+      })
+    },
+
+    $_toggleCluster() {
+      this.isCluster = !this.isCluster
+      const layers = this.allBusinessLayer
+      layers.forEach((layer) => {
+        layer.featureReduction = this.isCluster ? { type: 'selection' } : null
+        if (layer.visible) {
+          layer.refresh()
+        }
       })
     },
 

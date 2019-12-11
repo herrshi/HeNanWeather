@@ -4,21 +4,20 @@
     <mdb-navbar
       v-if="!mapOnly"
       :toggler="false"
-      color="indigo"
       position="top"
       expand="large"
       dark
-      style="z-index: 1045"
+      style="z-index: 1045; height: 84px; background-color: #1e90ff"
     >
       <mdb-navbar-brand :to="{ name: 'features', query: { userId } }">
         <div class="d-flex">
           <img
             src="~/assets/images/logo1.png"
             alt="logo"
-            height="30"
+            height="51px"
             class="mr-3"
           />
-          <img src="~/assets/images/logo2.png" alt="logo" height="30" />
+          <img src="~/assets/images/logo2.png" alt="logo" height="51px" />
         </div>
 
         <!--        <mdb-breadcrumb>-->
@@ -36,8 +35,8 @@
               slot="toggle"
               tag="a"
               nav-link
-              color="indigo"
               waves-fixed
+              style="background-color: #1e90ff"
             >
               <mdb-icon icon="user" class="mr-1" />{{ userName }}
             </mdb-dropdown-toggle>
@@ -66,7 +65,7 @@
         slim
         side-nav-class="sn-bg-1"
         mask="strong"
-        side-nav-style="top: 50px"
+        side-nav-style="top: 84px"
       >
         <mdb-side-nav-nav>
           <side-navbar-item
@@ -178,7 +177,7 @@ export default {
 
     contentStyle() {
       return `height: 100vh;
-      padding-top: ${this.mapOnly ? 0 : 55}px;
+      padding-top: ${this.mapOnly ? 0 : 84}px;
       margin-left: ${this.mapOnly ? 0 : this.collapse ? 60 : 240}px`
     },
 

@@ -19,6 +19,13 @@
         >
           <feature-editor :widget-config="widgetConfig" />
         </div>
+
+        <div
+          id="divAirQuality"
+          v-if="widgets && widgets.includes('AirQuality')"
+        >
+          <air-quality :widget-config="widgetConfig" />
+        </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
     </mdb-col>
@@ -37,11 +44,13 @@ import Overlay from '~/components/map/widgets/overlay'
 import LayerList from '~/components/map/widgets/layer-list'
 import NearbySearch from '~/components/map/widgets/nearby-search'
 import FeatureEditor from '~/components/map/widgets/feature-editor'
+import AirQuality from '~/components/map/widgets/air-quality'
 
 export default {
   name: 'Map',
 
   components: {
+    AirQuality,
     FeatureEditor,
     mdbCol,
     mdbRow,
@@ -139,6 +148,7 @@ export default {
       if (this.appConfig.map.proxy) {
         esriConfig.request.proxyUrl = this.appConfig.map.proxy
       }
+      esriConfig.fontsUrl = `${this.appConfig.map.arcgis_api}/fonts`
       const baseLayers = this.appConfig.map.basemaps.map((layerConfig) => {
         delete layerConfig.type
         return new TileLayer(layerConfig)
@@ -177,6 +187,11 @@ export default {
               sourceGraphic: selectedFeature
             })
             break
+          case 'NearbySearch_Pollutant':
+            this.$_nearbySearch({
+              sourceGraphic: selectedFeature,
+              types: ['PollutantSourceEnterprise']
+            })
         }
 
         this.$emit('mapPopupTriggerAction', {
@@ -206,6 +221,17 @@ export default {
           expanded: false
         })
         ui.add(expandFeatureEditor, 'bottom-right')
+      }
+
+      if (this.widgets.includes('AirQuality')) {
+        const expandAirQuality = new Expand({
+          view: this.view,
+          name: 'AirQuality',
+          content: document.getElementById('divAirQuality'),
+          expandIconClass: 'esri-icon-public',
+          expanded: true
+        })
+        ui.add(expandAirQuality, 'top-right')
       }
 
       await this.view.when()

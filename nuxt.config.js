@@ -42,7 +42,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  // modules: ['@nuxtjs/axios'],
+  modules: ['@nuxtjs/axios'],
   // axios: {
   //   host: '39.98.134.198',
   //   port: '18091'
@@ -55,7 +55,7 @@ export default {
      ** You can extend webpack config here
      */
     extend(config, ctx) {},
-    transpile: ['mdbvue/lib/components']
+    transpile: ['mdbvue/lib/components', 'vue-echarts', 'resize-detector']
   },
   router: {
     // base: process.env.NODE_ENV === 'production' ? '/HeNanWeather' : '/'

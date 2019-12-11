@@ -1,6 +1,6 @@
 <template>
   <mdb-modal :show="showModal" info>
-    <mdb-modal-header center :close="false">
+    <mdb-modal-header :close="false" center>
       <p class="heading">
         {{ header }}
       </p>
@@ -8,27 +8,27 @@
     <mdb-row class="m-2">
       <mdb-col col="6">
         <mdb-input
-          label="城市名称"
-          icon="city"
           :value="cityName"
           @input="$emit('update:cityName', $event)"
+          label="城市名称"
+          icon="city"
         />
       </mdb-col>
       <mdb-col col="6">
         <mdb-input
-          label="城市代码"
-          icon="edit"
           :value="cityCode"
           @input="$emit('update:cityCode', $event)"
+          label="城市代码"
+          icon="edit"
         />
       </mdb-col>
     </mdb-row>
     <mdb-modal-body> </mdb-modal-body>
     <mdb-modal-footer center>
-      <mdb-btn outline="info" rounded @click="$_editCityModal_confirmYes">
+      <mdb-btn @click="$_editCityModal_confirmYes" outline="info" rounded>
         <mdb-icon icon="check" class="mr-1" />确认
       </mdb-btn>
-      <mdb-btn color="info" rounded @click="$_editCityModal_confirmNo">
+      <mdb-btn @click="$_editCityModal_confirmNo" color="info" rounded>
         <mdb-icon icon="times" class="mr-1" />取消
       </mdb-btn>
     </mdb-modal-footer>

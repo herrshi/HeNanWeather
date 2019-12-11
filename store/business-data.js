@@ -505,6 +505,54 @@ const actions = {
         })
       })
     }
+  },
+
+  async getAirQualityRTData({ commit }) {
+    commit('startFetchData')
+    const result = await axiosGet('monitor_data/get_air_real_time_data')
+    commit('setBusinessData', { dataType: 'AirQualityRTData', data: result })
+    commit('stopFetchData')
+  },
+
+  async getAirQualityDailyData({ commit }, { startTime, endTime }) {
+    commit('startFetchData')
+
+    const result = await axiosGet('monitor_data/get_air_daily', {
+      startTime,
+      endTime
+    })
+    commit('setBusinessData', {
+      dataType: 'AirQualityDailyData',
+      data: result
+    })
+
+    commit('stopFetchData')
+  },
+
+  async getAirQualityWeeklyData({ commit }, { startTime, endTime }) {
+    commit('startFetchData')
+    const result = await axiosGet('monitor_data/get_air_week_report', {
+      startTime,
+      endTime
+    })
+    commit('setBusinessData', {
+      dataType: 'AirQualityWeeklyData',
+      data: result
+    })
+    commit('stopFetchData')
+  },
+
+  async getAirQualityMonthlyData({ commit }, { startTime, endTime }) {
+    commit('startFetchData')
+    const result = await axiosGet('monitor_data/get_air_Month_report', {
+      startTime,
+      endTime
+    })
+    commit('setBusinessData', {
+      dataType: 'AirQualityMonthlyData',
+      data: result
+    })
+    commit('stopFetchData')
   }
 }
 
