@@ -30,6 +30,7 @@
       </mdb-navbar-brand>
       <mdb-navbar-toggler>
         <mdb-navbar-nav right>
+          <mdb-nav-item icon="home" href="http://10.41.109.69:8080/hb/" />
           <mdb-dropdown tag="li" class="nav-item">
             <mdb-dropdown-toggle
               slot="toggle"
@@ -76,11 +77,11 @@
           />
           <mdb-side-nav-item
             :is-collapsed="collapse"
-            @toggle="collapse = !collapse"
             icon="angle-double-left"
             open-icon="angle-double-right"
             fixed
             toggler
+            @toggle="collapse = !collapse"
             >隐藏
           </mdb-side-nav-item>
         </mdb-side-nav-nav>
@@ -120,6 +121,7 @@ import {
   mdbNavbarBrand,
   mdbNavbarNav,
   mdbNavbarToggler,
+  mdbNavItem,
   mdbSideNav,
   mdbSideNavNav,
   mdbSideNavItem,
@@ -142,6 +144,7 @@ export default {
     mdbDropdownItem,
     mdbDropdownMenu,
     mdbDropdownToggle,
+    mdbNavItem,
     mdbIcon,
     mdbMask,
     mdbNavbar,
@@ -155,36 +158,6 @@ export default {
   },
 
   mixins: [waves],
-
-  data() {
-    return {
-      toggle: false,
-      wide: true,
-      collapse: false,
-      flexibleContentStyle: false
-    }
-  },
-
-  computed: {
-    ...mapState('app-info', ['appConfig']),
-    ...mapState('user', ['userName', 'userId']),
-    ...mapState(['naviBreadcrumb', 'mapOnly']),
-    ...mapGetters(['showLoading']),
-
-    sideNavbarItems() {
-      return this.appConfig.pageComponents.sideNavbarItems
-    },
-
-    contentStyle() {
-      return `height: 100vh;
-      padding-top: ${this.mapOnly ? 0 : 84}px;
-      margin-left: ${this.mapOnly ? 0 : this.collapse ? 60 : 240}px`
-    },
-
-    navbarStyle() {
-      return `margin-left: ${this.collapse ? 60 : 240}px`
-    }
-  },
 
   async fetch({ store }) {
     await store.dispatch('app-info/getAppConfig')
@@ -222,10 +195,37 @@ export default {
     await store.dispatch('business-data/getWaterMonitorFactorInfos')
   },
 
+  data() {
+    return {
+      toggle: false,
+      wide: true,
+      collapse: false,
+      flexibleContentStyle: false
+    }
+  },
+
+  computed: {
+    ...mapState('app-info', ['appConfig']),
+    ...mapState('user', ['userName', 'userId']),
+    ...mapState(['naviBreadcrumb', 'mapOnly']),
+    ...mapGetters(['showLoading']),
+
+    sideNavbarItems() {
+      return this.appConfig.pageComponents.sideNavbarItems
+    },
+
+    contentStyle() {
+      return `height: 100vh;
+      padding-top: ${this.mapOnly ? 0 : 84}px;
+      margin-left: ${this.mapOnly ? 0 : this.collapse ? 60 : 240}px`
+    },
+
+    navbarStyle() {
+      return `margin-left: ${this.collapse ? 60 : 240}px`
+    }
+  },
+
   mounted() {
-    this.setNaviBreadcrumb({
-      naviBreadcrumb: [this.appConfig.app.subTitle]
-    })
     const userId = this.$route.query.userId
     if (userId) {
       this.getUserInfo(userId)

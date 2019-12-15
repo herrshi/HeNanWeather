@@ -3,9 +3,10 @@
     <mdb-card-body class="p-0">
       <Map
         ref="main_map"
-        :widgets="['LayerList', 'NearbySearch']"
-        @mapPopupTriggerAction="$_map_popupTriggerAction"
+        :widgets="['LayerList', 'NearbySearch', 'Legend']"
+        :center="centerGeometry"
         theme="light"
+        @mapPopupTriggerAction="$_map_popupTriggerAction"
       />
 
       <air-station-detail
@@ -25,7 +26,8 @@
 
 <script>
 import { mdbCard, mdbCardBody } from 'mdbvue'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
+import { loadModules } from 'esri-loader'
 import Map from '~/components/map/map'
 import AirStationDetail from '~/components/modals/air-station-detail'
 import WaterStationDetail from '~/components/modals/water-station-detail'
@@ -44,20 +46,66 @@ export default {
       showAirStationDetailModal: false,
       showWaterStationDetailModal: false,
       detailAirStationId: '',
-      detailWaterStationId: ''
+      detailWaterStationId: '',
+      cities: [],
+      centerGeometry: null
     }
   },
 
   computed: {
-    ...mapState('app-info', ['appConfig'])
+    ...mapState('app-info', ['appConfig']),
+    ...mapGetters('business-data', ['getBusinessData'])
   },
 
-  mounted() {
-    this.setNaviBreadcrumb({ naviBreadcrumb: [this.appConfig.subTitle] })
+  async mounted() {
+    const [Graphic] = await loadModules(['esri/Graphic'], {
+      url: `${this.appConfig.map.arcgis_api}/init.js`
+    })
+    // 地级市
+    let response = await fetch(
+      `${process.env.baseUrl}/layer/HeNan_Prefecture_Level_City_Simplify.json`
+    )
+    let data = await response.json()
+    const prefectureCities = data.features.map((feature) =>
+      Graphic.fromJSON(feature)
+    )
+
+    // 县级市
+    response = await fetch(
+      `${process.env.baseUrl}/layer/HeNan_County_Level_City_Simplify.json`
+    )
+    data = await response.json()
+    const countyCities = data.features.map((feature) =>
+      Graphic.fromJSON(feature)
+    )
+    this.cities = prefectureCities.concat(countyCities)
+
+    let cityCode = this.$route.query.cityCode
+    if (cityCode) {
+      this.hideLayerListWidget()
+
+      if (cityCode.length === 6) {
+        cityCode = cityCode + '000'
+      }
+      const city = this.cities.find(
+        (city) => city.getAttribute('Code') === cityCode
+      )
+      if (city) {
+        this.centerGeometry = city.geometry
+        this.setCityCode({ cityCode })
+      }
+    }
+
+    const layerList = this.$route.query.layerList
+    if (layerList) {
+      const showLayer = layerList.split(',')
+      this.setShowLayer({ showLayer })
+    }
   },
 
   methods: {
-    ...mapMutations(['setNaviBreadcrumb']),
+    ...mapMutations(['setCityCode']),
+    ...mapMutations('map', ['hideLayerListWidget', 'setShowLayer']),
 
     $_map_popupTriggerAction(event) {
       switch (event.actionId) {
@@ -76,4 +124,4 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

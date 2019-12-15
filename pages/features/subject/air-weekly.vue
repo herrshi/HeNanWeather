@@ -4,16 +4,16 @@
       <Map
         :widgets="['AirQuality']"
         :widget-config="{ AirQuality: { type: 'weekly' } }"
-        @mapPopupTriggerAction="$_map_popupTriggerAction"
         theme="light"
+        @mapPopupTriggerAction="$_map_popupTriggerAction"
       />
     </mdb-card-body>
 
     <air-quality-detail
       :show-modal="showAirQualityDetail"
       :city-code="cityCode"
-      @closeDetail="showAirQualityDetail = false"
       data-type="AirQualityWeeklyData"
+      @closeDetail="showAirQualityDetail = false"
     />
   </mdb-card>
 </template>

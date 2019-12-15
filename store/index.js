@@ -1,6 +1,7 @@
 const state = () => ({
   naviBreadcrumb: [],
-  mapOnly: false
+  mapOnly: false,
+  cityCode: ''
 })
 
 const mutations = {
@@ -14,6 +15,10 @@ const mutations = {
 
   hideNav(state) {
     state.mapOnly = true
+  },
+
+  setCityCode(state, { cityCode }) {
+    state.cityCode = cityCode
   }
 }
 

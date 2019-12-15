@@ -23,6 +23,7 @@ const actions = {
   async getAppConfig({ commit }) {
     const appConfig = await AppConfig.getAppConfig()
     commit('setAppConfig', { appConfig })
+    return appConfig
   }
 }
 

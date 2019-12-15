@@ -6,7 +6,7 @@
     class="text-center"
     @close="showModal = false"
   >
-    <mdb-modal-header center :close="false">
+    <mdb-modal-header :close="false" center>
       <p class="heading">删除确认</p>
     </mdb-modal-header>
     <mdb-modal-body>
@@ -70,4 +70,4 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

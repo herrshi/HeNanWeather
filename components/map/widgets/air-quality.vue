@@ -3,25 +3,25 @@
     <mdb-card-body>
       <mdb-select
         v-model="monitoringFactor"
-        @getValue="$_dateChanged"
         label="监测因子: "
+        @getValue="$_dateChanged"
       />
 
       <mdb-date-picker
-        v-model="startDate"
         v-if="widgetConfig.AirQuality.type !== 'rt'"
-        @getValue="$_dateChanged"
+        v-model="startDate"
         :option="dateOptions"
         :limit="[{ type: 'fromto', to: today }]"
         label="请选择开始日期"
         far
         auto-hide
         class="black-text"
+        @getValue="$_dateChanged"
       />
 
       <mdb-date-picker
-        v-model="endDate"
         v-if="widgetConfig.AirQuality.type !== 'rt'"
+        v-model="endDate"
         :option="dateOptions"
         :limit="[{ type: 'fromto', from: startDate, to: today }]"
         label="请选择结束日期"
@@ -113,8 +113,8 @@ export default {
 
       monitoringFactor: [
         {
-          text: '城市AQI',
-          value: 'CITY_AQI',
+          text: 'PM25平均值',
+          value: 'PM25_VALUE_AVG',
           selected: true
         },
         {
@@ -122,28 +122,20 @@ export default {
           value: 'PM10_VALUE_AVG'
         },
         {
-          text: 'SO2平均值',
-          value: 'SO2_VALUE_AVG'
-        },
-        {
-          text: 'O3平均值',
-          value: 'O3_VALUE_AVG'
-        },
-        {
-          text: 'NO2平均值',
+          text: '二氧化氮平均值',
           value: 'NO2_VALUE_AVG'
         },
         {
-          text: 'CO平均值',
+          text: '二氧化硫平均值',
+          value: 'SO2_VALUE_AVG'
+        },
+        {
+          text: '一氧化碳平均值',
           value: 'CO_VALUE_AVG'
         },
         {
-          text: 'PM25平均值',
-          value: 'PM25_VALUE_AVG'
-        },
-        {
-          text: 'O3H8平均值',
-          value: 'O3H8_VALUE_AVG'
+          text: '臭氧平均值',
+          value: 'O3_VALUE_AVG'
         }
       ]
     }
@@ -151,7 +143,7 @@ export default {
 
   computed: {
     ...mapState('app-info', ['appConfig']),
-    ...mapState('base-data', ['airQualityMonitoringFactor']),
+    // ...mapState('base-data', ['airQualityMonitoringFactor']),
     ...mapGetters('business-data', ['getBusinessData']),
 
     // monitoringFactor() {
@@ -243,7 +235,7 @@ export default {
         layerInfos: [
           {
             layer: this.cityLayer,
-            title: '空气质量实时图'
+            title: '空气质量'
           }
         ]
       })
@@ -388,17 +380,17 @@ export default {
                 {
                   value: minValue,
                   color: '#4caf50',
-                  label: '低'
+                  label: minValue
                 },
                 {
-                  value: minValue + (maxValue - minValue) / 2,
+                  value: (maxValue + minValue) / 2,
                   color: '#ffeb3b',
-                  label: '低'
+                  label: Math.floor((maxValue + minValue) / 2)
                 },
                 {
                   value: maxValue,
                   color: '#f44336',
-                  label: '高'
+                  label: maxValue
                 }
               ]
             }
@@ -474,7 +466,9 @@ export default {
               font: {
                 family: 'yahei',
                 size: 12
-              }
+              },
+              haloSize: 1,
+              haloColor: 'white'
             }
           }
         ]
@@ -495,7 +489,7 @@ export default {
           result = this.getBusinessData('AirQualityDailyData')
           break
 
-        case 'weekly':
+        case 'weekly': {
           // 获取周数
           const startYearWeek = moment(this.startDate, 'YYYY-MM-DD').year()
           const startWeekNumber = moment(this.startDate, 'YYYY-MM-DD').week()
@@ -515,8 +509,9 @@ export default {
           })
           result = this.getBusinessData('AirQualityWeeklyData')
           break
+        }
 
-        case 'monthly':
+        case 'monthly': {
           const startYearMonth = moment(this.startDate, 'YYYY-MM-DD').year()
           const startMonthNumber =
             moment(this.startDate, 'YYYY-MM-DD').month() + 1
@@ -536,6 +531,7 @@ export default {
           })
           result = this.getBusinessData('AirQualityMonthlyData')
           break
+        }
       }
       const graphicSource = []
 
@@ -609,7 +605,9 @@ export default {
               font: {
                 family: 'yahei',
                 size: 12
-              }
+              },
+              haloSize: 1,
+              haloColor: 'white'
             }
           }
         ]
@@ -644,6 +642,10 @@ export default {
             }
           }
       }
+      // this.timeSlider.watch('values', (values) => {
+      //   this.cityLayer.labelingInfo[0].where = `time = ${values[0]}`
+      // })
+      // this.cityLayer.labelingInfo[0].where = `time = ${this.timeSlider.values[0]}`
     },
 
     async $_dateChanged() {

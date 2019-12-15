@@ -1,5 +1,5 @@
 <template>
-  <mdb-btn-group>
+  <mdb-btn-group v-if="layerListWidgetVisible">
     <mdb-tooltip
       v-for="(layerConfig, index) in layerListConfig"
       :key="index"
@@ -8,28 +8,27 @@
       <span slot="tip">{{ layerConfig.name }}</span>
       <mdb-btn
         slot="reference"
-        :active="layerConfig.active"
-        @click="$_toggleButton(layerConfig)"
         rounded
         size="sm"
         color="primary"
+        :active="layerConfig.active"
+        @click="$_toggleButton(layerConfig)"
       >
         {{ layerConfig.buttonName }}
       </mdb-btn>
     </mdb-tooltip>
-    <!--    <mdb-tooltip material>-->
-    <!--      <span slot="tip">聚合</span>-->
-    <!--      <mdb-btn-->
-    <!--        slot="reference"-->
-    <!--        :active="isCluster"-->
-    <!--        @click="$_toggleCluster"-->
-    <!--        rounded-->
-    <!--        size="sm"-->
-    <!--        color="info"-->
-    <!--      >-->
-    <!--        聚合-->
-    <!--      </mdb-btn>-->
-    <!--    </mdb-tooltip>-->
+    <mdb-tooltip material>
+      <span slot="tip">聚合</span>
+      <mdb-btn
+        slot="reference"
+        :color="isCluster ? 'success' : 'blue-grey'"
+        rounded
+        size="sm"
+        @click="$_toggleCluster"
+      >
+        聚合
+      </mdb-btn>
+    </mdb-tooltip>
   </mdb-btn-group>
 </template>
 
@@ -41,7 +40,7 @@ import { loadModules } from 'esri-loader'
 export default {
   name: 'LayerList',
 
-  inject: ['getMap'],
+  inject: ['getMap', 'getView'],
 
   components: {
     mdbBtn,
@@ -51,14 +50,20 @@ export default {
 
   data() {
     return {
-      isCluster: false
+      view: null,
+      isCluster: true
     }
   },
 
   computed: {
     ...mapState('app-info', ['appConfig']),
+    ...mapState('map', ['layerListWidgetVisible', 'showLayer']),
     ...mapGetters('business-data', ['getBusinessData']),
-    ...mapGetters('map', ['businessLayer', 'allBusinessLayer']),
+    ...mapGetters('map', [
+      'businessLayer',
+      'businessClusterLayer',
+      'visibleBusinessLayer'
+    ]),
 
     layerListConfig() {
       return this.appConfig.pageComponents.layerList
@@ -68,17 +73,45 @@ export default {
   async mounted() {
     this.startUpdating()
 
+    this.view = await this.getView()
     const map = await this.getMap()
+
     // foreach中不能使用async/await
     for (let i = 0; i < this.layerListConfig.length; i++) {
       const layerConfig = this.layerListConfig[i]
-      const layer = await this.$_createLayer(layerConfig)
-      if (layer) {
-        this.addBusinessLayer({ type: layerConfig.dataType, layer })
-        map.add(layer)
+
+      const featureLayer = await this.$_createFeatureLayer(layerConfig)
+      if (featureLayer) {
+        this.addBusinessLayer({
+          type: layerConfig.dataType,
+          layer: featureLayer
+        })
+        map.add(featureLayer)
+      }
+
+      const clusterLayer = await this.$_createClusterLayer(layerConfig)
+      if (clusterLayer) {
+        this.addBusinessClusterLayer({
+          type: layerConfig.dataType,
+          layer: clusterLayer
+        })
+        map.add(clusterLayer)
       }
     }
 
+    this.isCluster = this.layerListWidgetVisible
+
+    if (this.showLayer.length > 0) {
+      this.layerListConfig.forEach((layerConfig) => {
+        const { dataType } = layerConfig
+        this.setLayerActive({
+          type: dataType,
+          active: this.showLayer.includes(dataType)
+        })
+      })
+    }
+
+    this.resetLayers()
     this.stopUpdating()
   },
 
@@ -86,11 +119,230 @@ export default {
     ...mapMutations('app-info', ['setLayerActive']),
     ...mapMutations('map', [
       'addBusinessLayer',
+      'addBusinessClusterLayer',
       'startUpdating',
       'stopUpdating'
     ]),
 
-    async $_createLayer(layerConfig) {
+    async $_createClusterLayer(layerConfig) {
+      const { dataType, renderer, popupTemplate } = layerConfig
+      let features = this.getBusinessData(dataType)
+      if (!features || features.length === 0) {
+        await this.$store.dispatch(`business-data/getAll${dataType}`, {
+          isPage: 'NO'
+        })
+        features = this.getBusinessData(dataType)
+        if (!features || features.length === 0) {
+          return null
+        }
+      }
+      // 只对点图层做聚合
+      if (features[0].geometry.type !== 'point') {
+        return null
+      }
+      const data = features.map((feature) => ({
+        ...feature,
+        x: feature.geometry.x,
+        y: feature.geometry.y
+      }))
+
+      const [ClassBreaksRenderer, FlareClusterLayer] = await loadModules(
+        [
+          'esri/renderers/ClassBreaksRenderer',
+          'esri/extra/fcl/FlareClusterLayer_v4'
+        ],
+        {
+          url: `${this.appConfig.map.arcgis_api}/init.js`
+        }
+      )
+      const defaultSymbol = renderer.defaultSymbol || renderer.symbol
+      const clusterRenderer = new ClassBreaksRenderer({
+        defaultSymbol,
+        field: 'clusterCount',
+        classBreakInfos: [
+          {
+            minValue: 0,
+            maxValue: 20,
+            symbol: {
+              type: 'picture-marker',
+              url: '/images/m0.png',
+              width: '35px',
+              height: '35px'
+            }
+          },
+          {
+            minValue: 21,
+            maxValue: 50,
+            symbol: {
+              type: 'picture-marker',
+              url: '/images/m2.png',
+              width: '40px',
+              height: '40px'
+            }
+          },
+          {
+            minValue: 51,
+            maxValue: 100,
+            symbol: {
+              type: 'picture-marker',
+              url: '/images/m3.png',
+              width: '50px',
+              height: '50px'
+            }
+          },
+          {
+            minValue: 101,
+            symbol: {
+              type: 'picture-marker',
+              url: '/images/m4.png',
+              width: '60px',
+              height: '60px'
+            }
+          }
+        ]
+      })
+
+      const defaultAreaSymbol = {
+        type: 'simple-fill',
+        color: [0, 0, 0, 0.2],
+        outline: {
+          type: 'simple-line',
+          color: [0, 0, 0, 0.3]
+        }
+      }
+      const areaRenderer = new ClassBreaksRenderer({
+        defaultSymbol: defaultAreaSymbol,
+        field: 'clusterCount',
+        classBreakInfos: [
+          {
+            minValue: 0,
+            maxValue: 20,
+            symbol: {
+              type: 'simple-fill',
+              color: [255, 204, 102, 0.4],
+              outline: {
+                type: 'simple-line',
+                style: 'dash',
+                color: [221, 159, 34, 0.8]
+              }
+            }
+          },
+          {
+            minValue: 21,
+            maxValue: 150,
+            symbol: {
+              type: 'simple-fill',
+              color: [102, 204, 255, 0.4],
+              outline: {
+                type: 'simple-line',
+                style: 'dash',
+                color: [82, 163, 204, 0.8]
+              }
+            }
+          },
+          {
+            minValue: 151,
+            maxValue: 1000,
+            symbol: {
+              type: 'simple-fill',
+              color: [51, 204, 51, 0.4],
+              outline: {
+                type: 'simple-line',
+                style: 'dash',
+                color: [41, 163, 41, 0.8]
+              }
+            }
+          },
+          {
+            minValue: 1001,
+            symbol: {
+              type: 'simple-fill',
+              color: [250, 65, 74, 0.4],
+              outline: {
+                type: 'simple-line',
+                style: 'dash',
+                color: [200, 52, 59, 0.8]
+              }
+            }
+          }
+        ]
+      })
+
+      const flareRenderer = new ClassBreaksRenderer({
+        defaultSymbol,
+        field: 'clusterCount',
+        classBreakInfos: [
+          {
+            minValue: 0,
+            maxValue: 20,
+            symbol: {
+              type: 'simple-marker',
+              size: 14,
+              color: [255, 204, 102, 0.8],
+              outline: {
+                type: 'simple-line',
+                color: [221, 159, 34, 0.8]
+              }
+            }
+          },
+          {
+            minValue: 21,
+            maxValue: 150,
+            symbol: {
+              type: 'simple-marker',
+              size: 14,
+              color: [102, 204, 255, 0.8],
+              outline: {
+                type: 'simple-line',
+                color: [82, 163, 204, 0.8]
+              }
+            }
+          },
+          {
+            minValue: 151,
+            maxValue: 1000,
+            symbol: {
+              type: 'simple-marker',
+              size: 14,
+              color: [51, 204, 51, 0.8],
+              outline: {
+                type: 'simple-line',
+                color: [41, 163, 41, 0.8]
+              }
+            }
+          },
+          {
+            minValue: 1001,
+            symbol: {
+              type: 'simple-marker',
+              size: 14,
+              color: [250, 65, 74, 0.8],
+              outline: {
+                type: 'simple-line',
+                color: [200, 52, 59, 0.8]
+              }
+            }
+          }
+        ]
+      })
+
+      return new FlareClusterLayer.FlareClusterLayer({
+        id: `cluster${dataType}`,
+        singlePopupTemplate: popupTemplate,
+        clusterRenderer,
+        areaRenderer,
+        flareRenderer,
+        spatialReference: { wkid: 4326 },
+        maxSingleFlareCount: 8,
+        clusterRatio: 75,
+        clusterToScale: 10000,
+        clusterAreaDisplay: 'activated',
+        visible: false,
+        data
+      })
+    },
+
+    async $_createFeatureLayer(layerConfig) {
       const [FeatureLayer, Graphic] = await loadModules(
         ['esri/layers/FeatureLayer', 'esri/Graphic'],
         {
@@ -103,7 +355,7 @@ export default {
         renderer,
         popupTemplate,
         fields,
-        active = false,
+        // active = false,
         geometryType
       } = layerConfig
 
@@ -113,21 +365,8 @@ export default {
           isPage: 'NO'
         })
         features = this.getBusinessData(dataType)
-        if (!features) {
+        if (!features || features.length === 0) {
           return null
-        } else if (features.length === 0) {
-          return null
-          // const layer = new FeatureLayer()
-          // layer.geometryType = geometryType
-          // layer.source = []
-          // layer.objectIdField = 'FID'
-          // layer.label = name
-          // layer.outFields = ['*']
-          // layer.visible = active
-          // layer.fields = fields
-          // layer.renderer = renderer
-          // layer.popupTemplate = popupTemplate
-          // return layer
         }
       }
 
@@ -140,13 +379,17 @@ export default {
           graphics.push(new Graphic({ geometry, attributes: feature }))
         }
       }
+
+      // const clusterLayer = new FlareClusterLayer.FlareClusterLayer()
+      // console.log(clusterLayer)
+
       return new FeatureLayer({
         objectIdField: 'FID',
-        label: name,
+        title: name,
         source: graphics,
         geometryType,
         outFields: ['*'],
-        visible: active,
+        visible: false,
         fields,
         renderer,
         popupTemplate
@@ -155,13 +398,7 @@ export default {
 
     $_toggleCluster() {
       this.isCluster = !this.isCluster
-      const layers = this.allBusinessLayer
-      layers.forEach((layer) => {
-        layer.featureReduction = this.isCluster ? { type: 'selection' } : null
-        if (layer.visible) {
-          layer.refresh()
-        }
-      })
+      this.resetLayers()
     },
 
     $_toggleButton(layerConfig) {
@@ -169,18 +406,30 @@ export default {
       const active = !layerConfig.active
       this.setLayerActive({ type: dataType, active })
 
-      const layer = this.businessLayer(dataType)
-      if (layer) {
-        layer.visible = active
+      if (!this.isCluster) {
+        const layer = this.businessLayer(dataType)
+        if (layer) {
+          layer.visible = active
+        }
+      } else {
+        const layer = this.businessClusterLayer(dataType)
+        if (layer) {
+          layer.visible = active
+        }
       }
     },
 
     resetLayers() {
       this.layerListConfig.forEach((layerConfig) => {
         const { dataType, active } = layerConfig
-        const layer = this.businessLayer(dataType)
-        if (layer) {
-          layer.visible = active
+        const featureLayer = this.businessLayer(dataType)
+        const clusterLayer = this.businessClusterLayer(dataType)
+        if (this.isCluster) {
+          if (clusterLayer) clusterLayer.visible = active
+          if (featureLayer) featureLayer.visible = false
+        } else {
+          if (clusterLayer) clusterLayer.visible = false
+          if (featureLayer) featureLayer.visible = active
         }
       })
     }

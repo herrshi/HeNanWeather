@@ -13,8 +13,8 @@
         >
           <mdb-input
             :id="subItem.id"
-            :label="subItem.name"
             v-model="subItem.checked"
+            :label="subItem.name"
             type="checkbox"
           />
         </li>
@@ -54,4 +54,4 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

@@ -1,6 +1,6 @@
 <template>
   <mdb-modal :show="showModal" info>
-    <mdb-modal-header center :close="false">
+    <mdb-modal-header :close="false" center>
       <p class="heading">
         {{ header }}
       </p>
@@ -8,8 +8,8 @@
     <mdb-modal-body>
       <mdb-input
         :label="dataType"
-        icon="edit"
         :value="inputValue"
+        icon="edit"
         @input="$emit('update:inputValue', $event)"
       />
     </mdb-modal-body>
@@ -87,4 +87,4 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

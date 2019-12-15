@@ -25,11 +25,11 @@
         <mdb-col md="5" class="d-flex align-items-start">
           <div class="text-center">
             <mdb-btn
-              @click="$_login_userLogin"
               color="cyan"
               type="button"
               class="z-depth-1a"
               rounded
+              @click="$_login_userLogin"
             >
               <mdb-icon icon="sign-in-alt" class="mr-1" />登录
             </mdb-btn>

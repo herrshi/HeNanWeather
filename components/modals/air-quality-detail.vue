@@ -1,9 +1,9 @@
 <template>
   <mdb-modal
     :show="showModal"
+    size="lg"
     @show="$_modal_beforeShow"
     @close="$emit('closeDetail')"
-    size="lg"
   >
     <mdb-modal-header>
       <mdb-modal-title>{{ cityName }}</mdb-modal-title>
@@ -12,14 +12,14 @@
     <mdb-modal-body>
       <mdb-select
         v-model="monitoringFactor"
-        @getValue="$_setOption"
         label="监测因子"
+        @getValue="$_setOption"
       />
       <v-chart :options="chartOption" />
     </mdb-modal-body>
 
     <mdb-modal-footer>
-      <mdb-btn @click="$emit('closeDetail')" color="info" rounded>
+      <mdb-btn color="info" rounded @click="$emit('closeDetail')">
         <mdb-icon icon="times" class="mr-1" />关闭
       </mdb-btn>
     </mdb-modal-footer>
@@ -38,7 +38,7 @@ import {
   mdbSelect
 } from 'mdbvue'
 import { mapGetters } from 'vuex'
-import ECharts from 'vue-echarts'
+// import ECharts from 'vue-echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/visualMap'
 import 'echarts/lib/component/toolbox'
@@ -60,8 +60,8 @@ export default {
     mdbModalTitle,
     mdbModalBody,
     mdbModalFooter,
-    mdbSelect,
-    'v-chart': ECharts
+    mdbSelect
+    // 'v-chart': ECharts
   },
 
   props: {
@@ -222,33 +222,33 @@ export default {
           type: 'line',
           data: this.airQualityData.map(
             (data) => data[this.selectedFactor.value]
-          ),
-          markLine:
-            factorName === 'CITY_AQI'
-              ? {
-                  silent: true,
-                  lineStyle: {
-                    color: '#2196f3'
-                  },
-                  data: [
-                    {
-                      yAxis: 50
-                    },
-                    {
-                      yAxis: 100
-                    },
-                    {
-                      yAxis: 150
-                    },
-                    {
-                      yAxis: 200
-                    },
-                    {
-                      yAxis: 300
-                    }
-                  ]
-                }
-              : null
+          )
+          // markLine:
+          //   factorName === 'CITY_AQI'
+          //     ? {
+          //         silent: true,
+          //         lineStyle: {
+          //           color: '#2196f3'
+          //         },
+          //         data: [
+          //           {
+          //             yAxis: 50
+          //           },
+          //           {
+          //             yAxis: 100
+          //           },
+          //           {
+          //             yAxis: 150
+          //           },
+          //           {
+          //             yAxis: 200
+          //           },
+          //           {
+          //             yAxis: 300
+          //           }
+          //         ]
+          //       }
+          //     : null
         }
       }
     }

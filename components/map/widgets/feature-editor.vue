@@ -205,7 +205,6 @@ export default {
       const featureSet = await this.featureLayer.queryFeatures()
       const feature = features[0]
 
-      console.log(feature)
       const { objectId } = feature
       const row = this.tableData.find(
         (row) => row[this.featureLayer.objectIdField] === objectId

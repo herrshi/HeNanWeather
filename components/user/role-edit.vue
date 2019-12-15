@@ -1,10 +1,10 @@
 <template>
   <mdb-modal
     :show="showModal"
-    @show="$_modal_beforeShow"
     info
     size="fluid"
     scrollable
+    @show="$_modal_beforeShow"
   >
     <mdb-modal-header :close="false" center>
       <p class="heading">
@@ -14,9 +14,9 @@
     <mdb-modal-body>
       <mdb-input
         :value="roleName"
-        @input="$emit('update:roleName', $event)"
         label="角色名"
         icon="user"
+        @input="$emit('update:roleName', $event)"
       />
       <mdb-card-group
         v-for="(row, index1) in menuRows"
@@ -32,10 +32,10 @@
       </mdb-card-group>
     </mdb-modal-body>
     <mdb-modal-footer center>
-      <mdb-btn @click="$_roleEdit_confirmYes" outline="info" rounded>
+      <mdb-btn outline="info" rounded @click="$_roleEdit_confirmYes">
         <mdb-icon icon="check" class="mr-1" />确认
       </mdb-btn>
-      <mdb-btn @click="$_roleEdit_confirmNo" color="info" rounded>
+      <mdb-btn color="info" rounded @click="$_roleEdit_confirmNo">
         <mdb-icon icon="times" class="mr-1" />取消
       </mdb-btn>
     </mdb-modal-footer>
@@ -124,11 +124,10 @@ export default {
         })
       })
       if (checkedItems !== this.originMenus) {
-        const result = await axiosGet('/role/add_role_menu_check', {
+        await axiosGet('/role/add_role_menu_check', {
           roleId: this.roleId,
           ids: checkedItems
         })
-        console.log(result)
       }
       this.$emit('confirmYes')
     },

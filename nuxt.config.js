@@ -26,12 +26,17 @@ export default {
   css: [
     'bootstrap-css-only/css/bootstrap.min.css',
     'mdbvue/lib/css/mdb.min.css',
-    '@fortawesome/fontawesome-free/css/all.min.css'
+    '@fortawesome/fontawesome-free/css/all.min.css',
+    '~/assets/style.css'
   ],
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/mdbvue-notifications', '~/plugins/auth'],
+  plugins: [
+    '~/plugins/mdbvue-notifications',
+    '~/plugins/auth',
+    { src: '~/plugins/vue-echarts', ssr: false }
+  ],
   /*
    ** Nuxt.js dev-modules
    */

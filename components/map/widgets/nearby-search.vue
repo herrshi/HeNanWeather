@@ -6,18 +6,18 @@
           <mdb-input
             id="checkbox1"
             v-model="airQualityChecked"
-            @change="$_filterDatatable"
             type="checkbox"
             label="空气监测站"
+            @change="$_filterDatatable"
           />
         </mdb-col>
         <mdb-col class="pr-0">
           <mdb-input
             id="checkbox2"
             v-model="surfaceWaterChecked"
-            @change="$_filterDatatable"
             type="checkbox"
             label="地表水监测站"
+            @change="$_filterDatatable"
           />
         </mdb-col>
       </mdb-row>
@@ -27,18 +27,18 @@
           <mdb-input
             id="checkbox3"
             v-model="pollutantSourceEnterpriseChecked"
-            @change="$_filterDatatable"
             type="checkbox"
             label="重点污染源"
+            @change="$_filterDatatable"
           />
         </mdb-col>
         <mdb-col class="pr-0">
           <mdb-input
             id="checkbox4"
             v-model="medicalWasteChecked"
-            @change="$_filterDatatable"
             type="checkbox"
             label="医疗固废监测站"
+            @change="$_filterDatatable"
           />
         </mdb-col>
       </mdb-row>
@@ -48,15 +48,14 @@
           <mdb-input
             id="checkbox5"
             v-model="radiationSourceChecked"
-            @change="$_filterDatatable"
             type="checkbox"
             label="辐射监测站"
+            @change="$_filterDatatable"
           />
         </mdb-col>
       </mdb-row>
       <mdb-datatable
         v-if="refreshTable"
-        @selectRow="$_datatable_rowSelected"
         :data="tableData"
         :tfoot="false"
         max-height="50vh"
@@ -73,14 +72,15 @@
         focus
         fixed
         class="m-2"
+        @selectRow="$_datatable_rowSelected"
       />
       <mdb-btn-fixed
         :bottom="5"
         :right="5"
-        @click.native.prevent="$_close"
         icon="ban"
         size="sm"
         color="blue"
+        @click.native.prevent="$_close"
       />
     </mdb-card-body>
   </mdb-card>
@@ -472,4 +472,4 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

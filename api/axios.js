@@ -30,9 +30,7 @@ const axiosGet = async (url, params = null) => {
 const axiosPost = async (url, params = null) => {
   const urlParam = new URLSearchParams()
   for (const key in params) {
-    if (params.hasOwnProperty(key)) {
-      urlParam.append(key, params[key])
-    }
+    urlParam.append(key, params[key])
   }
   try {
     const response = params

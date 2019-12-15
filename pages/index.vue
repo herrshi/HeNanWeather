@@ -15,12 +15,12 @@ export default {
     Home
   },
 
-  computed: {
-    ...mapState('app-info', ['appConfig'])
-  },
-
   async asyncData({ store }) {
     await store.dispatch('app-info/getAppConfig')
+  },
+
+  computed: {
+    ...mapState('app-info', ['appConfig'])
   }
 }
 </script>

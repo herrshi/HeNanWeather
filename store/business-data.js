@@ -97,6 +97,7 @@ const actions = {
           siteName: name,
           siteNo: id,
           cityName,
+          cityId,
           waterBasin: riverSystem,
           waterSyste: river,
           siteTypeNa: stationTypeName,
@@ -111,6 +112,7 @@ const actions = {
           name,
           id,
           cityName,
+          cityCode: cityId,
           geometry: { type: 'point', x, y },
           createTime,
           controlLevelName,
@@ -128,11 +130,31 @@ const actions = {
     }
     commit('stopFetchData')
   },
+
+  async getWaterMonitorFactorInfos({ commit }) {
+    const result = await WaterStationApi.getMonitorFactoringInfo()
+    if (result) {
+      result.forEach((monitoringFactor) => {
+        const { ID, NAME, UNIT, LOWLIMIT, HIGHLIMIT } = monitoringFactor
+        commit('setWaterMonitoringFactor', {
+          factorName: ID,
+          factorInfo: { name: NAME, unit: UNIT, low: LOWLIMIT, high: HIGHLIMIT }
+        })
+      })
+    }
+  },
+
+  async getWaterStationRTData({ commit }) {
+    commit('startFetchData')
+    const result = await axiosGet('monitor_data/get_water_real_time_data')
+    commit('setBusinessData', { dataType: 'WaterStationRTData', data: result })
+    commit('stopFetchData')
+  },
   /** /.地表水监测站点 **/
 
   /** 重点区域空气监测站点 **/
   async getAllAirQualitySurveillanceStation(
-    { commit },
+    { commit, rootState },
     { isPage, page, limit }
   ) {
     commit('startFetchData')
@@ -142,13 +164,18 @@ const actions = {
       limit
     })
     if (result.code === 1) {
-      const filter = result.data.filter((station) => station.isDelete === 1)
-      const stations = filter.map((station) => {
+      let filtered = result.data.filter((station) => station.isDelete === 1)
+      const { cityCode } = rootState
+      if (cityCode && cityCode !== '') {
+        filtered = filtered.filter((station) => station.cityId === cityCode)
+      }
+      const stations = filtered.map((station) => {
         const {
           objectId,
           siteName: name,
           siteId: id,
           cityName,
+          cityId,
           siteTypeNa: stationTypeName,
           status,
           x,
@@ -160,6 +187,7 @@ const actions = {
           name,
           id,
           cityName,
+          cityId,
           stationTypeName,
           status: status === 0 ? '在线' : '离线',
           geometry: { type: 'point', x, y },
@@ -171,6 +199,54 @@ const actions = {
         data: stations
       })
     }
+    commit('stopFetchData')
+  },
+
+  async getAirQualityRTData({ commit }) {
+    commit('startFetchData')
+    const result = await axiosGet('monitor_data/get_air_real_time_data')
+    commit('setBusinessData', { dataType: 'AirQualityRTData', data: result })
+    commit('stopFetchData')
+  },
+
+  async getAirQualityDailyData({ commit }, { startTime, endTime }) {
+    commit('startFetchData')
+
+    const result = await axiosGet('monitor_data/get_air_daily', {
+      startTime,
+      endTime
+    })
+    commit('setBusinessData', {
+      dataType: 'AirQualityDailyData',
+      data: result
+    })
+
+    commit('stopFetchData')
+  },
+
+  async getAirQualityWeeklyData({ commit }, { startTime, endTime }) {
+    commit('startFetchData')
+    const result = await axiosGet('monitor_data/get_air_week_report', {
+      startTime,
+      endTime
+    })
+    commit('setBusinessData', {
+      dataType: 'AirQualityWeeklyData',
+      data: result
+    })
+    commit('stopFetchData')
+  },
+
+  async getAirQualityMonthlyData({ commit }, { startTime, endTime }) {
+    commit('startFetchData')
+    const result = await axiosGet('monitor_data/get_air_Month_report', {
+      startTime,
+      endTime
+    })
+    commit('setBusinessData', {
+      dataType: 'AirQualityMonthlyData',
+      data: result
+    })
     commit('stopFetchData')
   },
   /** /.重点区域空气监测站点 **/
@@ -490,70 +566,8 @@ const actions = {
       dataType: 'VehicleExhaustSurveillanceStation',
       data: []
     })
-  },
-  /** /.机动车尾气 **/
-
-  /** 地表水监测因子基础信息 */
-  async getWaterMonitorFactorInfos({ commit }) {
-    const result = await WaterStationApi.getMonitorFactoringInfo()
-    if (result) {
-      result.forEach((monitoringFactor) => {
-        const { ID, NAME, UNIT, LOWLIMIT, HIGHLIMIT } = monitoringFactor
-        commit('setWaterMonitoringFactor', {
-          factorName: ID,
-          factorInfo: { name: NAME, unit: UNIT, low: LOWLIMIT, high: HIGHLIMIT }
-        })
-      })
-    }
-  },
-
-  async getAirQualityRTData({ commit }) {
-    commit('startFetchData')
-    const result = await axiosGet('monitor_data/get_air_real_time_data')
-    commit('setBusinessData', { dataType: 'AirQualityRTData', data: result })
-    commit('stopFetchData')
-  },
-
-  async getAirQualityDailyData({ commit }, { startTime, endTime }) {
-    commit('startFetchData')
-
-    const result = await axiosGet('monitor_data/get_air_daily', {
-      startTime,
-      endTime
-    })
-    commit('setBusinessData', {
-      dataType: 'AirQualityDailyData',
-      data: result
-    })
-
-    commit('stopFetchData')
-  },
-
-  async getAirQualityWeeklyData({ commit }, { startTime, endTime }) {
-    commit('startFetchData')
-    const result = await axiosGet('monitor_data/get_air_week_report', {
-      startTime,
-      endTime
-    })
-    commit('setBusinessData', {
-      dataType: 'AirQualityWeeklyData',
-      data: result
-    })
-    commit('stopFetchData')
-  },
-
-  async getAirQualityMonthlyData({ commit }, { startTime, endTime }) {
-    commit('startFetchData')
-    const result = await axiosGet('monitor_data/get_air_Month_report', {
-      startTime,
-      endTime
-    })
-    commit('setBusinessData', {
-      dataType: 'AirQualityMonthlyData',
-      data: result
-    })
-    commit('stopFetchData')
   }
+  /** /.机动车尾气 **/
 }
 
 export default {

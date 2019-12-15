@@ -5,26 +5,47 @@
       :class="showNearbySearch ? 'pl-0 pr-1' : 'pl-0 pr-0'"
     >
       <div id="divWidgets">
-        <div id="divOverlay" v-if="false">
+        <div v-if="false" id="divOverlay">
           <Overlay ref="widgetOverlay" />
         </div>
 
-        <div id="divLayerList" v-if="widgets && widgets.includes('LayerList')">
+        <div v-if="widgets && widgets.includes('LayerList')" id="divLayerList">
           <layer-list ref="widgetLayerList" />
         </div>
 
         <div
-          id="divFeatureEditor"
           v-if="widgets && widgets.includes('FeatureEditor')"
+          id="divFeatureEditor"
         >
           <feature-editor :widget-config="widgetConfig" />
         </div>
 
         <div
-          id="divAirQuality"
           v-if="widgets && widgets.includes('AirQuality')"
+          id="divAirQuality"
         >
           <air-quality :widget-config="widgetConfig" />
+        </div>
+
+        <div
+          v-if="widgets && widgets.includes('WaterQuality')"
+          id="divWaterQuality"
+        >
+          <water-quality
+            :widget-config="widgetConfig"
+            @mapPopupTriggerAction="$_triggerPopupActionManual"
+          />
+        </div>
+        <div
+          v-if="widgets && widgets.includes('Legend')"
+          id="divLegend"
+          style="background-color: white"
+        >
+          <img
+            src="/images/legend.png"
+            alt="图例"
+            style="height: 330px; width: 150px"
+          />
         </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
@@ -45,11 +66,13 @@ import LayerList from '~/components/map/widgets/layer-list'
 import NearbySearch from '~/components/map/widgets/nearby-search'
 import FeatureEditor from '~/components/map/widgets/feature-editor'
 import AirQuality from '~/components/map/widgets/air-quality'
+import WaterQuality from '~/components/map/widgets/water-quality'
 
 export default {
   name: 'Map',
 
   components: {
+    WaterQuality,
     AirQuality,
     FeatureEditor,
     mdbCol,
@@ -75,6 +98,11 @@ export default {
     widgetConfig: {
       type: Object,
       default: () => ({})
+    },
+
+    center: {
+      type: Object,
+      default: null
     }
   },
 
@@ -234,7 +262,33 @@ export default {
         ui.add(expandAirQuality, 'top-right')
       }
 
+      if (this.widgets.includes('WaterQuality')) {
+        const expandWaterQuality = new Expand({
+          view: this.view,
+          name: 'AirQuality',
+          content: document.getElementById('divWaterQuality'),
+          expandIconClass: 'esri-icon-public',
+          expanded: true
+        })
+        ui.add(expandWaterQuality, 'top-right')
+      }
+
+      if (this.widgets.includes('Legend')) {
+        const expandLegend = new Expand({
+          view: this.view,
+          name: 'Legend',
+          content: document.getElementById('divLegend'),
+          expandIconClass: 'esri-icon-collection',
+          expanded: false
+        })
+        ui.add(expandLegend, 'bottom-left')
+      }
+
       await this.view.when()
+
+      if (this.center) {
+        this.view.goTo(this.center)
+      }
 
       setTimeout(() => {
         this.$emit('mapInitialized')
@@ -246,6 +300,10 @@ export default {
       this.showNearbySearch = true
       this.view.popup.close()
       this.$refs.widgetNearbySearch.nearbySearch({ sourceGraphic, types })
+    },
+
+    $_triggerPopupActionManual(event) {
+      this.$emit('mapPopupTriggerAction', event)
     },
 
     $_getMap() {
@@ -306,9 +364,13 @@ export default {
 
     findOverlay(params) {
       this.$refs.widgetOverlay.findOverlay(params)
+    },
+
+    goTo(params) {
+      this.view.goTo(params)
     }
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped />

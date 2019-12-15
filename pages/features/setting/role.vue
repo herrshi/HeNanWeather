@@ -6,7 +6,7 @@
   >
     <mdb-card-body>
       <div class="d-flex justify-content-start">
-        <mdb-btn @click="$_showNewModal" color="cyan" size="sm" rounded>
+        <mdb-btn color="cyan" size="sm" rounded @click="$_showNewModal">
           <mdb-icon icon="plus" class="mr-1" />新增角色
         </mdb-btn>
       </div>
@@ -222,4 +222,4 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped />
