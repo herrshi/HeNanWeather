@@ -1,7 +1,7 @@
 <template>
   <mdb-modal
     :show="showModal"
-    size="fluid"
+    size="lg"
     scrollable
     @show="$_modal_beforeShow"
     @close="$emit('closeDetail')"
@@ -105,9 +105,9 @@ export default {
       const filteredStations = stations.filter(
         (station) => station.cityCode === this.cityCode
       )
-      this.stationSelect = filteredStations.map((state) => ({
-        text: state.name,
-        value: state.id
+      this.stationSelect = filteredStations.map((station) => ({
+        text: station.name,
+        value: station.id
       }))
       if (this.stationSelect.length > 0) {
         this.stationSelect[0].selected = true

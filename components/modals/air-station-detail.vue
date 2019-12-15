@@ -55,6 +55,20 @@
                     <td>二氧化硫</td>
                     <td>{{ stationRTData['SO2'] }}</td>
                   </tr>
+                </mdb-tbl-body>
+              </mdb-tbl>
+            </mdb-col>
+
+            <mdb-col>
+              <mdb-tbl>
+                <mdb-tbl-head>
+                  <tr>
+                    <th>监测因子</th>
+                    <th>监测值</th>
+                  </tr>
+                </mdb-tbl-head>
+
+                <mdb-tbl-body>
                   <tr>
                     <td>一氧化碳</td>
                     <td>{{ stationRTData['CO'] }}</td>
@@ -62,6 +76,14 @@
                   <tr>
                     <td>臭氧</td>
                     <td>{{ stationRTData['O3'] }}</td>
+                  </tr>
+                  <tr>
+                    <td>温度</td>
+                    <td>{{ stationRTData['WD'] }}</td>
+                  </tr>
+                  <tr>
+                    <td>湿度</td>
+                    <td>{{ stationRTData['HU'] }}</td>
                   </tr>
                 </mdb-tbl-body>
               </mdb-tbl>
@@ -182,6 +204,14 @@ export default {
         {
           text: '臭氧',
           value: 'O3'
+        },
+        {
+          text: '温度',
+          value: 'WD'
+        },
+        {
+          text: '湿度',
+          value: 'HU'
         }
       ],
       chartOption: null

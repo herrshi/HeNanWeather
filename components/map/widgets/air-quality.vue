@@ -12,8 +12,7 @@
         v-model="startDate"
         :option="dateOptions"
         :limit="[{ type: 'fromto', to: today }]"
-        label="请选择开始日期"
-        far
+        label="开始日期"
         auto-hide
         class="black-text"
         @getValue="$_dateChanged"
@@ -24,7 +23,7 @@
         v-model="endDate"
         :option="dateOptions"
         :limit="[{ type: 'fromto', from: startDate, to: today }]"
-        label="请选择结束日期"
+        label="结束日期"
         auto-hide
         class="black-text"
       />
@@ -143,14 +142,7 @@ export default {
 
   computed: {
     ...mapState('app-info', ['appConfig']),
-    // ...mapState('base-data', ['airQualityMonitoringFactor']),
     ...mapGetters('business-data', ['getBusinessData']),
-
-    // monitoringFactor() {
-    //   return [].concat(
-    //     JSON.parse(JSON.stringify(this.airQualityMonitoringFactor))
-    //   )
-    // },
 
     selectedFactor() {
       return this.monitoringFactor.find((factor) => factor.selected === true)

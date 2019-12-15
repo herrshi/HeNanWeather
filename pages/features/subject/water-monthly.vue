@@ -42,7 +42,7 @@ export default {
       startTime: '',
       endTime: '',
       // 专题类型--小时/日/月
-      subjectType: 'hourly'
+      subjectType: 'monthly'
     }
   },
 

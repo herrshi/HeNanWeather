@@ -2,13 +2,47 @@
   <mdb-card color="white">
     <mdb-card-body>
       <mdb-select
+        v-if="widgetConfig.WaterQuality.type === 'rt'"
         v-model="monitoringFactor"
         label="监测因子: "
         @getValue="$_setRenderer"
       />
-      <mdb-form-inline v-if="widgetConfig.WaterQuality.type !== 'rt'">
-        <mdb-date-picker label="请选择开始日期" class="black-text" />
-        <mdb-time-picker label="请选择开始时间" />
+      <mdb-form-inline
+        v-if="widgetConfig.WaterQuality.type !== 'rt'"
+        class="justify-content-between"
+      >
+        <mdb-date-picker
+          v-model="startDate"
+          :option="dateOptions"
+          :limit="[{ type: 'fromto', to: today }]"
+          auto-hide
+          label="开始日期"
+          class="black-text my-0"
+        />
+        <mdb-select
+          v-if="widgetConfig.WaterQuality.type === 'hourly'"
+          v-model="startTime"
+          label="开始时间"
+        />
+      </mdb-form-inline>
+
+      <mdb-form-inline
+        v-if="widgetConfig.WaterQuality.type !== 'rt'"
+        class="justify-content-between"
+      >
+        <mdb-date-picker
+          v-model="endDate"
+          :option="dateOptions"
+          :limit="[{ type: 'fromto', to: today }]"
+          auto-hide
+          label="结束日期"
+          class="black-text my-0"
+        />
+        <mdb-select
+          v-if="widgetConfig.WaterQuality.type === 'hourly'"
+          v-model="endTime"
+          label="结束时间"
+        />
       </mdb-form-inline>
     </mdb-card-body>
   </mdb-card>
@@ -20,11 +54,11 @@ import {
   mdbCardBody,
   mdbSelect,
   mdbFormInline,
-  mdbDatePicker,
-  mdbTimePicker
+  mdbDatePicker
 } from 'mdbvue'
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex'
 import { loadModules } from 'esri-loader'
+import moment from 'moment'
 
 export default {
   name: 'WaterQuality',
@@ -34,8 +68,7 @@ export default {
     mdbCardBody,
     mdbSelect,
     mdbFormInline,
-    mdbDatePicker,
-    mdbTimePicker
+    mdbDatePicker
   },
 
   inject: ['getMap', 'getView'],
@@ -60,7 +93,94 @@ export default {
       countyLayer: null,
 
       stationGraphics: [],
-      monitoringFactor: []
+      monitoringFactor: [],
+
+      startDate: '',
+      endDate: moment().format('YYYY-MM-DD'),
+      today: moment().format('YYYY-MM-DD'),
+      dateOptions: {
+        type: 'day',
+        SundayFirst: false,
+        week: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        month: [
+          '一月',
+          '二月',
+          '三月',
+          '四月',
+          '五月',
+          '六月',
+          '七月',
+          '八月',
+          '九月',
+          '十月',
+          '十一月',
+          '十二月'
+        ],
+        format: 'YYYY-MM-DD',
+        color: {
+          header: 'primary',
+          headerText: 'primary',
+          checkedDay: 'primary'
+        },
+        buttons: {
+          ok: '确认',
+          clear: '清除',
+          today: '今日'
+        },
+        overlayOpacity: 0.5
+      },
+      startTime: [
+        { text: '0时', value: '00:00:00', selected: true },
+        { text: '1时', value: '01:00:00' },
+        { text: '2时', value: '02:00:00' },
+        { text: '3时', value: '03:00:00' },
+        { text: '4时', value: '04:00:00' },
+        { text: '5时', value: '05:00:00' },
+        { text: '6时', value: '06:00:00' },
+        { text: '7时', value: '07:00:00' },
+        { text: '8时', value: '08:00:00' },
+        { text: '9时', value: '09:00:00' },
+        { text: '10时', value: '10:00:00' },
+        { text: '11时', value: '11:00:00' },
+        { text: '12时', value: '12:00:00' },
+        { text: '13时', value: '13:00:00' },
+        { text: '14时', value: '14:00:00' },
+        { text: '15时', value: '15:00:00' },
+        { text: '16时', value: '16:00:00' },
+        { text: '17时', value: '17:00:00' },
+        { text: '18时', value: '18:00:00' },
+        { text: '19时', value: '19:00:00' },
+        { text: '20时', value: '20:00:00' },
+        { text: '21时', value: '21:00:00' },
+        { text: '22时', value: '22:00:00' },
+        { text: '23时', value: '23:00:00' }
+      ],
+      endTime: [
+        { text: '0时', value: '00:00:00', selected: true },
+        { text: '1时', value: '01:00:00' },
+        { text: '2时', value: '02:00:00' },
+        { text: '3时', value: '03:00:00' },
+        { text: '4时', value: '04:00:00' },
+        { text: '5时', value: '05:00:00' },
+        { text: '6时', value: '06:00:00' },
+        { text: '7时', value: '07:00:00' },
+        { text: '8时', value: '08:00:00' },
+        { text: '9时', value: '09:00:00' },
+        { text: '10时', value: '10:00:00' },
+        { text: '11时', value: '11:00:00' },
+        { text: '12时', value: '12:00:00' },
+        { text: '13时', value: '13:00:00' },
+        { text: '14时', value: '14:00:00' },
+        { text: '15时', value: '15:00:00' },
+        { text: '16时', value: '16:00:00' },
+        { text: '17时', value: '17:00:00' },
+        { text: '18时', value: '18:00:00' },
+        { text: '19时', value: '19:00:00' },
+        { text: '20时', value: '20:00:00' },
+        { text: '21时', value: '21:00:00' },
+        { text: '22时', value: '22:00:00' },
+        { text: '23时', value: '23:00:00' }
+      ]
     }
   },
 
@@ -72,10 +192,29 @@ export default {
 
     selectedFactor() {
       return this.monitoringFactor.find((factor) => factor.selected === true)
+    },
+
+    initStartDate() {
+      switch (this.widgetConfig.WaterQuality.type) {
+        case 'hourly':
+          return 1
+        case 'daily':
+          return 7
+        case 'weekly':
+          return 31
+        case 'monthly':
+          return 365
+        default:
+          return 1
+      }
     }
   },
 
   async mounted() {
+    this.startDate = moment()
+      .subtract(this.initStartDate, 'days')
+      .format('YYYY-MM-DD')
+
     this.startFetchData()
 
     for (const [key, value] of this.waterMonitoringFactorMap) {
@@ -106,38 +245,75 @@ export default {
     this.map = await this.getMap()
 
     // 图例
-    this.legend = new Legend({
-      view: this.view,
-      layerInfos: [
-        {
-          layer: this.waterStationLayer,
-          title: '地表水'
-        }
-      ]
-    })
-    const expandLegend = new Expand({
-      view: this.view,
-      content: this.legend,
-      name: 'Legend',
-      expandIconClass: 'esri-icon-collection',
-      expandTooltip: '图例',
-      expanded: false
-    })
-    this.view.ui.add(expandLegend, 'bottom-left')
+    if (this.widgetConfig.WaterQuality.type === 'rt') {
+      this.legend = new Legend({
+        view: this.view,
+        layerInfos: [
+          {
+            layer: this.waterStationLayer,
+            title: '地表水'
+          }
+        ]
+      })
+      const expandLegend = new Expand({
+        view: this.view,
+        content: this.legend,
+        name: 'Legend',
+        expandIconClass: 'esri-icon-collection',
+        expandTooltip: '图例',
+        expanded: false
+      })
+      this.view.ui.add(expandLegend, 'bottom-left')
+    }
 
     this.view.on('click', async (event) => {
       const response = await this.view.hitTest(event)
       if (response.results.length) {
+        const stationResult = response.results.find(
+          (result) => result.graphic.layer === this.waterStationLayer
+        )
+        if (stationResult) {
+          return
+        }
         const countryResult = response.results.find(
           (result) => result.graphic.layer === this.countyLayer
         )
         if (countryResult) {
           const graphic = countryResult.graphic
           if (graphic) {
-            this.$emit('mapPopupTriggerAction', {
-              actionId: 'showCountryWaterQualityModal',
-              selectedGraphic: graphic
-            })
+            switch (this.widgetConfig.WaterQuality.type) {
+              case 'rt':
+                this.$emit('mapPopupTriggerAction', {
+                  actionId: 'showCountryWaterQualityModal',
+                  selectedGraphic: graphic
+                })
+                break
+
+              case 'hourly':
+                this.$emit('mapPopupTriggerAction', {
+                  actionId: 'showCountryWaterQualityModal',
+                  selectedGraphic: graphic,
+                  start:
+                    this.startDate +
+                    ' ' +
+                    this.startTime.find((time) => time.selected).value,
+                  end:
+                    this.endDate +
+                    ' ' +
+                    this.endTime.find((time) => time.selected).value
+                })
+                break
+
+              case 'daily':
+              case 'monthly':
+                this.$emit('mapPopupTriggerAction', {
+                  actionId: 'showCountryWaterQualityModal',
+                  selectedGraphic: graphic,
+                  start: this.startDate,
+                  end: this.endDate
+                })
+                break
+            }
           }
         }
       }
@@ -405,6 +581,6 @@ export default {
 
 <style scoped>
 .card {
-  width: 300px;
+  width: 400px;
 }
 </style>
