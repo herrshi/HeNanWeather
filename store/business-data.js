@@ -66,7 +66,8 @@ const actions = {
           pollutantSourceTypeName,
           cityName,
           isDelete,
-          type: '重点污染源企业'
+          type: '污染源企业',
+          dataType: 'PollutantSourceEnterprise'
         }
       })
       commit('setBusinessData', {
@@ -120,7 +121,8 @@ const actions = {
           river,
           stationTypeName,
           boundary,
-          type: '地表水监测站'
+          type: '地表水站点',
+          dataType: 'SurfaceWaterSurveillanceStation'
         }
       })
       commit('setBusinessData', {
@@ -191,7 +193,8 @@ const actions = {
           stationTypeName,
           status: status === 0 ? '在线' : '离线',
           geometry: { type: 'point', x, y },
-          type: '空气监测站'
+          type: '空气监测站点',
+          dataType: 'AirQualitySurveillanceStation'
         }
       })
       commit('setBusinessData', {
@@ -282,7 +285,8 @@ const actions = {
           cityName,
           stationTypeName,
           geometry: { type: 'point', x, y },
-          type: '医疗固废监测站'
+          type: '医疗固废站点',
+          dataType: 'MedicalWasteSurveillanceStation'
         }
       })
       commit('setBusinessData', {
@@ -325,7 +329,8 @@ const actions = {
           cityName,
           stationTypeName,
           geometry: { type: 'point', x, y },
-          type: '辐射源监测站'
+          type: '辐射源站点',
+          dataType: 'RadiationSourceSurveillanceStation'
         }
       })
       commit('setBusinessData', {

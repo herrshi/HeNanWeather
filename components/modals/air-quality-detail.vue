@@ -92,31 +92,31 @@ export default {
           selected: true
         },
         {
-          text: 'PM10平均值',
+          text: 'PM10',
           value: 'PM10_VALUE_AVG'
         },
         {
-          text: 'SO2平均值',
+          text: 'SO2',
           value: 'SO2_VALUE_AVG'
         },
         {
-          text: 'O3平均值',
+          text: 'O3',
           value: 'O3_VALUE_AVG'
         },
         {
-          text: 'NO2平均值',
+          text: 'NO2',
           value: 'NO2_VALUE_AVG'
         },
         {
-          text: 'CO平均值',
+          text: 'CO',
           value: 'CO_VALUE_AVG'
         },
         {
-          text: 'PM25平均值',
+          text: 'PM25',
           value: 'PM25_VALUE_AVG'
         },
         {
-          text: 'O3H8平均值',
+          text: 'O3H8',
           value: 'O3H8_VALUE_AVG'
         }
       ]
@@ -158,7 +158,7 @@ export default {
         },
         xAxis: {
           data: this.airQualityData.map((data) =>
-            moment(data.TIME_NAME).format('YYYY-MM-DD')
+            moment(data.TIME_NAME).format('MM-DD')
           )
         },
         yAxis: {

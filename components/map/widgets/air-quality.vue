@@ -15,7 +15,6 @@
         label="开始日期"
         auto-hide
         class="black-text"
-        @getValue="$_dateChanged"
       />
 
       <mdb-date-picker
@@ -27,12 +26,25 @@
         auto-hide
         class="black-text"
       />
+
+      <div class="d-flex justify-content-center">
+        <mdb-btn outline="info" size="sm" rounded @click="$_dateChanged">
+          <mdb-icon icon="check" class="mr-1" />确定
+        </mdb-btn>
+      </div>
     </mdb-card-body>
   </mdb-card>
 </template>
 
 <script>
-import { mdbCard, mdbCardBody, mdbSelect, mdbDatePicker } from 'mdbvue'
+import {
+  mdbCard,
+  mdbCardBody,
+  mdbSelect,
+  mdbDatePicker,
+  mdbBtn,
+  mdbIcon
+} from 'mdbvue'
 import { loadModules } from 'esri-loader'
 import { mapActions, mapState, mapGetters } from 'vuex'
 import moment from 'moment'
@@ -44,7 +56,9 @@ export default {
     mdbCard,
     mdbCardBody,
     mdbSelect,
-    mdbDatePicker
+    mdbDatePicker,
+    mdbBtn,
+    mdbIcon
   },
 
   inject: ['getMap', 'getView'],
@@ -61,6 +75,7 @@ export default {
       map: null,
       view: null,
       cityLayer: null,
+      labelLayer: null,
       layerRenderer: null,
 
       cityGraphics: [],
@@ -112,31 +127,33 @@ export default {
 
       monitoringFactor: [
         {
-          text: 'PM25平均值',
+          text: 'PM25',
           value: 'PM25_VALUE_AVG',
           selected: true
         },
         {
-          text: 'PM10平均值',
+          text: 'PM10',
           value: 'PM10_VALUE_AVG'
         },
         {
-          text: '二氧化氮平均值',
+          text: '二氧化氮',
           value: 'NO2_VALUE_AVG'
         },
         {
-          text: '二氧化硫平均值',
+          text: '二氧化硫',
           value: 'SO2_VALUE_AVG'
         },
         {
-          text: '一氧化碳平均值',
+          text: '一氧化碳',
           value: 'CO_VALUE_AVG'
         },
         {
-          text: '臭氧平均值',
+          text: '臭氧',
           value: 'O3_VALUE_AVG'
         }
-      ]
+      ],
+
+      airQualityData: null
     }
   },
 
@@ -189,6 +206,7 @@ export default {
         }))
       )
       .concat([
+        { name: 'value', type: 'single' },
         { name: 'time', alias: '数据时间', type: 'date' },
         { name: 'PRIMARY_POLLUTANTS', alias: '首要污染物', type: 'string' }
       ])
@@ -249,6 +267,9 @@ export default {
           mode: 'instant'
         })
         this.view.ui.add(this.timeSlider, 'bottom-right')
+        this.timeSlider.watch('values', (values) => {
+          this.$_setLabelData()
+        })
       }
     },
 
@@ -471,14 +492,13 @@ export default {
     },
 
     async $_setDailyData() {
-      let result
       switch (this.widgetConfig.AirQuality.type) {
         case 'daily':
           await this.getAirQualityDailyData({
             startTime: this.startDate,
             endTime: this.endDate
           })
-          result = this.getBusinessData('AirQualityDailyData')
+          this.airQualityData = this.getBusinessData('AirQualityDailyData')
           break
 
         case 'weekly': {
@@ -499,7 +519,7 @@ export default {
             startTime: startTimeWeek,
             endTime: endTimeWeek
           })
-          result = this.getBusinessData('AirQualityWeeklyData')
+          this.airQualityData = this.getBusinessData('AirQualityWeeklyData')
           break
         }
 
@@ -521,7 +541,7 @@ export default {
             startTime: startTimeMonth,
             endTime: endTimeMonth
           })
-          result = this.getBusinessData('AirQualityMonthlyData')
+          this.airQualityData = this.getBusinessData('AirQualityMonthlyData')
           break
         }
       }
@@ -530,8 +550,8 @@ export default {
       let minValue = Number.MAX_VALUE
       let maxValue = Number.MIN_VALUE
 
-      for (let i = 0; i < result.length; i++) {
-        const data = result[i]
+      for (let i = 0; i < this.airQualityData.length; i++) {
+        const data = this.airQualityData[i]
         const value = data[this.selectedFactor.value]
         minValue = Math.min(minValue, value)
         maxValue = Math.max(maxValue, value)
@@ -586,23 +606,23 @@ export default {
               className: 'esri-icon-line-chart'
             }
           ]
-        },
-        labelingInfo: [
-          {
-            labelExpressionInfo: {
-              expression: `$feature.name + ':' + $feature.${this.selectedFactor.value}`
-            },
-            symbol: {
-              type: 'text',
-              font: {
-                family: 'yahei',
-                size: 12
-              },
-              haloSize: 1,
-              haloColor: 'white'
-            }
-          }
-        ]
+        }
+        // labelingInfo: [
+        //   {
+        //     labelExpressionInfo: {
+        //       expression: `$feature.name + ':' + $feature.${this.selectedFactor.value}`
+        //     },
+        //     symbol: {
+        //       type: 'text',
+        //       font: {
+        //         family: 'yahei',
+        //         size: 12
+        //       },
+        //       haloSize: 1,
+        //       haloColor: 'white'
+        //     }
+        //   }
+        // ]
       })
       this.cityLayer.renderer = this.$_setRenderer(minValue, maxValue)
       this.legend.layerInfos[0].layer = this.cityLayer
@@ -638,6 +658,63 @@ export default {
       //   this.cityLayer.labelingInfo[0].where = `time = ${values[0]}`
       // })
       // this.cityLayer.labelingInfo[0].where = `time = ${this.timeSlider.values[0]}`
+
+      if (this.labelLayer) {
+        this.map.remove(this.labelLayer)
+      }
+      this.labelLayer = new FeatureLayer({
+        objectIdField: 'FID',
+        source: this.cityGraphics,
+        fields: this.layerFields.map((field) => Field.fromJSON(field)),
+        outFields: ['*'],
+        renderer: {
+          type: 'simple',
+          symbol: {
+            type: 'simple-fill',
+            color: [0, 0, 0, 0],
+            outline: {
+              color: [0, 0, 0, 0]
+            }
+          }
+        },
+        labelingInfo: [
+          {
+            labelExpressionInfo: {
+              expression: `$feature.name + ':' + $feature.value`
+            },
+            symbol: {
+              type: 'text',
+              font: {
+                family: 'yahei',
+                size: 12
+              },
+              haloSize: 1,
+              haloColor: 'white'
+            }
+          }
+        ]
+      })
+      this.map.add(this.labelLayer)
+      setTimeout(() => {
+        this.$_setLabelData()
+      }, 1000)
+    },
+
+    $_setLabelData() {
+      const time = moment(this.timeSlider.values[0]).format('YYYY-MM-DD')
+      const updateFeatures = []
+      this.cityGraphics.forEach((graphic) => {
+        const data = this.airQualityData.find(
+          (result) =>
+            moment(result.TIME_NAME).format('YYYY-MM-DD') === time &&
+            result.CITY_CODE === graphic.getAttribute('Code')
+        )
+        if (data) {
+          graphic.setAttribute('value', data[this.selectedFactor.value])
+          updateFeatures.push(graphic)
+        }
+      })
+      this.labelLayer.applyEdits({ updateFeatures })
     },
 
     async $_dateChanged() {

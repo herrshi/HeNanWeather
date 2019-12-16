@@ -1,39 +1,30 @@
 <template>
-  <mdb-btn-group v-if="layerListWidgetVisible">
-    <mdb-tooltip
+  <mdb-btn-group>
+    <mdb-btn
       v-for="(layerConfig, index) in layerListConfig"
       :key="index"
-      material
+      rounded
+      size="sm"
+      color="primary"
+      :active="layerConfig.active"
+      @click="$_toggleButton(layerConfig)"
     >
-      <span slot="tip">{{ layerConfig.name }}</span>
-      <mdb-btn
-        slot="reference"
-        rounded
-        size="sm"
-        color="primary"
-        :active="layerConfig.active"
-        @click="$_toggleButton(layerConfig)"
-      >
-        {{ layerConfig.buttonName }}
-      </mdb-btn>
-    </mdb-tooltip>
-    <mdb-tooltip material>
-      <span slot="tip">聚合</span>
-      <mdb-btn
-        slot="reference"
-        :color="isCluster ? 'success' : 'blue-grey'"
-        rounded
-        size="sm"
-        @click="$_toggleCluster"
-      >
-        聚合
-      </mdb-btn>
-    </mdb-tooltip>
+      {{ layerConfig.buttonName }}
+    </mdb-btn>
+
+    <mdb-btn
+      :color="isCluster ? 'success' : 'blue-grey'"
+      rounded
+      size="sm"
+      @click="$_toggleCluster"
+    >
+      聚合
+    </mdb-btn>
   </mdb-btn-group>
 </template>
 
 <script>
-import { mdbBtn, mdbBtnGroup, mdbTooltip } from 'mdbvue'
+import { mdbBtn, mdbBtnGroup } from 'mdbvue'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { loadModules } from 'esri-loader'
 
@@ -44,14 +35,14 @@ export default {
 
   components: {
     mdbBtn,
-    mdbBtnGroup,
-    mdbTooltip
+    mdbBtnGroup
   },
 
   data() {
     return {
       view: null,
-      isCluster: true
+      isCluster: true,
+      legend: null
     }
   },
 
@@ -66,7 +57,9 @@ export default {
     ]),
 
     layerListConfig() {
-      return this.appConfig.pageComponents.layerList
+      if (this.layerListWidgetVisible)
+        return this.appConfig.pageComponents.layerList
+      else return this.appConfig.pageComponents.layerList.slice(0, 3)
     }
   },
 
@@ -75,6 +68,28 @@ export default {
 
     this.view = await this.getView()
     const map = await this.getMap()
+
+    const [Legend, Expand] = await loadModules(
+      ['esri/widgets/Legend', 'esri/widgets/Expand'],
+      {
+        url: `${this.appConfig.map.arcgis_api}/init.js`
+      }
+    )
+    this.legend = new Legend({
+      view: this.view,
+      layerInfos: this.visibleBusinessLayer.map((visibleLayer) => ({
+        title: visibleLayer.title,
+        layer: visibleLayer
+      }))
+    })
+    const legendExpand = new Expand({
+      view: this.view,
+      name: 'Legend',
+      content: this.legend,
+      expandIconClass: 'esri-icon-public',
+      expanded: false
+    })
+    this.view.ui.add(legendExpand, 'bottom-left')
 
     // foreach中不能使用async/await
     for (let i = 0; i < this.layerListConfig.length; i++) {
@@ -185,7 +200,7 @@ export default {
             maxValue: 100,
             symbol: {
               type: 'picture-marker',
-              url: '/images/m3.png',
+              url: '/images/m2.png',
               width: '50px',
               height: '50px'
             }
@@ -417,6 +432,13 @@ export default {
           layer.visible = active
         }
       }
+
+      // this.legend.layerInfos = this.visibleBusinessLayer.map(
+      //   (visibleLayer) => ({
+      //     title: visibleLayer.label,
+      //     layer: visibleLayer
+      //   })
+      // )
     },
 
     resetLayers() {
@@ -432,6 +454,13 @@ export default {
           if (featureLayer) featureLayer.visible = active
         }
       })
+
+      // this.legend.layerInfos = this.visibleBusinessLayer.map(
+      //   (visibleLayer) => ({
+      //     title: visibleLayer.title,
+      //     layer: visibleLayer
+      //   })
+      // )
     }
   }
 }
@@ -439,6 +468,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 800px;
+  width: 700px;
 }
 </style>

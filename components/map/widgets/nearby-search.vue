@@ -53,7 +53,29 @@
             @change="$_filterDatatable"
           />
         </mdb-col>
+        <mdb-col class="pr-0">
+          <mdb-input
+            id="checkbox6"
+            v-model="soilPollutantChecked"
+            type="checkbox"
+            label="土壤污染地块"
+            @change="$_filterDatatable"
+          />
+        </mdb-col>
       </mdb-row>
+
+      <mdb-row>
+        <mdb-col class="pr-0">
+          <mdb-input
+            id="checkbox7"
+            v-model="reserveChecked"
+            type="checkbox"
+            label="保护区"
+            @change="$_filterDatatable"
+          />
+        </mdb-col>
+      </mdb-row>
+
       <mdb-datatable
         v-if="refreshTable"
         :data="tableData"
@@ -63,12 +85,9 @@
         entries-title=""
         no-found-message="无符合记录"
         search-placeholder="搜索"
-        reponsive
         arrows
         striped
-        scroll-y
         bordered
-        hover
         focus
         fixed
         class="m-2"
@@ -139,7 +158,7 @@ export default {
         columns: [
           {
             label: '类别',
-            field: 'dataType'
+            field: 'type'
           },
           {
             label: '名称',
@@ -155,7 +174,9 @@ export default {
       medicalWasteChecked: true,
       pollutantSourceEnterpriseChecked: true,
       radiationSourceChecked: true,
-      surfaceWaterChecked: true
+      surfaceWaterChecked: true,
+      soilPollutantChecked: true,
+      reserveChecked: true
     }
   },
 
@@ -408,7 +429,8 @@ export default {
       }
       this.queryResults = features.map((feature) => ({
         id: feature.getAttribute('id'),
-        dataType: feature.getAttribute('type'),
+        type: feature.getAttribute('type'),
+        dataType: feature.getAttribute('dataType'),
         name: feature.getAttribute('name')
       }))
       await this.$_filterDatatable()
@@ -423,7 +445,23 @@ export default {
       return WaterStationApi.getRelatedPollutantSource(waterStationId, ids)
     },
 
-    $_datatable_rowSelected(index) {},
+    $_datatable_rowSelected(index) {
+      const { id, dataType } = this.tableData.rows[index]
+      const layer = this.businessLayer(dataType)
+      if (layer) {
+        const graphic = layer.source.find(
+          (graphic) => graphic.getAttribute('id') === id
+        )
+        if (graphic) {
+          this.view.goTo(graphic)
+          this.view.popup.close()
+          this.view.popup.open({
+            features: [graphic],
+            location: graphic.geometry
+          })
+        }
+      }
+    },
 
     $_removeHighlightHandlers() {
       this.highlightHandlers.forEach((layerView) => {
@@ -440,15 +478,15 @@ export default {
     async $_filterDatatable() {
       this.tableData.rows = this.queryResults.filter((rowData) => {
         switch (rowData.dataType) {
-          case '重点污染源企业':
+          case 'PollutantSourceEnterprise':
             return this.pollutantSourceEnterpriseChecked
-          case '地表水监测站':
+          case 'SurfaceWaterSurveillanceStation':
             return this.surfaceWaterChecked
-          case '空气监测站':
+          case 'AirQualitySurveillanceStation':
             return this.airQualityChecked
-          case '医疗固废监测站':
+          case 'MedicalWasteSurveillanceStation':
             return this.medicalWasteChecked
-          case '辐射源监测站':
+          case 'RadiationSourceSurveillanceStation':
             return this.radiationSourceChecked
           default:
             return true

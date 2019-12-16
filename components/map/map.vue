@@ -36,17 +36,6 @@
             @mapPopupTriggerAction="$_triggerPopupActionManual"
           />
         </div>
-        <div
-          v-if="widgets && widgets.includes('Legend')"
-          id="divLegend"
-          style="background-color: white"
-        >
-          <img
-            src="/images/legend.png"
-            alt="图例"
-            style="height: 330px; width: 150px"
-          />
-        </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
     </mdb-col>
@@ -271,17 +260,6 @@ export default {
           expanded: true
         })
         ui.add(expandWaterQuality, 'top-right')
-      }
-
-      if (this.widgets.includes('Legend')) {
-        const expandLegend = new Expand({
-          view: this.view,
-          name: 'Legend',
-          content: document.getElementById('divLegend'),
-          expandIconClass: 'esri-icon-collection',
-          expanded: false
-        })
-        ui.add(expandLegend, 'bottom-left')
       }
 
       await this.view.when()

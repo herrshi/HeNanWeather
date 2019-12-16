@@ -39,6 +39,7 @@ import {
   mdbSelect
 } from 'mdbvue'
 import _ from 'lodash'
+import moment from 'moment'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/visualMap'
@@ -196,7 +197,11 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: this.chartXData
+          data: this.chartXData.map((date) =>
+            moment(date).format(
+              this.subjectType === 'hourly' ? 'MM-DD hh:mm' : 'MM-DD'
+            )
+          )
         },
         yAxis: {
           type: 'value'

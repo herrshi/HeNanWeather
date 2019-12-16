@@ -157,7 +157,7 @@
     ],
     "layerList": [
       {
-        "name": "重点区域空气监测站点",
+        "name": "重点区域空气监测站点(480个)",
         "geometryType": "point",
         "buttonName": "空气",
         "dataType": "AirQualitySurveillanceStation",
@@ -190,10 +190,15 @@
           {
             "name": "type",
             "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
           }
         ],
         "renderer": {
           "type": "simple",
+          "label": "(480个)",
           "symbol": {
             "type": "picture-marker",
             "url": "/images/AirStation.png",
@@ -234,7 +239,7 @@
         }
       },
       {
-        "name": "地表水监测站点",
+        "name": "地表水监测站点(330个)",
         "geometryType": "point",
         "buttonName": "地表水",
         "dataType": "SurfaceWaterSurveillanceStation",
@@ -280,6 +285,10 @@
           {
             "name": "type",
             "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
           }
         ],
         "renderer": {
@@ -296,6 +305,7 @@
           "uniqueValueInfos": [
             {
               "value": "长江",
+              "label": "长江(56个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_ChangJiang.png",
@@ -306,6 +316,7 @@
             },
             {
               "value": "淮河",
+              "label": "淮河(182个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_HuaiHe.png",
@@ -316,6 +327,7 @@
             },
             {
               "value": "海河",
+              "label": "海河(42个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_HaiHe.png",
@@ -326,6 +338,7 @@
             },
             {
               "value": "黄河",
+              "label": "黄河(50个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_HuangHe.png",
@@ -377,7 +390,7 @@
         }
       },
       {
-        "name": "重点污染源企业",
+        "name": "重点污染源企业(4284个)",
         "geometryType": "point",
         "buttonName": "污染源",
         "dataType": "PollutantSourceEnterprise",
@@ -411,6 +424,10 @@
           {
             "name": "type",
             "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
           }
         ],
         "renderer": {
@@ -426,6 +443,7 @@
           "uniqueValueInfos": [
             {
               "value": "一般废水",
+              "label": "一般废水(1377个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/corp_water.png",
@@ -436,6 +454,7 @@
             },
             {
               "value": "一般废气",
+              "label": "一般废气(2415个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/corp_air.png",
@@ -446,6 +465,7 @@
             },
             {
               "value": "一般废水,一般废气",
+              "label": "涉水涉气(492个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/corp_water_air.png",
@@ -520,6 +540,10 @@
           {
             "name": "type",
             "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
           }
         ],
         "renderer": {
@@ -592,6 +616,10 @@
           {
             "name": "type",
             "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
           }
         ],
         "renderer": {
@@ -663,6 +691,10 @@
           },
           {
             "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "dataType",
             "type": "string"
           }
         ],
@@ -839,6 +871,12 @@
             "name": "type",
             "type": "string",
             "defaultValue": "土壤污染地块",
+            "editable": false
+          },
+          {
+            "name": "dataType",
+            "type": "string",
+            "defaultValue": "SoilPollutantArea",
             "editable": false
           }
         ],
@@ -1021,6 +1059,12 @@
             "name": "type",
             "type": "string",
             "defaultValue": "保护区",
+            "editable": false
+          },
+          {
+            "name": "dataType",
+            "type": "string",
+            "defaultValue": "Reserve",
             "editable": false
           }
         ],

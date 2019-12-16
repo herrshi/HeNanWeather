@@ -97,6 +97,7 @@
       <mdb-select
         v-model="airStationMonitoringFactor"
         label="监测因子: "
+        multiple
         @getValue="$_setOption"
       />
       <v-chart :options="chartOption" />
@@ -219,8 +220,8 @@ export default {
   },
 
   computed: {
-    selectedFactor() {
-      return this.airStationMonitoringFactor.find(
+    selectedFactors() {
+      return this.airStationMonitoringFactor.filter(
         (factor) => factor.selected === true
       )
     }
@@ -255,79 +256,37 @@ export default {
     },
 
     $_setOption() {
-      const factorName = this.selectedFactor.value
+      // const factorName = this.selectedFactor.value
       this.chartOption = {
         tooltip: {
           trigger: 'axis'
         },
+        legend: { data: this.selectedFactors.map((factor) => factor.text) },
         xAxis: {
+          boundaryGap: false,
           data: this.stationHistData.map((data) =>
-            moment(data.TIME_NAME).format('YYYY-MM-DD')
+            moment(data.TIME_NAME).format('MM-DD')
           )
         },
         yAxis: {
-          splitLine: {
-            show: false
-          }
+          type: 'value'
         },
-        toolbox: {
-          left: 'center',
-          feature: {
-            dataZoom: {
-              yAxisIndex: 'none'
-            },
-            restore: {},
-            saveAsImage: {}
-          }
-        },
-        visualMap:
-          factorName === 'AQI'
-            ? {
-                top: 0,
-                right: 0,
-                pieces: [
-                  {
-                    gt: 0,
-                    lte: 50,
-                    color: '#096'
-                  },
-                  {
-                    gt: 50,
-                    lte: 100,
-                    color: '#ffde33'
-                  },
-                  {
-                    gt: 100,
-                    lte: 150,
-                    color: '#ff9933'
-                  },
-                  {
-                    gt: 150,
-                    lte: 200,
-                    color: '#cc0033'
-                  },
-                  {
-                    gt: 200,
-                    lte: 300,
-                    color: '#660099'
-                  },
-                  {
-                    gt: 300,
-                    color: '#7e0023'
-                  }
-                ],
-                outOfRange: {
-                  color: '#999'
-                }
-              }
-            : null,
-        series: {
-          name: this.selectedFactor.text,
+        // toolbox: {
+        //   left: 'center',
+        //   feature: {
+        //     dataZoom: {
+        //       yAxisIndex: 'none'
+        //     },
+        //     restore: {},
+        //     saveAsImage: {}
+        //   }
+        // },
+        series: this.selectedFactors.map((factor) => ({
+          name: factor.text,
           type: 'line',
-          data: this.stationHistData.map(
-            (data) => data[this.selectedFactor.value]
-          )
-        }
+          smooth: true,
+          data: this.stationHistData.map((data) => data[factor.value])
+        }))
       }
     }
   }

@@ -85,9 +85,7 @@ export default {
       this.startFetchData()
       const result = await WaterStationApi.getRTData(this.stationId)
       this.stopFetchData()
-      if (result) {
-        this.stationRTData = result[0]
-      }
+      this.stationRTData = result && result.length > 0 ? result[0] : {}
     }
   }
 }
