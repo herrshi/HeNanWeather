@@ -294,14 +294,6 @@
         "renderer": {
           "type": "unique-value",
           "field": "riverSystem",
-          "defaultSymbol": {
-            "type": "picture-marker",
-            "url": "/images/WaterStation_Other.png",
-            "width": "30px",
-            "height": "40px",
-            "yoffset": "20px"
-          },
-          "defaultLabel": "其他",
           "uniqueValueInfos": [
             {
               "value": "长江",
@@ -390,7 +382,7 @@
         }
       },
       {
-        "name": "重点污染源企业(4284个)",
+        "name": "污染源企业(4965个)",
         "geometryType": "point",
         "buttonName": "污染源",
         "dataType": "PollutantSourceEnterprise",
@@ -433,17 +425,10 @@
         "renderer": {
           "type": "unique-value",
           "field": "pollutantSourceTypeName",
-          "defaultSymbol": {
-            "type": "picture-marker",
-            "url": "/images/corp_water_air.png",
-            "width": "32px",
-            "height": "38px",
-            "yoffset": "19px"
-          },
           "uniqueValueInfos": [
             {
               "value": "一般废水",
-              "label": "一般废水(1377个)",
+              "label": "废水企业(1541个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/corp_water.png",
@@ -454,21 +439,10 @@
             },
             {
               "value": "一般废气",
-              "label": "一般废气(2415个)",
+              "label": "废气企业(3424个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/corp_air.png",
-                "width": "32px",
-                "height": "38px",
-                "yoffset": "19px"
-              }
-            },
-            {
-              "value": "一般废水,一般废气",
-              "label": "涉水涉气(492个)",
-              "symbol": {
-                "type": "picture-marker",
-                "url": "/images/corp_water_air.png",
                 "width": "32px",
                 "height": "38px",
                 "yoffset": "19px"

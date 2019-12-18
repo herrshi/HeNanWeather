@@ -9,7 +9,7 @@
       dark
       style="z-index: 1045; height: 84px; background-color: #1e90ff"
     >
-      <mdb-navbar-brand :to="{ name: 'features', query: { userId } }">
+      <mdb-navbar-brand :to="{ name: 'features', query: { roleId } }">
         <div class="d-flex">
           <img
             src="~/assets/images/logo1.png"
@@ -74,6 +74,7 @@
             :key="index"
             v-bind="navbarItem"
             :user-id="userId"
+            :role-id="roleId"
           />
           <mdb-side-nav-item
             :is-collapsed="collapse"
@@ -159,7 +160,15 @@ export default {
 
   mixins: [waves],
 
-  async fetch({ store }) {
+  async fetch({ store, query }) {
+    const { userId, roleId } = query
+    if (userId) {
+      store.dispatch('user/getUserInfo', userId)
+    }
+
+    if (roleId) {
+      await store.dispatch('user/getMenuByRole', { roleId })
+    }
     await store.dispatch('app-info/getAppConfig')
     await store.dispatch('user/getAllRoles')
     await store.dispatch('base-data/getAllPollutantSourceTypes')
@@ -206,13 +215,9 @@ export default {
 
   computed: {
     ...mapState('app-info', ['appConfig']),
-    ...mapState('user', ['userName', 'userId']),
+    ...mapState('user', ['userName', 'userId', 'roleId', 'sideNavbarItems']),
     ...mapState(['naviBreadcrumb', 'mapOnly']),
     ...mapGetters(['showLoading']),
-
-    sideNavbarItems() {
-      return this.appConfig.pageComponents.sideNavbarItems
-    },
 
     contentStyle() {
       return `height: 100vh;
@@ -222,13 +227,6 @@ export default {
 
     navbarStyle() {
       return `margin-left: ${this.collapse ? 60 : 240}px`
-    }
-  },
-
-  mounted() {
-    const userId = this.$route.query.userId
-    if (userId) {
-      this.getUserInfo(userId)
     }
   },
 

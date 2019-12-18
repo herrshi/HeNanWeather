@@ -6,7 +6,9 @@ const state = () => ({
   userName: null,
   userDept: null,
   loginStatus: null,
-  allRoles: []
+  allRoles: [],
+  roleId: null,
+  sideNavbarItems: null
 })
 
 const mutations = {
@@ -33,6 +35,14 @@ const mutations = {
 
   setAllRoles(state, { roles }) {
     state.allRoles = roles
+  },
+
+  setRoleId(state, { roleId }) {
+    state.roleId = roleId
+  },
+
+  setSideNavbarItems(state, { sideNavbarItems }) {
+    state.sideNavbarItems = sideNavbarItems
   }
 }
 
@@ -101,6 +111,24 @@ const actions = {
       await dispatch('getAllRoles')
     }
     return result
+  },
+
+  async getMenuByRole({ commit }, { roleId }) {
+    commit('setRoleId', { roleId })
+    const results = await axiosGet('/menu/get_menu_by_role', { roleId })
+    const sideNavbarItems = results.map((result) => {
+      const { name, children: subItems } = result
+      let { icon } = result
+      if (!icon) {
+        icon = 'chevron-right'
+      }
+      return {
+        name,
+        icon,
+        subItems
+      }
+    })
+    commit('setSideNavbarItems', { sideNavbarItems })
   }
 }
 

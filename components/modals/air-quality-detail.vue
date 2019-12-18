@@ -92,28 +92,28 @@ export default {
           selected: true
         },
         {
+          text: 'PM2.5',
+          value: 'PM25_VALUE_AVG'
+        },
+        {
           text: 'PM10',
           value: 'PM10_VALUE_AVG'
         },
         {
-          text: 'SO2',
-          value: 'SO2_VALUE_AVG'
-        },
-        {
-          text: 'O3',
-          value: 'O3_VALUE_AVG'
-        },
-        {
-          text: 'NO2',
-          value: 'NO2_VALUE_AVG'
-        },
-        {
-          text: 'CO',
+          text: '一氧化碳',
           value: 'CO_VALUE_AVG'
         },
         {
-          text: 'PM25',
-          value: 'PM25_VALUE_AVG'
+          text: '二氧化氮',
+          value: 'NO2_VALUE_AVG'
+        },
+        {
+          text: '二氧化硫',
+          value: 'SO2_VALUE_AVG'
+        },
+        {
+          text: '臭氧',
+          value: 'O3_VALUE_AVG'
         },
         {
           text: 'O3H8',
@@ -157,6 +157,7 @@ export default {
           trigger: 'axis'
         },
         xAxis: {
+          boundaryGap: false,
           data: this.airQualityData.map((data) =>
             moment(data.TIME_NAME).format('MM-DD')
           )

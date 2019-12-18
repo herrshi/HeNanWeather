@@ -57,9 +57,11 @@ export default {
     ]),
 
     layerListConfig() {
-      if (this.layerListWidgetVisible)
-        return this.appConfig.pageComponents.layerList
-      else return this.appConfig.pageComponents.layerList.slice(0, 3)
+      // 只需要显示前三个图层，其他隐藏
+      return this.appConfig.pageComponents.layerList.slice(0, 3)
+      // if (this.layerListWidgetVisible)
+      //   return this.appConfig.pageComponents.layerList
+      // else return this.appConfig.pageComponents.layerList.slice(0, 3)
     }
   },
 
@@ -468,6 +470,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 700px;
+  width: 350px;
 }
 </style>

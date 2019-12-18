@@ -39,6 +39,10 @@
                 </mdb-tbl-head>
 
                 <mdb-tbl-body>
+                  <!--                  <tr>-->
+                  <!--                    <td>AQI</td>-->
+                  <!--                    <td>{{ stationRTData['AQI'] }}</td>-->
+                  <!--                  </tr>-->
                   <tr>
                     <td>PM2.5</td>
                     <td>{{ stationRTData['PM25'] }}</td>
@@ -94,12 +98,12 @@
     </mdb-modal-body>
 
     <mdb-modal-body v-if="tabs === 2">
-      <mdb-select
-        v-model="airStationMonitoringFactor"
-        label="监测因子: "
-        multiple
-        @getValue="$_setOption"
-      />
+      <!--      <mdb-select-->
+      <!--        v-model="airStationMonitoringFactor"-->
+      <!--        label="监测因子: "-->
+      <!--        multiple-->
+      <!--        @getValue="$_setOption"-->
+      <!--      />-->
       <v-chart :options="chartOption" />
     </mdb-modal-body>
 
@@ -128,8 +132,7 @@ import {
   mdbTabItem,
   mdbCard,
   mdbCardBody,
-  mdbCardTitle,
-  mdbSelect
+  mdbCardTitle
 } from 'mdbvue'
 import moment from 'moment'
 import 'echarts/lib/chart/line'
@@ -160,8 +163,7 @@ export default {
     mdbTabItem,
     mdbCard,
     mdbCardBody,
-    mdbCardTitle,
-    mdbSelect
+    mdbCardTitle
   },
 
   props: {
@@ -181,6 +183,11 @@ export default {
       stationRTData: {},
       stationHistData: {},
       airStationMonitoringFactor: [
+        // {
+        //   text: 'AQI',
+        //   value: 'AQI',
+        //   selected: true
+        // },
         {
           text: 'PM2.5',
           value: 'PM25',
@@ -188,31 +195,38 @@ export default {
         },
         {
           text: 'PM10',
-          value: 'PM10'
-        },
-        {
-          text: '二氧化氮',
-          value: 'NO2'
-        },
-        {
-          text: '二氧化硫',
-          value: 'SO2'
+          value: 'PM10',
+          selected: true
         },
         {
           text: '一氧化碳',
-          value: 'CO'
+          value: 'CO',
+          selected: true
+        },
+        {
+          text: '二氧化氮',
+          value: 'NO2',
+          selected: true
+        },
+        {
+          text: '二氧化硫',
+          value: 'SO2',
+          selected: true
         },
         {
           text: '臭氧',
-          value: 'O3'
+          value: 'O3',
+          selected: true
         },
         {
           text: '温度',
-          value: 'WD'
+          value: 'WD',
+          selected: true
         },
         {
           text: '湿度',
-          value: 'HU'
+          value: 'HU',
+          selected: true
         }
       ],
       chartOption: null

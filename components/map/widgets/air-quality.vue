@@ -127,9 +127,13 @@ export default {
 
       monitoringFactor: [
         {
-          text: 'PM25',
-          value: 'PM25_VALUE_AVG',
+          text: 'AQI',
+          value: 'CITY_AQI',
           selected: true
+        },
+        {
+          text: 'PM2.5',
+          value: 'PM25_VALUE_AVG'
         },
         {
           text: 'PM10',
@@ -304,7 +308,7 @@ export default {
               }
             },
             {
-              minValue: 50.001,
+              minValue: 51,
               maxValue: 100,
               label: '良(51 - 100)',
               symbol: {
@@ -318,7 +322,7 @@ export default {
               }
             },
             {
-              minValue: 100.001,
+              minValue: 101,
               maxValue: 150,
               label: '轻度污染(101 - 150)',
               symbol: {
@@ -332,7 +336,7 @@ export default {
               }
             },
             {
-              minValue: 150.001,
+              minValue: 151,
               maxValue: 200,
               label: '中度污染(151 - 200)',
               symbol: {
@@ -346,7 +350,7 @@ export default {
               }
             },
             {
-              minValue: 200.001,
+              minValue: 201,
               maxValue: 300,
               label: '重度污染(201 - 300)',
               symbol: {
@@ -360,8 +364,7 @@ export default {
               }
             },
             {
-              minValue: 300.001,
-              maxValue: 300,
+              minValue: 301,
               label: '严重污染(301+)',
               symbol: {
                 type: 'simple-fill',
