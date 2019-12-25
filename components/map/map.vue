@@ -36,6 +36,9 @@
             @mapPopupTriggerAction="$_triggerPopupActionManual"
           />
         </div>
+        <div v-if="widgets && widgets.includes('Noise')" id="divNoise">
+          <Noise :widget-config="widgetConfig" />
+        </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
     </mdb-col>
@@ -56,11 +59,13 @@ import NearbySearch from '~/components/map/widgets/nearby-search'
 import FeatureEditor from '~/components/map/widgets/feature-editor'
 import AirQuality from '~/components/map/widgets/air-quality'
 import WaterQuality from '~/components/map/widgets/water-quality'
+import Noise from '~/components/map/widgets/noise'
 
 export default {
   name: 'Map',
 
   components: {
+    Noise,
     WaterQuality,
     AirQuality,
     FeatureEditor,
@@ -260,6 +265,17 @@ export default {
           expanded: true
         })
         ui.add(expandWaterQuality, 'top-right')
+      }
+
+      if (this.widgets.includes('Noise')) {
+        const expandNoise = new Expand({
+          view: this.view,
+          name: 'Noise',
+          content: document.getElementById('divNoise'),
+          expandIconClass: 'esri-icon-announcement',
+          expanded: true
+        })
+        ui.add(expandNoise, 'top-right')
       }
 
       await this.view.when()

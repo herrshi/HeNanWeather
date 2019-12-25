@@ -660,10 +660,6 @@
             "type": "string"
           },
           {
-            "name": "status",
-            "type": "string"
-          },
-          {
             "name": "type",
             "type": "string"
           },
