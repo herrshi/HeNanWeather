@@ -1,5 +1,11 @@
 <template>
-  <mdb-card color="white">
+  <mdb-card
+    color="white"
+    :style="
+      'width: ' +
+        (widgetConfig.WaterQuality.type === 'hourly' ? '400px' : '300px')
+    "
+  >
     <mdb-card-body>
       <mdb-select
         v-if="widgetConfig.WaterQuality.type === 'rt'"
@@ -580,7 +586,7 @@ export default {
 </script>
 
 <style scoped>
-.card {
+/* .card {
   width: 400px;
-}
+} */
 </style>

@@ -267,7 +267,6 @@ export default {
       if (this.widgetConfig.AirQuality.type !== 'rt') {
         this.timeSlider = new TimeSlider({
           view: this.view,
-          // container: document.getElementById('timeSlider'),
           mode: 'instant'
         })
         this.view.ui.add(this.timeSlider, 'bottom-right')
