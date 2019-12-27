@@ -1,9 +1,5 @@
 <template>
-  <mdb-card
-    color="rgba-white-strong"
-    style="color: black !important;"
-    class="h-100 v-100"
-  >
+  <mdb-card color="white" style="color: black !important;" class="h-100 w-100">
     <mdb-card-body>
       <div class="d-flex justify-content-start">
         <mdb-btn color="cyan" size="sm" rounded @click="$_showNewModal">
