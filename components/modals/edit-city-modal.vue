@@ -5,25 +5,28 @@
         {{ header }}
       </p>
     </mdb-modal-header>
-    <mdb-row class="m-2">
-      <mdb-col col="6">
-        <mdb-input
-          :value="cityName"
-          label="城市名称"
-          icon="city"
-          @input="$emit('update:cityName', $event)"
-        />
-      </mdb-col>
-      <mdb-col col="6">
-        <mdb-input
-          :value="cityCode"
-          label="城市代码"
-          icon="edit"
-          @input="$emit('update:cityCode', $event)"
-        />
-      </mdb-col>
-    </mdb-row>
-    <mdb-modal-body> </mdb-modal-body>
+
+    <mdb-modal-body>
+      <mdb-row class="m-2">
+        <mdb-col col="6">
+          <mdb-input
+            :value="cityName"
+            label="城市名称"
+            icon="city"
+            @input="$emit('update:cityName', $event)"
+          />
+        </mdb-col>
+        <mdb-col col="6">
+          <mdb-input
+            :value="cityCode"
+            label="城市代码"
+            icon="edit"
+            @input="$emit('update:cityCode', $event)"
+          />
+        </mdb-col>
+      </mdb-row>
+    </mdb-modal-body>
+
     <mdb-modal-footer center>
       <mdb-btn outline="info" rounded @click="$_editCityModal_confirmYes">
         <mdb-icon icon="check" class="mr-1" />确认

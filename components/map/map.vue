@@ -5,7 +5,7 @@
       :class="showNearbySearch ? 'pl-0 pr-1' : 'pl-0 pr-0'"
     >
       <div id="divWidgets">
-        <div v-if="false" id="divOverlay">
+        <div id="divOverlay">
           <Overlay ref="widgetOverlay" />
         </div>
 
@@ -286,8 +286,7 @@ export default {
 
       setTimeout(() => {
         this.$emit('mapInitialized')
-      }, 2000)
-      // this.$emit('mapInitialized')
+      }, 1000)
     },
 
     $_nearbySearch({ sourceGraphic, types = null } = {}) {

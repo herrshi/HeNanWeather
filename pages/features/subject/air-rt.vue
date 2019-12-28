@@ -2,7 +2,7 @@
   <mdb-card color="white" style="color: black !important;" class="h-100 w-100">
     <mdb-card-body class="p-0">
       <Map
-        :widgets="['']"
+        :widgets="['AirQuality']"
         :widget-config="{ AirQuality: { type: 'rt' } }"
         theme="light"
       />

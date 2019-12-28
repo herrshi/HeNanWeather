@@ -13,7 +13,8 @@ export default {
   data() {
     return {
       overlayLayer: null,
-      isWebMercator: true
+      isWebMercator: true,
+      view: null
     }
   },
 
@@ -22,13 +23,15 @@ export default {
     ...mapState('app-info', ['appConfig'])
   },
 
-  async created() {
+  async mounted() {
     const [GraphicsLayer] = await loadModules(['esri/layers/GraphicsLayer'], {
       url: `${this.appConfig.map.arcgis_api}/init.js`
     })
     this.overlayLayer = new GraphicsLayer()
     const map = await this.getMap()
     map.add(this.overlayLayer)
+
+    this.view = await this.getView()
   },
 
   methods: {
@@ -63,10 +66,8 @@ export default {
     } = {}) {
       this.startUpdating()
 
-      const view = await this.getView()
-
       if (this.isWebMercator === null) {
-        const { spatialReference } = view
+        const { spatialReference } = this.view
         this.isWebMercator = spatialReference.isWebMercator
       }
 
