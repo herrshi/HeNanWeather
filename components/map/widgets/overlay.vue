@@ -161,14 +161,11 @@ export default {
           geometry.type === 'point' ? geometry : geometry.extent.center
         // 居中
         if (centerResult) {
-          await this.view.goTo(
-            { center: centerPoint, zoom },
-            { speedFactor: 3 }
-          )
+          await this.view.goTo(geometry, { speedFactor: 3 })
         }
         // 显示popup
+        this.view.popup.close()
         if (showPopup) {
-          this.view.popup.close()
           this.view.popup.open({ features: [graphic], location: centerPoint })
         }
         return {
