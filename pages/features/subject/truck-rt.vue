@@ -68,6 +68,12 @@
             <mdb-select v-model="endTime" label="开始时间" />
           </mdb-form-inline>
 
+          <div class="d-flex justify-content-center">
+            <mdb-btn color="info" rounded @click="$_getHistData">
+              <mdb-icon icon="search" class="mr-2" />查询
+            </mdb-btn>
+          </div>
+
           <mdb-datatable
             v-if="refreshHistTable"
             :data="histTableData"
@@ -170,6 +176,7 @@ export default {
       startDate: '',
       endDate: moment().format('YYYY-MM-DD'),
       today: moment().format('YYYY-MM-DD'),
+      selectedHistPlateNum: '',
       dateOptions: {
         type: 'day',
         SundayFirst: false,
@@ -364,15 +371,33 @@ export default {
     $_map_popupTriggerAction(event) {
       if (event.actionId === 'truck-hist') {
         this.leftPanelType = 'hist'
-        const plateNum = event.selectedGraphic.getAttribute('plateNum')
-        this.$_getHistData(plateNum)
+        this.selectedHistPlateNum = event.selectedGraphic.getAttribute(
+          'plateNum'
+        )
+        this.$_getHistData()
       }
     },
 
-    async $_getHistData(plateNum) {
+    async $_getHistData() {
+      let start = this.startDate
+      let end = this.endDate
+      start += ' ' + this.startTime.find((time) => time.selected).value
+      end += ' ' + this.endTime.find((time) => time.selected).value
+      if (start > end) {
+        this.$notify.error({
+          message: '时间范围错误',
+          position: 'top right'
+        })
+        return
+      }
+
       this.$refs.Map.hideOverlays({ type: 'truck-rt' })
 
-      const histData = await axiosGet('car_tack/get_his_tack', { plateNum })
+      const histData = await axiosGet('car_tack/get_his_tack', {
+        plateNum: this.selectedHistPlateNum,
+        startTime: start,
+        endTime: end
+      })
 
       this.histTableData.rows = histData.map((data, index) => ({
         index: index + 1,
@@ -392,7 +417,7 @@ export default {
         paths: [path]
       }
       const lineOverlay = {
-        id: plateNum,
+        id: this.selectedHistPlateNum,
         type: 'truck-hist',
         geometry,
         symbol: {
@@ -431,7 +456,7 @@ export default {
       })
       this.$refs.Map.findOverlay({
         type: 'truck-hist',
-        id: plateNum,
+        id: this.selectedHistPlateNum,
         showPopup: false
       })
     },
