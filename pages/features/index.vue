@@ -20,6 +20,12 @@
         :station-id="detailWaterStationId"
         @closeDetail="showWaterStationDetailModal = false"
       />
+
+      <pollutant-source-detail
+        :show-modal="showPollutantSourceDetailModal"
+        :station-id="detailPollutantSourceId"
+        @closeDetail="showPollutantSourceDetailModal = false"
+      />
     </mdb-card-body>
   </mdb-card>
 </template>
@@ -31,11 +37,13 @@ import { loadModules } from 'esri-loader'
 import Map from '~/components/map/map'
 import AirStationDetail from '~/components/modals/air-station-detail'
 import WaterStationDetail from '~/components/modals/water-station-detail'
+import PollutantSourceDetail from '~/components/modals/pollutant-source-detail'
 
 export default {
   components: {
     AirStationDetail,
     WaterStationDetail,
+    PollutantSourceDetail,
     Map,
     mdbCard,
     mdbCardBody
@@ -45,8 +53,10 @@ export default {
     return {
       showAirStationDetailModal: false,
       showWaterStationDetailModal: false,
+      showPollutantSourceDetailModal: false,
       detailAirStationId: '',
       detailWaterStationId: '',
+      detailPollutantSourceId: '',
       cities: [],
       centerGeometry: null
     }
@@ -117,6 +127,13 @@ export default {
         case 'DetailWater':
           this.detailWaterStationId = event.selectedGraphic.getAttribute('id')
           this.showWaterStationDetailModal = true
+          break
+
+        case 'DetailPollutantSource':
+          this.detailPollutantSourceId = event.selectedGraphic.getAttribute(
+            'id'
+          )
+          this.showPollutantSourceDetailModal = true
           break
       }
     }

@@ -1,3 +1,4 @@
+// import _ from 'lodash'
 import { axiosGet, axiosPost } from '~/api/axios'
 import WaterStationApi from '~/api/WaterStation'
 
@@ -54,18 +55,20 @@ const actions = {
           property: controlLevelName,
           type: pollutantSourceTypeName,
           cityName,
-          isDelete
+          isDelete,
+          point
         } = enterprise
 
         return {
           name,
-          id: psCode,
+          id: psCode || objectId,
           objectId,
           geometry: { type: 'point', x, y },
           controlLevelName,
           pollutantSourceTypeName,
           cityName,
           isDelete,
+          point,
           type: '污染源企业',
           dataType: 'PollutantSourceEnterprise'
         }
@@ -80,6 +83,119 @@ const actions = {
   /** /.重点污染源企业 **/
 
   /** 地表水监测站点 **/
+  // 国控
+  async getAllSurfaceWaterSurveillanceStationGK(
+    { commit, getters },
+    { isPage, page, limit }
+  ) {
+    commit('startFetchData')
+    const result = await axiosGet('/section/find_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const filter = result.data.filter(
+        (station) => station.isDelete === 1 && station.siteAuthor === '国控'
+      )
+      const stations = filter.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteNo: id,
+          cityName,
+          cityId,
+          waterBasin: riverSystem,
+          waterSyste: river,
+          siteTypeNa: stationTypeName,
+          property: boundary,
+          siteAuthor: controlLevelName,
+          x,
+          y,
+          createTime
+        } = station
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          cityCode: cityId,
+          geometry: { type: 'point', x, y },
+          createTime,
+          controlLevelName,
+          riverSystem,
+          river,
+          stationTypeName,
+          boundary,
+          type: '地表水站点',
+          dataType: 'SurfaceWaterSurveillanceStation'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'SurfaceWaterSurveillanceStationGK',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+
+  // 其他
+  async getAllSurfaceWaterSurveillanceStationSK(
+    { commit, getters },
+    { isPage, page, limit }
+  ) {
+    commit('startFetchData')
+    const result = await axiosGet('/section/find_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const filter = result.data.filter(
+        (station) => station.isDelete === 1 && station.siteAuthor !== '国控'
+      )
+      const stations = filter.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteNo: id,
+          cityName,
+          cityId,
+          waterBasin: riverSystem,
+          waterSyste: river,
+          siteTypeNa: stationTypeName,
+          property: boundary,
+          siteAuthor: controlLevelName,
+          x,
+          y,
+          createTime
+        } = station
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          cityCode: cityId,
+          geometry: { type: 'point', x, y },
+          createTime,
+          controlLevelName,
+          riverSystem,
+          river,
+          stationTypeName,
+          boundary,
+          type: '地表水站点',
+          dataType: 'SurfaceWaterSurveillanceStation'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'SurfaceWaterSurveillanceStationSK',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+
+  // 所有
   async getAllSurfaceWaterSurveillanceStation(
     { commit },
     { isPage, page, limit }
@@ -125,6 +241,7 @@ const actions = {
           dataType: 'SurfaceWaterSurveillanceStation'
         }
       })
+
       commit('setBusinessData', {
         dataType: 'SurfaceWaterSurveillanceStation',
         data: stations
@@ -155,6 +272,112 @@ const actions = {
   /** /.地表水监测站点 **/
 
   /** 重点区域空气监测站点 **/
+  // 国控
+  async getAllAirQualitySurveillanceStationGK(
+    { commit },
+    { isPage, page, limit }
+  ) {
+    commit('startFetchData')
+    const result = await axiosGet('area_site/find_area_site_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const filtered = result.data.filter(
+        (station) => station.isDelete === 1 && station.shape === '国控'
+      )
+      // const { cityCode } = rootState
+      // if (cityCode && cityCode !== '') {
+      //   filtered = filtered.filter((station) => station.cityId === cityCode)
+      // }
+      const stations = filtered.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteId: id,
+          cityName,
+          cityId,
+          siteTypeNa: stationTypeName,
+          status,
+          x,
+          y
+        } = station
+
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          cityId,
+          stationTypeName,
+          status: status === 0 ? '在线' : '离线',
+          geometry: { type: 'point', x, y },
+          type: '空气监测站点',
+          dataType: 'AirQualitySurveillanceStation'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'AirQualitySurveillanceStationGK',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+
+  // 其他
+  async getAllAirQualitySurveillanceStationSK(
+    { commit },
+    { isPage, page, limit }
+  ) {
+    commit('startFetchData')
+    const result = await axiosGet('area_site/find_area_site_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const filtered = result.data.filter(
+        (station) => station.isDelete === 1 && state.shape !== '国控'
+      )
+      // const { cityCode } = rootState
+      // if (cityCode && cityCode !== '') {
+      //   filtered = filtered.filter((station) => station.cityId === cityCode)
+      // }
+      const stations = filtered.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteId: id,
+          cityName,
+          cityId,
+          siteTypeNa: stationTypeName,
+          status,
+          x,
+          y
+        } = station
+
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          cityId,
+          stationTypeName,
+          status: status === 0 ? '在线' : '离线',
+          geometry: { type: 'point', x, y },
+          type: '空气监测站点',
+          dataType: 'AirQualitySurveillanceStation'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'AirQualitySurveillanceStationSK',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+  // 所有
   async getAllAirQualitySurveillanceStation(
     { commit, rootState },
     { isPage, page, limit }
@@ -166,11 +389,11 @@ const actions = {
       limit
     })
     if (result.code === 1) {
-      let filtered = result.data.filter((station) => station.isDelete === 1)
-      const { cityCode } = rootState
-      if (cityCode && cityCode !== '') {
-        filtered = filtered.filter((station) => station.cityId === cityCode)
-      }
+      const filtered = result.data.filter((station) => station.isDelete === 1)
+      // const { cityCode } = rootState
+      // if (cityCode && cityCode !== '') {
+      //   filtered = filtered.filter((station) => station.cityId === cityCode)
+      // }
       const stations = filtered.map((station) => {
         const {
           objectId,

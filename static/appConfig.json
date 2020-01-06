@@ -157,10 +157,10 @@
     ],
     "layerList": [
       {
-        "name": "重点区域空气监测站点(480个)",
+        "name": "国控空气监测站点(75个)",
         "geometryType": "point",
-        "buttonName": "空气",
-        "dataType": "AirQualitySurveillanceStation",
+        "buttonName": "空气(国)",
+        "dataType": "AirQualitySurveillanceStationGK",
         "active": true,
         "fields": [
           {
@@ -198,7 +198,89 @@
         ],
         "renderer": {
           "type": "simple",
-          "label": "(480个)",
+          "label": "(75个)",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/AirStation_gk.png",
+            "width": "57px",
+            "height": "55px",
+            "yoffset": "27px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "stationTypeName",
+                  "label": "站点类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "详细信息",
+              "id": "DetailAir",
+              "className": "esri-icon-table"
+            },
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },
+      {
+        "name": "其他空气监测站点(405个)",
+        "geometryType": "point",
+        "buttonName": "空气(其他)",
+        "dataType": "AirQualitySurveillanceStationSK",
+        "active": true,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "label": "(405个)",
           "symbol": {
             "type": "picture-marker",
             "url": "/images/AirStation.png",
@@ -239,10 +321,10 @@
         }
       },
       {
-        "name": "地表水监测站点(330个)",
+        "name": "国控地表水监测站点(86个)",
         "geometryType": "point",
-        "buttonName": "地表水",
-        "dataType": "SurfaceWaterSurveillanceStation",
+        "buttonName": "地表水(国)",
+        "dataType": "SurfaceWaterSurveillanceStationGK",
         "active": false,
         "fields": [
           {
@@ -297,22 +379,165 @@
           "uniqueValueInfos": [
             {
               "value": "长江",
-              "label": "长江(56个)",
+              "label": "长江(12个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/WaterStation_ChangJiang_gk.png",
+                "width": "57px",
+                "height": "55px",
+                "yoffset": "28px"
+              }
+            },
+            {
+              "value": "淮河",
+              "label": "淮河(44个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/WaterStation_HuaiHe_gk.png",
+                "width": "57px",
+                "height": "55px",
+                "yoffset": "28px"
+              }
+            },
+            {
+              "value": "黄河",
+              "label": "黄河(15个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/WaterStation_HuangHe_gk.png",
+                "width": "57px",
+                "height": "55px",
+                "yoffset": "28px"
+              }
+            },
+            {
+              "value": "海河",
+              "label": "海河(15个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/WaterStation_HaiHe_gk.png",
+                "width": "57px",
+                "height": "55px",
+                "yoffset": "28px"
+              }
+            }
+          ]
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "riverSystem",
+                  "label": "水系"
+                },
+                {
+                  "fieldName": "river",
+                  "label": "河流"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "详细信息",
+              "id": "DetailWater",
+              "className": "esri-icon-table"
+            },
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            },
+            {
+              "title": "污染源搜索",
+              "id": "NearbySearch_Pollutant",
+              "className": "esri-icon-lightbulb"
+            }
+          ]
+        }
+      },
+      {
+        "name": "省控地表水监测站点(244个)",
+        "geometryType": "point",
+        "buttonName": "地表水(其他)",
+        "dataType": "SurfaceWaterSurveillanceStationSK",
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "boundary",
+            "type": "string"
+          },
+          {
+            "name": "riverSystem",
+            "type": "string",
+            "alias": "水系"
+          },
+          {
+            "name": "river",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "controlLevelName",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "unique-value",
+          "field": "riverSystem",
+          "uniqueValueInfos": [
+            {
+              "value": "长江",
+              "label": "长江(55个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_ChangJiang.png",
-                "width": "30px",
+                "width": "24px",
                 "height": "40px",
                 "yoffset": "20px"
               }
             },
             {
               "value": "淮河",
-              "label": "淮河(182个)",
+              "label": "淮河(176个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_HuaiHe.png",
-                "width": "30px",
+                "width": "24px",
                 "height": "40px",
                 "yoffset": "20px"
               }
@@ -323,18 +548,18 @@
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_HaiHe.png",
-                "width": "30px",
+                "width": "24px",
                 "height": "40px",
                 "yoffset": "20px"
               }
             },
             {
               "value": "黄河",
-              "label": "黄河(50个)",
+              "label": "黄河(49个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/WaterStation_HuangHe.png",
-                "width": "30px",
+                "width": "24px",
                 "height": "40px",
                 "yoffset": "20px"
               }
@@ -382,7 +607,7 @@
         }
       },
       {
-        "name": "污染源企业(4965个)",
+        "name": "污染源企业(4677个)",
         "geometryType": "point",
         "buttonName": "污染源",
         "dataType": "PollutantSourceEnterprise",
@@ -403,6 +628,11 @@
           {
             "name": "controlLevelName",
             "type": "string"
+          },
+          {
+            "name": "point",
+            "type": "string",
+            "alias": "位置"
           },
           {
             "name": "id",
@@ -428,7 +658,7 @@
           "uniqueValueInfos": [
             {
               "value": "一般废水",
-              "label": "废水企业(1541个)",
+              "label": "废水企业(1249个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/corp_water.png",
@@ -439,10 +669,21 @@
             },
             {
               "value": "一般废气",
-              "label": "废气企业(3424个)",
+              "label": "废气企业(3137个)",
               "symbol": {
                 "type": "picture-marker",
                 "url": "/images/corp_air.png",
+                "width": "32px",
+                "height": "38px",
+                "yoffset": "19px"
+              }
+            },
+            {
+              "value": "一般废水,一般废气",
+              "label": "涉水涉气企业(291个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/corp_water_air.png",
                 "width": "32px",
                 "height": "38px",
                 "yoffset": "19px"
@@ -461,8 +702,8 @@
                   "label": "所在城市"
                 },
                 {
-                  "fieldName": "controlLevelName",
-                  "label": "管控级别"
+                  "fieldName": "point",
+                  "label": "地址"
                 },
                 {
                   "fieldName": "pollutantSourceTypeName",
@@ -472,6 +713,11 @@
             }
           ],
           "actions": [
+            {
+              "title": "详细信息",
+              "id": "DetailPollutantSource",
+              "className": "esri-icon-table"
+            },
             {
               "title": "周边搜索",
               "id": "NearbySearch",

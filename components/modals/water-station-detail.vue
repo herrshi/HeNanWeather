@@ -1,7 +1,7 @@
 <template>
   <mdb-modal
     :show="showModal"
-    size="lg"
+    size="xl"
     scrollable
     @show="$_modal_beforeShow"
     @close="$emit('closeDetail')"

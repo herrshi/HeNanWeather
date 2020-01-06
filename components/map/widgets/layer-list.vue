@@ -47,6 +47,7 @@ export default {
   },
 
   computed: {
+    ...mapState(['mapOnly']),
     ...mapState('app-info', ['appConfig']),
     ...mapState('map', ['layerListWidgetVisible', 'showLayer']),
     ...mapGetters('business-data', ['getBusinessData']),
@@ -58,7 +59,7 @@ export default {
 
     layerListConfig() {
       // 只需要显示前三个图层，其他隐藏
-      return this.appConfig.pageComponents.layerList.slice(0, 3)
+      return this.appConfig.pageComponents.layerList.slice(0, 5)
       // if (this.layerListWidgetVisible)
       //   return this.appConfig.pageComponents.layerList
       // else return this.appConfig.pageComponents.layerList.slice(0, 3)
@@ -89,7 +90,8 @@ export default {
       name: 'Legend',
       content: this.legend,
       expandIconClass: 'esri-icon-public',
-      expanded: false
+      // 不显示导航栏的页面要显示图例
+      expanded: this.mapOnly
     })
     this.view.ui.add(legendExpand, 'bottom-left')
 
@@ -116,7 +118,7 @@ export default {
       }
     }
 
-    this.isCluster = this.layerListWidgetVisible
+    this.isCluster = !this.mapOnly && this.layerListWidgetVisible
 
     if (this.showLayer.length > 0) {
       this.layerListConfig.forEach((layerConfig) => {
@@ -126,6 +128,26 @@ export default {
           active: this.showLayer.includes(dataType)
         })
       })
+      if (this.showLayer.includes('SurfaceWaterSurveillanceStation')) {
+        this.setLayerActive({
+          type: 'SurfaceWaterSurveillanceStationGK',
+          active: true
+        })
+        this.setLayerActive({
+          type: 'SurfaceWaterSurveillanceStationSK',
+          active: true
+        })
+      }
+      if (this.showLayer.includes('AirQualitySurveillanceStation')) {
+        this.setLayerActive({
+          type: 'AirQualitySurveillanceStationGK',
+          active: true
+        })
+        this.setLayerActive({
+          type: 'AirQualitySurveillanceStationSK',
+          active: true
+        })
+      }
     }
 
     this.resetLayers()
@@ -470,6 +492,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 350px;
+  width: 620px;
 }
 </style>

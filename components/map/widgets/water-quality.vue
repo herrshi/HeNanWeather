@@ -418,7 +418,7 @@ export default {
 
     async $_setRTData() {
       // 加入监测站图层
-      const dataType = 'SurfaceWaterSurveillanceStation'
+      const dataType = 'SurfaceWaterSurveillanceStationGK'
       const layerConfig = this.appConfig.pageComponents.layerList.find(
         (layer) => layer.dataType === dataType
       )

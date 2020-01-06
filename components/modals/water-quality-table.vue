@@ -6,6 +6,7 @@
           <tr>
             <th>监测因子</th>
             <th>监测值</th>
+            <th>标准值</th>
           </tr>
         </mdb-tbl-head>
 
@@ -16,6 +17,9 @@
             </td>
             <td :class="$_getMonitoringFactorColor(factor)">
               {{ $_getMonitoringFactorDisplayValue(factor) }}
+            </td>
+            <td>
+              {{ $_getMonitoringFactorTooltip(factor) }}
             </td>
           </tr>
         </mdb-tbl-body>
@@ -48,7 +52,7 @@ export default {
   data() {
     return {
       factorList1: ['F10', 'F11', 'F12', 'F13', 'F14'],
-      factorList2: ['F15', 'F16', 'F20', 'F30']
+      factorList2: ['F15', 'F16', 'F20', 'F30', 'F18']
     }
   },
 
@@ -68,7 +72,7 @@ export default {
     $_getMonitoringFactorTooltip(factor) {
       const factorInfo = this.waterMonitoringFactorMap.get(factor)
       const { low, high, unit } = factorInfo
-      return low + unit + ' - ' + high + unit
+      return low + unit + ' ~ ' + high + unit
     },
 
     $_getMonitoringFactorColor(factor) {
