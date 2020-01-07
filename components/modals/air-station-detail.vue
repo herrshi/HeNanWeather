@@ -247,8 +247,10 @@ export default {
     async $_modal_beforeShow() {
       this.startFetchData()
       const result = await AirStationApi.getRTData(this.stationId)
-      if (result) {
+      if (result && result.length > 0) {
         this.stationRTData = result[0]
+      } else {
+        this.stationRTData = {}
       }
 
       const startDate = moment()
