@@ -39,6 +39,13 @@
         <div v-if="widgets && widgets.includes('Noise')" id="divNoise">
           <Noise :widget-config="widgetConfig" />
         </div>
+
+        <div
+          v-if="widgets && widgets.includes('MultiSearch')"
+          id="divMultiSearch"
+        >
+          <multi-search />
+        </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
     </mdb-col>
@@ -60,11 +67,13 @@ import FeatureEditor from '~/components/map/widgets/feature-editor'
 import AirQuality from '~/components/map/widgets/air-quality'
 import WaterQuality from '~/components/map/widgets/water-quality'
 import Noise from '~/components/map/widgets/noise'
+import MultiSearch from '~/components/map/widgets/multi-search'
 
 export default {
   name: 'Map',
 
   components: {
+    MultiSearch,
     Noise,
     WaterQuality,
     AirQuality,
@@ -276,6 +285,17 @@ export default {
           expanded: true
         })
         ui.add(expandNoise, 'top-right')
+      }
+
+      if (this.widgets.includes('MultiSearch')) {
+        const expandMultiSearch = new Expand({
+          view: this.view,
+          name: 'MultiSearch',
+          content: document.getElementById('divMultiSearch'),
+          expandIconClass: 'esri-icon-search',
+          expanded: true
+        })
+        ui.add(expandMultiSearch, 'top-right')
       }
 
       await this.view.when()
