@@ -49,7 +49,7 @@ export default {
   computed: {
     ...mapState(['mapOnly']),
     ...mapState('app-info', ['appConfig']),
-    ...mapState('map', ['layerListWidgetVisible', 'showLayer']),
+    ...mapState('map', ['layerListWidgetVisible', 'showLayer', 'showLegend']),
     ...mapGetters('business-data', ['getBusinessData']),
     ...mapGetters('map', [
       'businessLayer',
@@ -91,7 +91,7 @@ export default {
       content: this.legend,
       expandIconClass: 'esri-icon-public',
       // 不显示导航栏的页面要显示图例
-      expanded: this.mapOnly
+      expanded: this.showLegend
     })
     this.view.ui.add(legendExpand, 'bottom-left')
 

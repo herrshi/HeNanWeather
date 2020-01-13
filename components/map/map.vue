@@ -293,7 +293,7 @@ export default {
           name: 'MultiSearch',
           content: document.getElementById('divMultiSearch'),
           expandIconClass: 'esri-icon-search',
-          expanded: true
+          expanded: false
         })
         ui.add(expandMultiSearch, 'top-right')
       }

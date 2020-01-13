@@ -12,7 +12,9 @@ const state = () => ({
 
   layerListWidgetVisible: true,
   // 要显示的图层
-  showLayer: []
+  showLayer: [],
+  // 是否显示图例
+  showLegend: false
 })
 
 const mutations = {
@@ -54,6 +56,10 @@ const mutations = {
 
   setShowLayer(state, { showLayer }) {
     state.showLayer = showLayer
+  },
+
+  setShowLegend(state, { showLegend }) {
+    state.showLegend = showLegend
   }
 }
 

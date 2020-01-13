@@ -106,16 +106,23 @@ export default {
       }
     }
 
-    const layerList = this.$route.query.layerList
+    const { layerList, legend } = this.$route.query
     if (layerList) {
       const showLayer = layerList.split(',')
       this.setShowLayer({ showLayer })
+    }
+    if (legend) {
+      this.setShowLegend({ showLegend: legend.toLowerCase() === 'show' })
     }
   },
 
   methods: {
     ...mapMutations(['setCityCode']),
-    ...mapMutations('map', ['hideLayerListWidget', 'setShowLayer']),
+    ...mapMutations('map', [
+      'hideLayerListWidget',
+      'setShowLayer',
+      'setShowLegend'
+    ]),
 
     $_map_popupTriggerAction(event) {
       switch (event.actionId) {

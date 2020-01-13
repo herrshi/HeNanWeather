@@ -27,9 +27,17 @@ const actions = {
   }
 }
 
+const getters = {
+  activeLayerConfig: (state) =>
+    state.appConfig.pageComponents.layerList.filter(
+      (layerConfig) => layerConfig.active
+    )
+}
+
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }
