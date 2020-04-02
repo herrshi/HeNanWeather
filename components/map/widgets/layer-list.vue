@@ -59,7 +59,7 @@ export default {
 
     layerListConfig() {
       // 只需要显示前三个图层，其他隐藏
-      return this.appConfig.pageComponents.layerList.slice(0, 5)
+      return this.appConfig.pageComponents.layerList.slice(0, 6)
       // if (this.layerListWidgetVisible)
       //   return this.appConfig.pageComponents.layerList
       // else return this.appConfig.pageComponents.layerList.slice(0, 3)
@@ -408,7 +408,6 @@ export default {
           return null
         }
       }
-
       const graphics = []
       for (let i = 0; i < features.length; i++) {
         const feature = features[i]
@@ -492,6 +491,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 620px;
+  width: 650px;
 }
 </style>
