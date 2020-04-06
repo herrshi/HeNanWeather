@@ -722,6 +722,16 @@ const actions = {
           const geometry = pointList.includes('rings')
             ? JSON.parse(pointList)
             : null
+          const path = geometry.rings[0][0]
+          const firstPoint = path[0]
+          const lastPoint = path[path.length - 1]
+          if (
+            firstPoint[0] !== lastPoint[0] &&
+            firstPoint[1] !== lastPoint[1]
+          ) {
+            geometry.rings[0][0].push(geometry.rings[0][0][0])
+          }
+
           if (geometry) {
             geometry.type = 'polygon'
           }

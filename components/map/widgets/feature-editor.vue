@@ -1,23 +1,43 @@
 <template>
-  <mdb-card color="white">
+  <mdb-card>
     <mdb-card-body>
-      <mdb-tbl>
-        <mdb-tbl-head>
-          <tr>
-            <th v-for="(field, index) in tableHeader" :key="index">
-              {{ field.alias }}
-            </th>
-          </tr>
-        </mdb-tbl-head>
+      <!-- <mdb-scrollbar v-if="false" height="300px">
+        <mdb-tbl>
+          <mdb-tbl-head>
+            <tr>
+              <th v-for="(field, index) in tableHeader" :key="index">
+                {{ field.alias }}
+              </th>
+            </tr>
+          </mdb-tbl-head>
 
-        <mdb-tbl-body>
-          <tr v-for="row in tableData" :key="row.id">
-            <td v-for="(field, index) in tableHeader" :key="index">
-              {{ $_getDomainValue(field, row[field.name]) }}
-            </td>
-          </tr>
-        </mdb-tbl-body>
-      </mdb-tbl>
+          <mdb-tbl-body>
+            <tr v-for="row in tableData" :key="row.id">
+              <td v-for="(field, index) in tableHeader" :key="index">
+                {{ $_getDomainValue(field, row[field.name]) }}
+              </td>
+            </tr>
+          </mdb-tbl-body>
+        </mdb-tbl>
+      </mdb-scrollbar> -->
+
+      <mdb-datatable
+        v-if="refreshTable"
+        :data="dataTableData"
+        :tfoot="false"
+        max-height="400px"
+        showing-text="显示"
+        entries-title=""
+        no-found-message="无符合记录"
+        search-placeholder="搜索"
+        arrows
+        striped
+        bordered
+        scroll-y
+        hover
+        class="m-2"
+        @selectRow="$_datatable_rowSelected"
+      />
     </mdb-card-body>
   </mdb-card>
 </template>
@@ -25,7 +45,7 @@
 <script>
 import { loadModules } from 'esri-loader'
 import { mapState, mapGetters } from 'vuex'
-import { mdbCard, mdbCardBody, mdbTbl, mdbTblHead, mdbTblBody } from 'mdbvue'
+import { mdbCard, mdbCardBody, mdbDatatable } from 'mdbvue'
 
 export default {
   name: 'FeatureEditor',
@@ -33,9 +53,7 @@ export default {
   components: {
     mdbCard,
     mdbCardBody,
-    mdbTbl,
-    mdbTblHead,
-    mdbTblBody
+    mdbDatatable
   },
 
   inject: ['getMap', 'getView'],
@@ -52,13 +70,36 @@ export default {
       map: null,
       view: null,
       featureLayer: null,
-      tableData: []
+      tableData: [],
+      refreshTable: true,
+      dataTableData: {
+        columns: [
+          {
+            label: '地块名称',
+            field: 'name'
+          },
+          {
+            label: '编码',
+            field: 'siteCode'
+          },
+          {
+            label: '管控',
+            field: 'levelName'
+          },
+          {
+            label: '城市',
+            field: 'cityName'
+          }
+        ],
+        rows: []
+      }
     }
   },
 
   computed: {
     ...mapState('app-info', ['appConfig']),
     ...mapGetters('map', ['businessLayer']),
+    ...mapGetters('base-data', ['getCityByCode']),
 
     dataType() {
       return this.widgetConfig.FeatureEditor.dataType
@@ -115,7 +156,16 @@ export default {
       this.featureLayer.visible = true
 
       const featureSet = await this.featureLayer.queryFeatures()
-      this.tableData = featureSet.features.map((graphic) => graphic.attributes)
+      // this.tableData = featureSet.features.map((graphic) => graphic.attributes)
+      this.dataTableData.rows = featureSet.features.map((graphic) => ({
+        name: graphic.attributes.name,
+        siteCode: graphic.attributes.siteCode,
+        levelName: graphic.attributes.levelName,
+        cityName: this.getCityByCode(graphic.attributes.cityCode).cityName
+      }))
+      this.refreshTable = false
+      await this.$nextTick()
+      this.refreshTable = true
 
       this.featureLayer.on('edits', (event) => {
         const { addedFeatures, deletedFeatures, updatedFeatures } = event
@@ -147,7 +197,17 @@ export default {
           graphic.getAttribute(this.featureLayer.objectIdField) === objectId
       )
       if (graphic) {
-        this.tableData.push(graphic.attributes)
+        // this.tableData.push(graphic.attributes)
+        this.dataTableData.rows.push({
+          name: graphic.attributes.name,
+          siteCode: graphic.attributes.siteCode,
+          levelName: graphic.attributes.levelName,
+          cityName: this.getCityByCode(graphic.attributes.cityCode).cityName
+        })
+        this.refreshTable = false
+        await this.$nextTick()
+        this.refreshTable = true
+
         const result = await this.$store.dispatch(
           `business-data/add${this.dataType}`,
           { graphic }
@@ -178,9 +238,20 @@ export default {
           graphic.getAttribute(this.featureLayer.objectIdField) === objectId
       )
       if (graphic) {
-        this.tableData = featureSet.features.map(
-          (graphic) => graphic.attributes
-        )
+        // this.tableData = featureSet.features.map(
+        //   (graphic) => graphic.attributes
+        // )
+
+        this.dataTableData.rows = featureSet.features.map((graphic) => ({
+          name: graphic.attributes.name,
+          siteCode: graphic.attributes.siteCode,
+          levelName: graphic.attributes.levelName,
+          cityName: this.getCityByCode(graphic.attributes.cityCode).cityName
+        }))
+        this.refreshTable = false
+        await this.$nextTick()
+        this.refreshTable = true
+
         const result = await this.$store.dispatch(
           `business-data/update${this.dataType}`,
           { graphic }
@@ -210,9 +281,19 @@ export default {
         (row) => row[this.featureLayer.objectIdField] === objectId
       )
       if (row) {
-        this.tableData = featureSet.features.map(
-          (graphic) => graphic.attributes
-        )
+        // this.tableData = featureSet.features.map(
+        //   (graphic) => graphic.attributes
+        // )
+        this.dataTableData.rows = featureSet.features.map((graphic) => ({
+          name: graphic.attributes.name,
+          siteCode: graphic.attributes.siteCode,
+          levelName: graphic.attributes.levelName,
+          cityName: this.getCityByCode(graphic.attributes.cityCode).cityName
+        }))
+        this.refreshTable = false
+        await this.$nextTick()
+        this.refreshTable = true
+
         const result = await this.$store.dispatch(
           `business-data/delete${this.dataType}`,
           { id: row.id }
@@ -231,6 +312,21 @@ export default {
           })
         }
       }
+    },
+
+    $_datatable_rowSelected(index) {
+      const { siteCode } = this.dataTableData.rows[index]
+      const graphic = this.featureLayer.source.find(
+        (graphic) => graphic.getAttribute('siteCode') === siteCode
+      )
+      if (graphic) {
+        this.view.goTo(graphic)
+        this.view.popup.close()
+        this.view.popup.open({
+          features: [graphic],
+          location: graphic.geometry
+        })
+      }
     }
   }
 }
@@ -238,7 +334,8 @@ export default {
 
 <style scoped>
 .card {
-  width: 600px;
-  height: 300px;
+  width: 500px;
+  height: 700px;
+  top: -200px;
 }
 </style>
