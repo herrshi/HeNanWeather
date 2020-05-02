@@ -167,7 +167,7 @@ export default {
     },
 
     $_datatable_rowSelected(index) {
-      if (index > 0) {
+      if (index >= 0) {
         const { id, dataType } = this.tableData.rows[index]
         const layer = this.businessLayer(dataType)
         if (layer) {
