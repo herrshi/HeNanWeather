@@ -12,6 +12,10 @@
       {{ layerConfig.buttonName }}
     </mdb-btn>
 
+    <mdb-btn rounded size="sm" color="primary" :active="showNonRoadMachinery">
+      非道路
+    </mdb-btn>
+
     <mdb-btn
       :color="isCluster ? 'success' : 'blue-grey'"
       rounded
@@ -42,7 +46,8 @@ export default {
     return {
       view: null,
       isCluster: true,
-      legend: null
+      legend: null,
+      showNonRoadMachinery: false
     }
   },
 
@@ -59,10 +64,10 @@ export default {
 
     layerListConfig() {
       // 只需要显示前三个图层，其他隐藏
-      return this.appConfig.pageComponents.layerList.slice(0, 6)
-      // if (this.layerListWidgetVisible)
-      //   return this.appConfig.pageComponents.layerList
-      // else return this.appConfig.pageComponents.layerList.slice(0, 3)
+      // return this.appConfig.pageComponents.layerList.slice(0, 6)
+      if (this.layerListWidgetVisible)
+        return this.appConfig.pageComponents.layerList
+      else return this.appConfig.pageComponents.layerList.slice(0, 3)
     }
   },
 
@@ -491,6 +496,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 650px;
+  width: 1100px;
 }
 </style>

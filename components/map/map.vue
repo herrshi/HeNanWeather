@@ -46,6 +46,13 @@
         >
           <multi-search />
         </div>
+
+        <div
+          v-if="widgets && widgets.includes('NonRoadMachinery')"
+          id="divNonRoadMachinery"
+        >
+          <non-road-machinery />
+        </div>
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
     </mdb-col>
@@ -68,6 +75,7 @@ import AirQuality from '~/components/map/widgets/air-quality'
 import WaterQuality from '~/components/map/widgets/water-quality'
 import Noise from '~/components/map/widgets/noise'
 import MultiSearch from '~/components/map/widgets/multi-search'
+import NonRoadMachinery from '~/components/map/widgets/non-road-machinery'
 
 export default {
   name: 'Map',
@@ -82,7 +90,8 @@ export default {
     mdbRow,
     Overlay,
     NearbySearch,
-    LayerList
+    LayerList,
+    NonRoadMachinery
   },
 
   props: {
@@ -296,6 +305,16 @@ export default {
           expanded: false
         })
         ui.add(expandMultiSearch, 'top-right')
+      }
+
+      if (this.widgets.includes('NonRoadMachinery')) {
+        const expandNonRoad = new Expand({
+          view: this.view,
+          name: 'NonRoadMachinery',
+          content: document.getElementById('divNonRoadMachinery'),
+          expanded: false
+        })
+        ui.add(expandNonRoad, 'top-right')
       }
 
       await this.view.when()
