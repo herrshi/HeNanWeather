@@ -217,6 +217,17 @@ export default {
 
   methods: {
     $_onSketchMove(event) {
+      const graphic = event.graphics[0]
+      graphic.symbol = {
+        type: 'simple-marker',
+        style: 'square',
+        size: 20,
+        color: [76, 175, 80, 0.6],
+        outline: {
+          color: 'white',
+          width: 2
+        }
+      }
       const vertices = [
         [this.centerGraphic.geometry.x, this.centerGraphic.geometry.y],
         [this.edgeGraphic.geometry.x, this.edgeGraphic.geometry.y]
@@ -312,7 +323,11 @@ export default {
           type: 'simple-marker',
           style: 'square',
           size: 20,
-          color: '#4caf50'
+          color: [76, 175, 80, 0.6],
+          outline: {
+            color: 'white',
+            width: 2
+          }
         }
       })
 
@@ -488,6 +503,8 @@ export default {
             return this.medicalWasteChecked
           case 'RadiationSourceSurveillanceStation':
             return this.radiationSourceChecked
+          case 'SoilPollutantArea':
+            return this.soilPollutantChecked
           default:
             return true
         }

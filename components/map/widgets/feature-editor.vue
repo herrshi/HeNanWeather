@@ -44,7 +44,7 @@
 
 <script>
 import { loadModules } from 'esri-loader'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { mdbCard, mdbCardBody, mdbDatatable } from 'mdbvue'
 
 export default {
@@ -127,6 +127,8 @@ export default {
   },
 
   methods: {
+    ...mapActions('map', ['createFeatureLayer']),
+
     $_getDomainValue(field, rowValue) {
       if (!field.domain) {
         return rowValue
@@ -151,7 +153,9 @@ export default {
       )
       this.featureLayer = this.businessLayer(this.dataType)
       if (!this.featureLayer) {
-        return
+        this.featureLayer = await this.createFeatureLayer({
+          dataType: this.dataType
+        })
       }
       this.featureLayer.visible = true
 

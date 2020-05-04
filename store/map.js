@@ -148,7 +148,11 @@ const actions = {
         renderer,
         popupTemplate
       })
-      commit('addBusinessLayer', { type: dataType, layer: featureLayer })
+      commit('addBusinessLayer', {
+        type: dataType,
+        layer: featureLayer
+      })
+      return featureLayer
     }
   }
 }
