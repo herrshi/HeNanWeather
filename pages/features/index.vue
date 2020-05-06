@@ -3,13 +3,7 @@
     <mdb-card-body class="p-0">
       <Map
         ref="main_map"
-        :widgets="[
-          'LayerList',
-          'NearbySearch',
-          'Legend',
-          'MultiSearch',
-          'NonRoadMachinery'
-        ]"
+        :widgets="['LayerList', 'NearbySearch', 'Legend', 'MultiSearch']"
         :center="centerGeometry"
         theme="light"
         @mapPopupTriggerAction="$_map_popupTriggerAction"

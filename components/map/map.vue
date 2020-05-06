@@ -47,12 +47,17 @@
           <multi-search />
         </div>
 
-        <div
+        <!-- <div
           v-if="widgets && widgets.includes('NonRoadMachinery')"
           id="divNonRoadMachinery"
         >
           <non-road-machinery />
-        </div>
+        </div> -->
+
+        <non-road-machinery
+          v-if="widgets && widgets.includes('NonRoadMachinery')"
+          style="position: absolute; top: 50px; right: 15px; z-index: 99"
+        />
       </div>
       <div id="MapDiv" class="w-100 h-100"></div>
     </mdb-col>
@@ -67,6 +72,7 @@
 import { mapMutations, mapState } from 'vuex'
 import { loadCss, loadModules } from 'esri-loader'
 import { mdbCol, mdbRow } from 'mdbvue'
+import _ from 'lodash'
 import Overlay from '~/components/map/widgets/overlay'
 import LayerList from '~/components/map/widgets/layer-list'
 import NearbySearch from '~/components/map/widgets/nearby-search'
@@ -122,7 +128,8 @@ export default {
     return {
       view: null,
       map: null,
-      showNearbySearch: false
+      showNearbySearch: false,
+      addedWidget: []
     }
   },
 
@@ -250,6 +257,7 @@ export default {
           expanded: true
         })
         ui.add(expandLayerList, 'bottom-right')
+        this.addedWidget.push(expandLayerList)
       }
 
       if (this.widgets.includes('FeatureEditor')) {
@@ -261,6 +269,7 @@ export default {
           expanded: false
         })
         ui.add(expandFeatureEditor, 'bottom-right')
+        this.addedWidget.push(expandFeatureEditor)
       }
 
       if (this.widgets.includes('AirQuality')) {
@@ -283,6 +292,7 @@ export default {
           expanded: true
         })
         ui.add(expandWaterQuality, 'top-right')
+        this.addedWidget.push(expandWaterQuality)
       }
 
       if (this.widgets.includes('Noise')) {
@@ -294,6 +304,7 @@ export default {
           expanded: true
         })
         ui.add(expandNoise, 'top-right')
+        this.addedWidget.push(expandNoise)
       }
 
       if (this.widgets.includes('MultiSearch')) {
@@ -305,6 +316,7 @@ export default {
           expanded: false
         })
         ui.add(expandMultiSearch, 'top-right')
+        this.addedWidget.push(expandMultiSearch)
       }
 
       if (this.widgets.includes('NonRoadMachinery')) {
@@ -312,9 +324,11 @@ export default {
           view: this.view,
           name: 'NonRoadMachinery',
           content: document.getElementById('divNonRoadMachinery'),
+          expandIconClass: 'esri-icon-map-pin',
           expanded: false
         })
         ui.add(expandNonRoad, 'top-right')
+        this.addedWidget.push(expandNonRoad)
       }
 
       await this.view.when()
@@ -372,6 +386,49 @@ export default {
     $_hideNearbySearch() {
       this.showNearbySearch = false
       this.$refs.widgetLayerList.resetLayers()
+    },
+
+    addWidget(widgetOption) {
+      const { name } = widgetOption
+
+      // const [Expand] = await loadModules(['esri/widgets/Expand'], {
+      //   url: `${this.appConfig.map.arcgis_api}/init.js`
+      // })
+      if (!this.widgets.includes(name)) {
+        this.widgets.push(name)
+        this.$forceUpdate()
+        // await this.$nextTick()
+      }
+
+      // switch (name) {
+      //   case 'NonRoadMachinery': {
+
+      //     const expandNonRoad = new Expand({
+      //       view: this.view,
+      //       name,
+      //       content: document.getElementById('divNonRoadMachinery'),
+      //       expandIconClass: 'esri-icon-map-pin',
+      //       expanded
+      //     })
+      //     this.view.ui.add(expandNonRoad, position)
+      //     this.addedWidget.push(expandNonRoad)
+      //     break
+      //   }
+      // }
+    },
+
+    removeWidget(widgetOption) {
+      _.pull(this.widgets, widgetOption.name)
+      this.$forceUpdate()
+      // const widget = this.addedWidget.find(
+      //   (widget) => widget.name === widgetOption.name
+      // )
+      // if (widget) {
+      //   this.view.ui.remove(widget)
+      //   _.pull(this.widgets, widgetOption.name)
+      //   this.$forceUpdate()
+      //   await this.$nextTick()
+      // }
     },
 
     closePopup() {

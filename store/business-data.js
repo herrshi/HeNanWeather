@@ -804,8 +804,31 @@ const actions = {
       dataType: 'VehicleExhaustSurveillanceStation',
       data: []
     })
-  }
+  },
   /** /.机动车尾气 **/
+
+  /** 非道路移动机械 */
+  async getNonRoadMachineryByCity(
+    { commit },
+    { cityCode, isPage, page, limit }
+  ) {
+    const result = await axiosGet('MVFdlydMechante/find_MVFdlydMechante_data', {
+      cityCode,
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const machineries = result.data.filter(
+        (machinery) => machinery.longitude !== '' && machinery.latitude !== ''
+      )
+      // .map((machinery) => ({ ...machinery, id: machinery.deviceId }))
+
+      return machineries
+    }
+  }
+
+  /** /.非道路移动机械 */
 }
 
 export default {

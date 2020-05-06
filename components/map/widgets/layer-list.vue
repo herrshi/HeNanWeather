@@ -12,7 +12,13 @@
       {{ layerConfig.buttonName }}
     </mdb-btn>
 
-    <mdb-btn rounded size="sm" color="primary" :active="showNonRoadMachinery">
+    <mdb-btn
+      rounded
+      size="sm"
+      color="primary"
+      :active="showNonRoadMachinery"
+      @click="$_toggleNonRoadMachinery"
+    >
       非道路
     </mdb-btn>
 
@@ -444,10 +450,27 @@ export default {
       this.resetLayers()
     },
 
+    $_toggleNonRoadMachinery() {
+      this.showNonRoadMachinery = !this.showNonRoadMachinery
+      if (this.showNonRoadMachinery) {
+        this.$parent.$parent.$parent.addWidget({
+          name: 'NonRoadMachinery'
+        })
+      } else {
+        this.$parent.$parent.$parent.removeWidget({
+          name: 'NonRoadMachinery'
+        })
+      }
+    },
+
     $_toggleButton(layerConfig) {
       const { dataType } = layerConfig
       const active = !layerConfig.active
       this.setLayerActive({ type: dataType, active })
+      // 关闭已打开的弹窗
+      if (!active) {
+        this.$parent.$parent.$parent.closePopup()
+      }
 
       if (!this.isCluster) {
         const layer = this.businessLayer(dataType)
