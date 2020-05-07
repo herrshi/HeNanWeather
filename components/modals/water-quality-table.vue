@@ -66,7 +66,11 @@ export default {
   methods: {
     $_getMonitoringFactorDisplayValue(factor) {
       const value = this.stationData[factor]
-      return value + this.waterMonitoringFactorMap.get(factor).unit
+      if (!isNaN(value)) {
+        return value + this.waterMonitoringFactorMap.get(factor).unit
+      } else {
+        return ''
+      }
     },
 
     $_getMonitoringFactorTooltip(factor) {

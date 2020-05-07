@@ -812,6 +812,7 @@ const actions = {
     { commit },
     { cityCode, isPage, page, limit }
   ) {
+    commit('startFetchData')
     const result = await axiosGet('MVFdlydMechante/find_MVFdlydMechante_data', {
       cityCode,
       isPage,
@@ -823,12 +824,42 @@ const actions = {
         (machinery) => machinery.longitude !== '' && machinery.latitude !== ''
       )
       // .map((machinery) => ({ ...machinery, id: machinery.deviceId }))
-
+      commit('stopFetchData')
       return machineries
     }
-  }
+  },
 
   /** /.非道路移动机械 */
+
+  /** 遥感点 */
+  async getAllTelemetryPoint({ commit }) {
+    commit('startFetchData')
+
+    const dataType = 'TelemetryPoint'
+
+    const result = await axiosGet('monitor_data/get_y_jdc_siteinfo')
+    const points = result
+      .filter((point) => Number(point.DDJD) !== 0 && Number(point.DDWD) !== 0)
+      .map((point, index) => {
+        const { DDJD, DDWD, DWMC, DWDZ, DWBH } = point
+        return {
+          objectId: index,
+          name: DWMC,
+          id: DWBH,
+          address: DWDZ,
+          geometry: { type: 'point', x: Number(DDJD), y: Number(DDWD) },
+          type: '机动车遥测点',
+          dataType
+        }
+      })
+    commit('setBusinessData', {
+      dataType,
+      data: points
+    })
+
+    commit('stopFetchData')
+  }
+  /** /.遥感点 */
 }
 
 export default {

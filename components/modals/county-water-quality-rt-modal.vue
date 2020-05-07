@@ -92,6 +92,9 @@ export default {
     async $_modal_beforeShow() {
       this.startFetchData()
 
+      this.stationRTData = {}
+      this.stationSelect = []
+
       let stations = await this.getBusinessData(
         'SurfaceWaterSurveillanceStation'
       )
@@ -119,12 +122,14 @@ export default {
     },
 
     async $_stationChanged() {
-      const selectedStation = this.stationSelect.filter(
+      const selectedStation = this.stationSelect.find(
         (station) => station.selected === true
       )
-      const result = await WaterStationApi.getRTData(selectedStation.value)
-      if (result) {
-        this.stationRTData = result[0]
+      if (selectedStation) {
+        const result = await WaterStationApi.getRTData(selectedStation.value)
+        if (result) {
+          this.stationRTData = result[0]
+        }
       }
     }
   }

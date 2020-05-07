@@ -87,14 +87,14 @@ export default {
           alias: '车牌颜色'
         },
         {
-          name: 'mhyframeNo',
-          type: 'string',
-          alias: '车架号'
-        },
-        {
           name: 'mhycolor',
           type: 'string',
           alias: '车身颜色'
+        },
+        {
+          name: 'mhyframeNo',
+          type: 'string',
+          alias: '车架号'
         },
         {
           name: 'mhyreglocation',
@@ -249,7 +249,9 @@ export default {
 
   created() {
     this.popupFields = this.machineryFields
-      .filter((field) => field.name !== 'OBJECTID')
+      .filter(
+        (field) => field.name !== 'OBJECTID' && field.name !== 'mhyplateColor'
+      )
       .map((field) => ({ fieldName: field.name, label: field.alias }))
 
     this.citySelector = this.cities
@@ -304,8 +306,6 @@ export default {
 
     /** 显示 */
     async $_showCityMachinery(cityCode) {
-      this.startUpdating()
-
       const data = await this.getNonRoadMachineryByCity({
         cityCode,
         isPage: 'NO'
@@ -313,8 +313,6 @@ export default {
       if (data) {
         this.$_createLayer(data)
       }
-
-      this.stopUpdating()
     },
 
     /** 创建一个图层 */
@@ -342,6 +340,19 @@ export default {
           default:
             otherCount++
         }
+
+        if (pointData.mhyplateColor.includes(',')) {
+          const colorCode = pointData.mhyplateColor.slice(
+            0,
+            pointData.mhyplateColor.indexOf(',')
+          )
+          pointData.mhyplate =
+            '<span style="background-color:' +
+            colorCode +
+            '">' +
+            pointData.mhyplate +
+            '</span>'
+        }
         return new this.Graphic({
           geometry: {
             type: 'point',
@@ -357,7 +368,7 @@ export default {
 
       this.chartOption = {
         title: {
-          text: '总数: ' + data.length + '个',
+          text: '非道路移动机械总数: ' + data.length + '个',
           left: 'center'
         },
         tooltip: {

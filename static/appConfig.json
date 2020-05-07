@@ -1325,6 +1325,70 @@
             }
           ]
         }
+      },
+      {
+        "name": "机动车遥测点",
+        "geometryType": "point",
+        "buttonName": "遥测",
+        "dataType": "TelemetryPoint",
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/JingChe-blue.png",
+            "width": "24px",
+            "height": "35px",
+            "yoffset": "18px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "address",
+                  "label": "地址"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
       }
     ]
   },
