@@ -48,15 +48,15 @@ export default {
       }
     ]
     let rows = store.getters['business-data/getBusinessData'](
-      'RadiationSourceSurveillanceStation'
+      'RadioactiveSourceSurveillanceStation'
     )
     if (!rows) {
       await store.dispatch(
-        'business-data/getAllRadiationSourceSurveillanceStation',
+        'business-data/getAllRadioactiveSourceSurveillanceStation',
         { isPage: 'NO' }
       )
       rows = store.getters['business-data/getBusinessData'](
-        'RadiationSourceSurveillanceStation'
+        'RadioactiveSourceSurveillanceStation'
       )
     }
 

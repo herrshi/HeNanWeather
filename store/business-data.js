@@ -565,6 +565,50 @@ const actions = {
   },
   /** /.辐射源 **/
 
+  /** 放射源 **/
+  async getAllRadioactiveSourceSurveillanceStation(
+    { commit },
+    { isPage, page, limit }
+  ) {
+    commit('startFetchData')
+    const result = await axiosGet('radioactiveSourceSite/find_area_site_page', {
+      isPage,
+      page,
+      limit
+    })
+    if (result.code === 1) {
+      const filter = result.data.filter((station) => station.isDelete === 1)
+      const stations = filter.map((station) => {
+        const {
+          objectId,
+          siteName: name,
+          siteId: id,
+          cityName,
+          siteTypeNa: stationTypeName,
+          x,
+          y
+        } = station
+
+        return {
+          objectId,
+          name,
+          id,
+          cityName,
+          stationTypeName,
+          geometry: { type: 'point', x, y },
+          type: '放射源站点',
+          dataType: 'RadioactiveSourceSurveillanceStation'
+        }
+      })
+      commit('setBusinessData', {
+        dataType: 'RadioactiveSourceSurveillanceStation',
+        data: stations
+      })
+    }
+    commit('stopFetchData')
+  },
+  /** /.放射源 **/
+
   /** 噪声 **/
   async getAllNoiseSurveillanceStation({ commit }, { isPage, page, limit }) {
     commit('startFetchData')

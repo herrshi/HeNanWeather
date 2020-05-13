@@ -1067,6 +1067,82 @@
         }
       },
       {
+        "name": "放射源监测站点",
+        "geometryType": "point",
+        "buttonName": "放射",
+        "dataType": "RadioactiveSourceSurveillanceStation",
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "stationTypeName",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "simple",
+          "symbol": {
+            "type": "picture-marker",
+            "url": "/images/RadiationStation.png",
+            "width": "30px",
+            "height": "40px",
+            "yoffset": "20px"
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "stationTypeName",
+                  "label": "站点类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },
+      {
         "name": "噪声监测站点",
         "geometryType": "point",
         "buttonName": "噪声",

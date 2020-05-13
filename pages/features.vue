@@ -64,9 +64,8 @@
         :is-collapsed="collapse"
         :break-width="0"
         slim
-        side-nav-class="sn-bg-1"
+        side-nav-class="side-nav-class"
         mask="strong"
-        side-nav-style="top: 84px"
       >
         <mdb-side-nav-nav>
           <side-navbar-item
@@ -237,7 +236,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .view {
   background: url('~assets/images/89.jpg') no-repeat center center;
   background-size: cover;
@@ -254,5 +253,10 @@ export default {
 
 .page-content {
   transition: all 0.2s linear;
+}
+
+.side-nav-class {
+  top: 84px !important;
+  background-image: url('~assets/images/sidenav1.jpg') !important;
 }
 </style>
