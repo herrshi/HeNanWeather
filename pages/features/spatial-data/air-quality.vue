@@ -1,5 +1,5 @@
 <template>
-  <mdb-card color="white" style="color: black !important;" class="h-100 w-100">
+  <mdb-card style="color: black !important;" class="h-100 w-100">
     <mdb-card-body class="p-2">
       <mdb-datatable
         :data="tableData"

@@ -3,7 +3,7 @@
 数据量较大，只显示地级市范围，不显示全省数据
 -->
 <template>
-  <mdb-card color="white">
+  <mdb-card>
     <mdb-card-body>
       <!-- 地级市选择 -->
       <mdb-select

@@ -1,6 +1,5 @@
 <template>
   <mdb-card
-    color="white"
     :style="
       'width: ' +
         (widgetConfig.WaterQuality.type === 'hourly' ? '400px' : '300px')
@@ -11,6 +10,7 @@
         v-if="widgetConfig.WaterQuality.type === 'rt'"
         v-model="monitoringFactor"
         label="监测因子: "
+        color="primary"
         @getValue="$_setRenderer"
       />
       <mdb-form-inline

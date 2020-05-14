@@ -1,6 +1,5 @@
 <template>
   <mdb-card
-    color="white"
     :style="
       'width: ' + (widgetConfig.Noise.type === 'hourly' ? '400px' : '300px')
     "
@@ -9,6 +8,7 @@
       <mdb-select
         v-model="monitoringFactor"
         label="监测因子"
+        color="primary"
         @getValue="$_dataChanged"
       />
 

@@ -1,9 +1,10 @@
 <template>
-  <mdb-card color="white">
+  <mdb-card>
     <mdb-card-body>
       <mdb-select
         v-model="monitoringFactor"
         label="监测因子: "
+        color="primary"
         @getValue="$_dateChanged"
       />
 

@@ -1,7 +1,7 @@
 <template>
-  <mdb-btn-group>
+  <!-- <mdb-btn-group>
     <mdb-btn
-      v-for="(layerConfig, index) in layerListConfig"
+      v-for="(layerConfig, index) in layerListConfig1"
       :key="index"
       rounded
       size="sm"
@@ -30,7 +30,55 @@
     >
       聚合
     </mdb-btn>
-  </mdb-btn-group>
+  </mdb-btn-group> -->
+  <div>
+    <mdb-btn-group>
+      <mdb-btn
+        v-for="(layerConfig, index) in layerListConfig1"
+        :key="index"
+        rounded
+        size="sm"
+        color="primary"
+        :active="layerConfig.active"
+        @click="$_toggleButton(layerConfig)"
+      >
+        {{ layerConfig.buttonName }}
+      </mdb-btn>
+    </mdb-btn-group>
+
+    <mdb-btn-group>
+      <mdb-btn
+        v-for="(layerConfig, index) in layerListConfig2"
+        :key="index"
+        rounded
+        size="sm"
+        color="primary"
+        :active="layerConfig.active"
+        @click="$_toggleButton(layerConfig)"
+      >
+        {{ layerConfig.buttonName }}
+      </mdb-btn>
+
+      <mdb-btn
+        rounded
+        size="sm"
+        color="primary"
+        :active="showNonRoadMachinery"
+        @click="$_toggleNonRoadMachinery"
+      >
+        非道路
+      </mdb-btn>
+
+      <mdb-btn
+        :color="isCluster ? 'success' : 'blue-grey'"
+        rounded
+        size="sm"
+        @click="$_toggleCluster"
+      >
+        聚合
+      </mdb-btn>
+    </mdb-btn-group>
+  </div>
 </template>
 
 <script>
@@ -71,9 +119,15 @@ export default {
     layerListConfig() {
       // 只需要显示前三个图层，其他隐藏
       // return this.appConfig.pageComponents.layerList.slice(0, 6)
-      if (this.layerListWidgetVisible)
-        return this.appConfig.pageComponents.layerList
-      else return this.appConfig.pageComponents.layerList.slice(0, 3)
+      return this.appConfig.pageComponents.layerList
+    },
+
+    layerListConfig1() {
+      return this.appConfig.pageComponents.layerList.slice(0, 7)
+    },
+
+    layerListConfig2() {
+      return this.appConfig.pageComponents.layerList.slice(7)
     }
   },
 
@@ -519,6 +573,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 1100px;
+  width: 650px;
 }
 </style>
