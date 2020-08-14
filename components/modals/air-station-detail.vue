@@ -28,7 +28,13 @@
             </mdb-card-title>
           </div>
 
-          <mdb-row>
+          <div v-if="loadingStatus !== '数据载入完成'" class="text-center">
+            <p>
+              <strong>{{ loadingStatus }}</strong>
+            </p>
+          </div>
+
+          <mdb-row v-if="loadingStatus === '数据载入完成'">
             <mdb-col>
               <mdb-tbl>
                 <mdb-tbl-head>
@@ -98,13 +104,12 @@
     </mdb-modal-body>
 
     <mdb-modal-body v-if="tabs === 2">
-      <!--      <mdb-select-->
-      <!--        v-model="airStationMonitoringFactor"-->
-      <!--        label="监测因子: "-->
-      <!--        multiple-->
-      <!--        @getValue="$_setOption"-->
-      <!--      />-->
-      <v-chart :options="chartOption" />
+      <div v-if="loadingStatus !== '数据载入完成'" class="text-center">
+        <p>
+          <strong>{{ loadingStatus }}</strong>
+        </p>
+      </div>
+      <v-chart v-if="loadingStatus === '数据载入完成'" :options="chartOption" />
     </mdb-modal-body>
 
     <mdb-modal-footer>
@@ -180,8 +185,8 @@ export default {
   data() {
     return {
       tabs: 1,
-      stationRTData: {},
-      stationHistData: {},
+      stationRTData: undefined,
+      stationHistData: undefined,
       airStationMonitoringFactor: [
         // {
         //   text: 'AQI',
@@ -238,6 +243,28 @@ export default {
       return this.airStationMonitoringFactor.filter(
         (factor) => factor.selected === true
       )
+    },
+
+    loadingStatus() {
+      if (this.tabs === 1) {
+        if (!this.stationRTData) {
+          return '数据载入中'
+        } else if (Object.keys(this.stationRTData).length === 0) {
+          return '无数据'
+        } else {
+          return '数据载入完成'
+        }
+      } else if (this.tabs === 2) {
+        if (!this.stationHistData) {
+          return '数据载入中'
+        } else if (Object.keys(this.stationHistData).length === 0) {
+          return '无数据'
+        } else {
+          return '数据载入完成'
+        }
+      } else {
+        return '无数据'
+      }
     }
   },
 
@@ -245,6 +272,10 @@ export default {
     ...mapMutations('business-data', ['startFetchData', 'stopFetchData']),
 
     async $_modal_beforeShow() {
+      this.chartOption = {}
+      this.stationRTData = undefined
+      this.stationHistData = undefined
+
       this.startFetchData()
       const result = await AirStationApi.getRTData(this.stationId)
       if (result && result.length > 0) {

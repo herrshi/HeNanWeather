@@ -15,7 +15,14 @@
         label="监测因子"
         @getValue="$_setOption"
       />
-      <v-chart :options="chartOption" />
+
+      <div v-if="loadingStatus !== '数据载入完成'" class="text-center">
+        <p>
+          <strong>{{ loadingStatus }}</strong>
+        </p>
+      </div>
+
+      <v-chart v-if="loadingStatus === '数据载入完成'" :options="chartOption" />
     </mdb-modal-body>
 
     <mdb-modal-footer>
@@ -81,9 +88,9 @@ export default {
 
   data() {
     return {
-      airQualityData: null,
+      airQualityData: undefined,
 
-      chartOption: null,
+      chartOption: undefined,
 
       monitoringFactor: [
         {
@@ -135,11 +142,24 @@ export default {
 
     selectedFactor() {
       return this.monitoringFactor.find((factor) => factor.selected === true)
+    },
+
+    loadingStatus() {
+      if (!this.airQualityData) {
+        return '数据载入中'
+      } else if (Object.keys(this.airQualityData).length === 0) {
+        return '无数据'
+      } else {
+        return '数据载入完成'
+      }
     }
   },
 
   methods: {
     $_modal_beforeShow() {
+      this.chartOption = {}
+      this.airQualityData = undefined
+
       const result = this.getBusinessData(this.dataType)
       this.airQualityData = result.filter(
         (cityData) => this.cityCode === cityData.CITY_CODE

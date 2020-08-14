@@ -158,6 +158,7 @@
     "layerList": [
       {
         "name": "国控空气监测站点(75个)",
+        "include": true,
         "geometryType": "point",
         "buttonName": "空气(国)",
         "dataType": "AirQualitySurveillanceStationGK",
@@ -240,6 +241,7 @@
       },
       {
         "name": "其他空气监测站点(405个)",
+        "include": true,
         "geometryType": "point",
         "buttonName": "空气(其他)",
         "dataType": "AirQualitySurveillanceStationSK",
@@ -322,6 +324,7 @@
       },
       {
         "name": "国控地表水监测站点(86个)",
+        "include": true,
         "geometryType": "point",
         "buttonName": "地表水(国)",
         "dataType": "SurfaceWaterSurveillanceStationGK",
@@ -465,6 +468,7 @@
       },
       {
         "name": "省控地表水监测站点(244个)",
+        "include": true,
         "geometryType": "point",
         "buttonName": "地表水(其他)",
         "dataType": "SurfaceWaterSurveillanceStationSK",
@@ -608,6 +612,7 @@
       },
       {
         "name": "污染源企业(4677个)",
+        "include": true,
         "geometryType": "point",
         "buttonName": "污染源",
         "dataType": "PollutantSourceEnterprise",
@@ -727,7 +732,8 @@
         }
       },
       {
-        "name": "土壤污染地块",
+        "name": "疑似污染地块",
+        "include": true,
         "buttonName": "土壤",
         "dataType": "SoilPollutantArea",
         "active": false,
@@ -916,6 +922,7 @@
       },
       {
         "name": "医疗固废监测站点",
+        "include": false,
         "geometryType": "point",
         "buttonName": "医疗",
         "dataType": "MedicalWasteSurveillanceStation",
@@ -992,6 +999,7 @@
       },
       {
         "name": "辐射源监测站点",
+        "include": false,
         "geometryType": "point",
         "buttonName": "辐射",
         "dataType": "RadiationSourceSurveillanceStation",
@@ -1068,6 +1076,7 @@
       },
       {
         "name": "放射源监测站点",
+        "include": false,
         "geometryType": "point",
         "buttonName": "放射",
         "dataType": "RadioactiveSourceSurveillanceStation",
@@ -1144,6 +1153,7 @@
       },
       {
         "name": "噪声监测站点",
+        "include": false,
         "geometryType": "point",
         "buttonName": "噪声",
         "dataType": "NoiseSurveillanceStation",
@@ -1216,6 +1226,7 @@
       },
       {
         "name": "保护区",
+        "include": false,
         "buttonName": "保护区",
         "dataType": "Reserve",
         "active": false,
@@ -1404,6 +1415,7 @@
       },
       {
         "name": "机动车遥测点",
+        "include": true,
         "geometryType": "point",
         "buttonName": "遥测",
         "dataType": "TelemetryPoint",

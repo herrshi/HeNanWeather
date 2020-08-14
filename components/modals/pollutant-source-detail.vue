@@ -15,7 +15,15 @@
     </mdb-modal-header>
 
     <mdb-modal-body>
-      <div v-if="pollutantType === '一般废气'">
+      <div v-if="loadingStatus !== '数据载入完成'" class="text-center">
+        <p>
+          <strong>{{ loadingStatus }}</strong>
+        </p>
+      </div>
+
+      <div
+        v-if="pollutantType === '一般废气' && loadingStatus === '数据载入完成'"
+      >
         <mdb-accordion v-for="(data, index) in airData" :key="index" table>
           <mdb-accordion-pane
             :title="data.OUTPUTNAME + '  ' + data.MONITORTIME"
@@ -86,7 +94,9 @@
         </mdb-accordion>
       </div>
 
-      <div v-if="pollutantType === '一般废水'">
+      <div
+        v-if="pollutantType === '一般废水' && loadingStatus === '数据载入完成'"
+      >
         <mdb-accordion v-for="(data, index) in waterData" :key="index" table>
           <mdb-accordion-pane
             :title="data.OUTPUTNAME + '  ' + data.MONITORTIME"
@@ -184,7 +194,6 @@ export default {
 
   data() {
     return {
-      stationRTData: {},
       stationName: '',
       pollutantType: '',
       elHeight: 0,
@@ -209,13 +218,35 @@ export default {
       ],
       waterFactors: new Map(),
       waterShowFactors1: ['VALUE1', 'VALUE2', 'VALUE4', 'COUFLOW'],
-      airData: [],
-      waterData: []
+      airData: undefined,
+      waterData: undefined
     }
   },
 
   computed: {
-    ...mapGetters('business-data', ['getBusinessData'])
+    ...mapGetters('business-data', ['getBusinessData']),
+
+    loadingStatus() {
+      if (this.pollutantType === '一般废气') {
+        if (!this.airData) {
+          return '数据载入中'
+        } else if (Object.keys(this.airData).length === 0) {
+          return '无数据'
+        } else {
+          return '数据载入完成'
+        }
+      } else if (this.pollutantType === '一般废水') {
+        if (!this.waterData) {
+          return '数据载入中'
+        } else if (Object.keys(this.waterData).length === 0) {
+          return '无数据'
+        } else {
+          return '数据载入完成'
+        }
+      } else {
+        return '数据载入完成'
+      }
+    }
   },
 
   mounted() {
@@ -260,6 +291,9 @@ export default {
     },
 
     async $_modal_beforeShow() {
+      this.airData = undefined
+      this.waterData = undefined
+
       this.startFetchData()
       this.openPaneNum = 0
 

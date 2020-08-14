@@ -1,7 +1,7 @@
 <template>
-  <!-- <mdb-btn-group>
+  <mdb-btn-group>
     <mdb-btn
-      v-for="(layerConfig, index) in layerListConfig1"
+      v-for="(layerConfig, index) in layerListConfig"
       :key="index"
       rounded
       size="sm"
@@ -13,6 +13,7 @@
     </mdb-btn>
 
     <mdb-btn
+      v-if="true"
       rounded
       size="sm"
       color="primary"
@@ -30,8 +31,9 @@
     >
       聚合
     </mdb-btn>
-  </mdb-btn-group> -->
-  <div>
+  </mdb-btn-group>
+
+  <!-- <div>
     <mdb-btn-group>
       <mdb-btn
         v-for="(layerConfig, index) in layerListConfig1"
@@ -78,7 +80,7 @@
         聚合
       </mdb-btn>
     </mdb-btn-group>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -119,7 +121,9 @@ export default {
     layerListConfig() {
       // 只需要显示前三个图层，其他隐藏
       // return this.appConfig.pageComponents.layerList.slice(0, 6)
-      return this.appConfig.pageComponents.layerList
+      return this.appConfig.pageComponents.layerList.filter(
+        (layer) => layer.include
+      )
     },
 
     layerListConfig1() {
@@ -573,6 +577,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 650px;
+  width: 800px;
 }
 </style>
