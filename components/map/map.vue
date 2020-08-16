@@ -385,7 +385,9 @@ export default {
     // todo 改为state
     $_hideNearbySearch() {
       this.showNearbySearch = false
-      this.$refs.widgetLayerList.resetLayers()
+      if (this.$refs.widgetLayerList) {
+        this.$refs.widgetLayerList.resetLayers()
+      }
     },
 
     addWidget(widgetOption) {

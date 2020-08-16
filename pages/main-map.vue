@@ -1,29 +1,77 @@
 <template>
   <div style="height: 100vh">
-    <Map theme="light" />
+    <Map
+      ref="main_map"
+      theme="light"
+      :widgets="['NearbySearch']"
+      @mapInitialized="$_mapInitialized"
+      @mapPopupTriggerAction="$_map_popupTriggerAction"
+    />
+
+    <air-station-detail
+      :show-modal="showAirStationDetailModal"
+      :station-id="detailAirStationId"
+      @closeDetail="showAirStationDetailModal = false"
+    />
+
+    <water-station-detail
+      :show-modal="showWaterStationDetailModal"
+      :station-id="detailWaterStationId"
+      @closeDetail="showWaterStationDetailModal = false"
+    />
+
+    <pollutant-source-detail
+      :show-modal="showPollutantSourceDetailModal"
+      :station-id="detailPollutantSourceId"
+      @closeDetail="showPollutantSourceDetailModal = false"
+    />
+
+    <Loader v-if="showLoading" class="float-right" />
   </div>
 </template>
 
 <script>
 import { loadModules } from 'esri-loader'
-import { mapState } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import Map from '~/components/map/map'
+import Loader from '~/components/loader'
+import AirStationDetail from '~/components/modals/air-station-detail'
+import WaterStationDetail from '~/components/modals/water-station-detail'
+import PollutantSourceDetail from '~/components/modals/pollutant-source-detail'
 
 export default {
-  components: { Map },
+  name: 'MainMap',
+
+  components: {
+    Map,
+    Loader,
+    AirStationDetail,
+    WaterStationDetail,
+    PollutantSourceDetail
+  },
 
   async fetch({ store }) {
     await store.dispatch('app-info/getAppConfig')
+    await store.dispatch('business-data/getWaterMonitorFactorInfos')
   },
 
   data() {
     return {
-      layerConfig: []
+      map: null,
+      layerConfigs: [],
+      showAirStationDetailModal: false,
+      showWaterStationDetailModal: false,
+      showPollutantSourceDetailModal: false,
+      detailAirStationId: '',
+      detailWaterStationId: '',
+      detailPollutantSourceId: ''
     }
   },
 
   computed: {
-    ...mapState('app-info', ['appConfig'])
+    ...mapState('app-info', ['appConfig']),
+    ...mapGetters('business-data', ['getBusinessData']),
+    ...mapGetters(['showLoading'])
   },
 
   mounted() {
@@ -34,68 +82,76 @@ export default {
       const layerList = layers.toLowerCase().split(',')
       if (layerList.includes('air')) {
         // 空气监测站点
-        this.layerConfig.push(
+        this.layerConfigs.push(
           ...allLayerConfigs.filter(
             (config) =>
               config.dataType === 'AirQualitySurveillanceStationGK' ||
               config.dataType === 'AirQualitySurveillanceStationSK'
           )
         )
-      } else if (layerList.includes('water')) {
+      }
+      if (layerList.includes('water')) {
         // 地表水监测站点
-        this.layerConfig.push(
+        this.layerConfigs.push(
           ...allLayerConfigs.filter(
             (config) =>
               config.dataType === 'SurfaceWaterSurveillanceStationGK' ||
               config.dataType === 'SurfaceWaterSurveillanceStationSK'
           )
         )
-      } else if (layerList.includes('pollutantsource')) {
+      }
+      if (layerList.includes('pollutantsource')) {
         // 污染源
-        this.layerConfig.push(
+        this.layerConfigs.push(
           ...allLayerConfigs.filter(
             (config) => config.dataType === 'PollutantSourceEnterprise'
           )
         )
-      } else if (layerList.includes('soil')) {
+      }
+      if (layerList.includes('soil')) {
         // 污染地块
         this.layerConfig.push(
           ...allLayerConfigs.filter(
             (config) => config.dataType === 'SoilPollutantArea'
           )
         )
-      } else if (layerList.includes('medical')) {
+      }
+      if (layerList.includes('medical')) {
         // 医疗固废监测站
-        this.layerConfig.push(
+        this.layerConfigs.push(
           ...allLayerConfigs.filter(
             (config) => config.dataType === 'MedicalWasteSurveillanceStation'
           )
         )
-      } else if (layerList.includes('radiation')) {
+      }
+      if (layerList.includes('radiation')) {
         // 辐射源监测站
         this.layerConfig.push(
           ...allLayerConfigs.filter(
             (config) => config.dataType === 'RadiationSourceSurveillanceStation'
           )
         )
-      } else if (layerList.includes('radioactive')) {
+      }
+      if (layerList.includes('radioactive')) {
         // 放射源监测站
-        this.layerConfig.push(
+        this.layerConfigs.push(
           ...allLayerConfigs.filter(
             (config) =>
               config.dataType === 'RadioactiveSourceSurveillanceStation'
           )
         )
-      } else if (layerList.includes('noise')) {
+      }
+      if (layerList.includes('noise')) {
         // 噪声监测站
-        this.layerConfig.push(
+        this.layerConfigs.push(
           ...allLayerConfigs.filter(
             (config) => config.dataType === 'NoiseSurveillanceStation'
           )
         )
-      } else if (layerList.includes('reserve')) {
+      }
+      if (layerList.includes('reserve')) {
         // 保护区
-        this.layerConfig.push(
+        this.layerConfigs.push(
           ...allLayerConfigs.filter((config) => config.dataType === 'Reserve')
         )
       }
@@ -103,6 +159,27 @@ export default {
   },
 
   methods: {
+    ...mapMutations('map', ['addBusinessLayer']),
+
+    async $_mapInitialized() {
+      await this.$_showLayers()
+    },
+
+    async $_showLayers() {
+      const map = this.$refs.main_map.map
+      for (let i = 0; i < this.layerConfigs.length; i++) {
+        const layerConfig = this.layerConfigs[i]
+        const featureLayer = await this.$_createFeatureLayer(layerConfig)
+        if (featureLayer) {
+          this.addBusinessLayer({
+            type: layerConfig.dataType,
+            layer: featureLayer
+          })
+          map.add(featureLayer)
+        }
+      }
+    },
+
     async $_createFeatureLayer(layerConfig) {
       const [FeatureLayer, Graphic] = await loadModules(
         ['esri/layers/FeatureLayer', 'esri/Graphic'],
@@ -140,20 +217,38 @@ export default {
         }
       }
 
-      // const clusterLayer = new FlareClusterLayer.FlareClusterLayer()
-      // console.log(clusterLayer)
-
       return new FeatureLayer({
         objectIdField: 'FID',
         title: name,
         source: graphics,
         geometryType,
         outFields: ['*'],
-        visible: false,
+        visible: true,
         fields,
         renderer,
         popupTemplate
       })
+    },
+
+    $_map_popupTriggerAction(event) {
+      switch (event.actionId) {
+        case 'DetailAir':
+          this.detailAirStationId = event.selectedGraphic.getAttribute('id')
+          this.showAirStationDetailModal = true
+          break
+
+        case 'DetailWater':
+          this.detailWaterStationId = event.selectedGraphic.getAttribute('id')
+          this.showWaterStationDetailModal = true
+          break
+
+        case 'DetailPollutantSource':
+          this.detailPollutantSourceId = event.selectedGraphic.getAttribute(
+            'id'
+          )
+          this.showPollutantSourceDetailModal = true
+          break
+      }
     }
   }
 }
