@@ -5,7 +5,7 @@
   "author": "herrshi",
   "private": true,
   "scripts": {
-    "dev": "cross-env BASE_URL=http://localhost:18088 BUILD_ENV=test nuxt",
+    "dev": "cross-env BASE_URL=http://localhost:18088 BUILD_ENV=test nuxt --fix",
     "build_local": "cross-env BASE_URL=http://localhost:18088 BUILD_ENV=test nuxt build",
     "build_ali": "cross-env BASE_URL=http://47.110.60.109:18088 BUILD_ENV=prod_ali nuxt build",
     "build_production": "cross-env BASE_URL=http://10.41.109.91:18089 BUILD_ENV=prod nuxt build",
