@@ -58,6 +58,7 @@ export default {
   data() {
     return {
       map: null,
+      view: null,
       layerConfigs: [],
       showAirStationDetailModal: false,
       showWaterStationDetailModal: false,
@@ -71,6 +72,7 @@ export default {
   computed: {
     ...mapState('app-info', ['appConfig']),
     ...mapGetters('business-data', ['getBusinessData']),
+    ...mapGetters('map', ['visibleBusinessLayer']),
     ...mapGetters(['showLoading'])
   },
 
@@ -163,6 +165,34 @@ export default {
 
     async $_mapInitialized() {
       await this.$_showLayers()
+      await this.$_showLegend()
+    },
+
+    async $_showLegend() {
+      const view = this.$refs.main_map.view
+
+      const [Legend, Expand] = await loadModules(
+        ['esri/widgets/Legend', 'esri/widgets/Expand'],
+        {
+          url: `${this.appConfig.map.arcgis_api}/init.js`
+        }
+      )
+      const legend = new Legend({
+        view,
+        layerInfos: this.visibleBusinessLayer.map((visibleLayer) => ({
+          title: visibleLayer.title,
+          layer: visibleLayer
+        }))
+      })
+      const legendExpand = new Expand({
+        view,
+        name: 'Legend',
+        content: legend,
+        expandIconClass: 'esri-icon-public'
+        // 不显示导航栏的页面要显示图例
+        // expanded: this.showLegend
+      })
+      view.ui.add(legendExpand, 'bottom-left')
     },
 
     async $_showLayers() {
