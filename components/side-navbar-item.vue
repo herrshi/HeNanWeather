@@ -47,4 +47,8 @@ export default {
 }
 </script>
 
-<style scoped />
+<style>
+.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent {
+  color: #0d47a1;
+}
+</style>

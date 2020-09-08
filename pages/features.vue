@@ -231,7 +231,9 @@ export default {
   },
 
   mounted() {
-    const activeMenu = $('.nuxt-link-active ')
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
     console.log(activeMenu)
   },
 
