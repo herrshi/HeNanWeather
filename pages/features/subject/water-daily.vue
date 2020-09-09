@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import { mdbCard, mdbCardBody } from 'mdbvue'
 import Map from '~/components/map/map'
 import CountyWaterQualityHistModal from '~/components/modals/county-water-quality-hist-modal'
@@ -33,6 +34,13 @@ export default {
     Map,
     mdbCard,
     mdbCardBody
+  },
+
+  mounted() {
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   data() {

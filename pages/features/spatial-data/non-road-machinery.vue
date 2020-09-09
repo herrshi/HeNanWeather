@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import { mdbCard, mdbCardBody, mdbDatatable, mdbSelect } from 'mdbvue'
 import { mapActions, mapState, mapGetters } from 'vuex'
 
@@ -177,6 +178,13 @@ export default {
         text: city.cityName,
         value: city.cityCode
       }))
+  },
+
+  mounted() {
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   methods: {

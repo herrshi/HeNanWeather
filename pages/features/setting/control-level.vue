@@ -132,6 +132,11 @@ export default {
       naviBreadcrumb: [this.subTitle, '系统设置', this.pageName]
     })
     this.$_attachTableButtonEvent()
+
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   methods: {

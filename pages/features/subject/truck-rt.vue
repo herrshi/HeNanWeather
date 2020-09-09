@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import {
   mdbRow,
   mdbCol,
@@ -269,6 +270,11 @@ export default {
     this.startDate = moment()
       .subtract(1, 'days')
       .format('YYYY-MM-DD')
+
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   methods: {

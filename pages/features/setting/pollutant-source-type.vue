@@ -133,6 +133,11 @@ export default {
 
     // 使用jQuery来响应DataTable内的button click
     this.$_attachTableButtonEvent()
+
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   methods: {

@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import { mdbCard, mdbCardBody } from 'mdbvue'
 import Map from '~/components/map/map'
 import CountyWaterQualityHistModal from '~/components/modals/county-water-quality-hist-modal'
@@ -44,6 +45,13 @@ export default {
       // 专题类型--小时/日/月
       subjectType: 'hourly'
     }
+  },
+
+  mounted() {
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   methods: {

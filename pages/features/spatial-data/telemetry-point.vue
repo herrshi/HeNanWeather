@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import { mdbCard, mdbCardBody, mdbDatatable } from 'mdbvue'
 export default {
   name: 'TelemetryPoint',
@@ -54,6 +55,13 @@ export default {
     return {
       tableData: { columns, rows }
     }
+  },
+
+  mounted() {
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   }
 }
 </script>

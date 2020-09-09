@@ -134,6 +134,11 @@ export default {
     })
 
     this.$_attachTableButtonEvent()
+
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   methods: {
