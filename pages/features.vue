@@ -106,7 +106,6 @@
 </template>
 
 <script>
-import $ from 'jquery'
 import { mapActions, mapState, mapMutations, mapGetters } from 'vuex'
 import {
   // mdbBreadcrumb,
@@ -228,13 +227,6 @@ export default {
     navbarStyle() {
       return `margin-left: ${this.collapse ? 60 : 240}px`
     }
-  },
-
-  mounted() {
-    const activeMenu = $(
-      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
-    )
-    console.log(activeMenu)
   },
 
   methods: {

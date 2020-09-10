@@ -78,7 +78,11 @@ export default {
 
   mounted() {
     const { layers } = this.$route.query
-    const allLayerConfigs = this.appConfig.pageComponents.layerList
+    // 深拷贝
+    const oriLayerConfigs = JSON.parse(
+      JSON.stringify(this.appConfig.pageComponents.layerList)
+    )
+    const allLayerConfigs = oriLayerConfigs.reverse()
 
     if (layers) {
       const layerList = layers.toLowerCase().split(',')
@@ -170,6 +174,8 @@ export default {
 
     async $_showLegend() {
       const view = this.$refs.main_map.view
+      // 专题图的页面较大，地图需要放大一级
+      await view.goTo({ zoom: ++view.zoom })
 
       const [Legend, Expand] = await loadModules(
         ['esri/widgets/Legend', 'esri/widgets/Expand'],

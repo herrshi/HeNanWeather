@@ -36,13 +36,6 @@ export default {
     mdbCardBody
   },
 
-  mounted() {
-    const activeMenu = $(
-      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
-    )
-    activeMenu.addClass('active')
-  },
-
   data() {
     return {
       showCountyWaterQualityHist: false,
@@ -52,6 +45,13 @@ export default {
       // 专题类型--小时/日/月
       subjectType: 'daily'
     }
+  },
+
+  mounted() {
+    const activeMenu = $(
+      '.nuxt-link-exact-active.nuxt-link-active.sidenav-link.ripple-parent'
+    )
+    activeMenu.addClass('active')
   },
 
   methods: {

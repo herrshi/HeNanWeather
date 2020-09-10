@@ -464,4 +464,8 @@ export default {
 }
 </script>
 
-<style scoped />
+<style scoped>
+#MapDiv {
+  background-color: rgb(244, 243, 240);
+}
+</style>

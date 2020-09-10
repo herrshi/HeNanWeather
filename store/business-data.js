@@ -274,7 +274,7 @@ const actions = {
   /** 重点区域空气监测站点 **/
   // 国控
   async getAllAirQualitySurveillanceStationGK(
-    { commit },
+    { commit, rootState },
     { isPage, page, limit }
   ) {
     commit('startFetchData')
@@ -284,13 +284,13 @@ const actions = {
       limit
     })
     if (result.code === 1) {
-      const filtered = result.data.filter(
+      let filtered = result.data.filter(
         (station) => station.isDelete === 1 && station.shape === '国控'
       )
-      // const { cityCode } = rootState
-      // if (cityCode && cityCode !== '') {
-      //   filtered = filtered.filter((station) => station.cityId === cityCode)
-      // }
+      const { cityCode } = rootState
+      if (cityCode && cityCode !== '') {
+        filtered = filtered.filter((station) => station.cityId === cityCode)
+      }
       const stations = filtered.map((station) => {
         const {
           objectId,
@@ -327,7 +327,7 @@ const actions = {
 
   // 其他
   async getAllAirQualitySurveillanceStationSK(
-    { commit },
+    { commit, rootState },
     { isPage, page, limit }
   ) {
     commit('startFetchData')
@@ -337,13 +337,13 @@ const actions = {
       limit
     })
     if (result.code === 1) {
-      const filtered = result.data.filter(
-        (station) => station.isDelete === 1 && state.shape !== '国控'
+      let filtered = result.data.filter(
+        (station) => station.isDelete === 1 && station.shape !== '国控'
       )
-      // const { cityCode } = rootState
-      // if (cityCode && cityCode !== '') {
-      //   filtered = filtered.filter((station) => station.cityId === cityCode)
-      // }
+      const { cityCode } = rootState
+      if (cityCode && cityCode !== '') {
+        filtered = filtered.filter((station) => station.cityId === cityCode)
+      }
       const stations = filtered.map((station) => {
         const {
           objectId,
@@ -389,11 +389,11 @@ const actions = {
       limit
     })
     if (result.code === 1) {
-      const filtered = result.data.filter((station) => station.isDelete === 1)
-      // const { cityCode } = rootState
-      // if (cityCode && cityCode !== '') {
-      //   filtered = filtered.filter((station) => station.cityId === cityCode)
-      // }
+      let filtered = result.data.filter((station) => station.isDelete === 1)
+      const { cityCode } = rootState
+      if (cityCode && cityCode !== '') {
+        filtered = filtered.filter((station) => station.cityId === cityCode)
+      }
       const stations = filtered.map((station) => {
         const {
           objectId,

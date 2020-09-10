@@ -121,9 +121,10 @@ export default {
     layerListConfig() {
       // 只需要显示前三个图层，其他隐藏
       // return this.appConfig.pageComponents.layerList.slice(0, 6)
-      return this.appConfig.pageComponents.layerList.filter(
+      const layerConfig = this.appConfig.pageComponents.layerList.filter(
         (layer) => layer.include
       )
+      return layerConfig
     },
 
     layerListConfig1() {
