@@ -611,127 +611,6 @@
         }
       },
       {
-        "name": "污染源企业(4677个)",
-        "include": true,
-        "geometryType": "point",
-        "buttonName": "污染源",
-        "dataType": "PollutantSourceEnterprise",
-        "active": false,
-        "fields": [
-          {
-            "name": "FID",
-            "type": "oid"
-          },
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "cityName",
-            "type": "string"
-          },
-          {
-            "name": "controlLevelName",
-            "type": "string"
-          },
-          {
-            "name": "point",
-            "type": "string",
-            "alias": "位置"
-          },
-          {
-            "name": "id",
-            "type": "string"
-          },
-          {
-            "name": "pollutantSourceTypeName",
-            "type": "string",
-            "alias": "污染源类型"
-          },
-          {
-            "name": "type",
-            "type": "string"
-          },
-          {
-            "name": "dataType",
-            "type": "string"
-          }
-        ],
-        "renderer": {
-          "type": "unique-value",
-          "field": "pollutantSourceTypeName",
-          "uniqueValueInfos": [
-            {
-              "value": "一般废水",
-              "label": "废水企业(1249个)",
-              "symbol": {
-                "type": "picture-marker",
-                "url": "/images/corp_water.png",
-                "width": "32px",
-                "height": "38px",
-                "yoffset": "19px"
-              }
-            },
-            {
-              "value": "一般废气",
-              "label": "废气企业(3137个)",
-              "symbol": {
-                "type": "picture-marker",
-                "url": "/images/corp_air.png",
-                "width": "32px",
-                "height": "38px",
-                "yoffset": "19px"
-              }
-            },
-            {
-              "value": "一般废水,一般废气",
-              "label": "涉水涉气企业(291个)",
-              "symbol": {
-                "type": "picture-marker",
-                "url": "/images/corp_water_air.png",
-                "width": "32px",
-                "height": "38px",
-                "yoffset": "19px"
-              }
-            }
-          ]
-        },
-        "popupTemplate": {
-          "title": "{name}",
-          "content": [
-            {
-              "type": "fields",
-              "fieldInfos": [
-                {
-                  "fieldName": "cityName",
-                  "label": "所在城市"
-                },
-                {
-                  "fieldName": "point",
-                  "label": "地址"
-                },
-                {
-                  "fieldName": "pollutantSourceTypeName",
-                  "label": "污染源类型"
-                }
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "title": "详细信息",
-              "id": "DetailPollutantSource",
-              "className": "esri-icon-table"
-            },
-            {
-              "title": "周边搜索",
-              "id": "NearbySearch",
-              "className": "esri-icon-search"
-            }
-          ]
-        }
-      },
-      {
         "name": "疑似污染地块",
         "include": true,
         "buttonName": "土壤",
@@ -860,6 +739,29 @@
             }
           },
           {
+            "name": "colorType",
+            "alias": "地块信息",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "colorType_domain",
+              "codedValues": [
+                {
+                  "name": "超标",
+                  "code": "1"
+                },
+                {
+                  "name": "未超标",
+                  "code": "2"
+                },
+                {
+                  "name": "未调查",
+                  "code": "3"
+                }
+              ]
+            }         
+          },
+          {
             "name": "id",
             "alias": "编号",
             "type": "string",
@@ -879,16 +781,55 @@
           }
         ],
         "renderer": {
-          "type": "simple",
-          "symbol": {
+          "type": "unique-value",
+          "field": "colorType",
+          "defaultSymbol": {
             "type": "simple-fill",
-            "color": [255, 152, 0, 0.7],
+            "color": [158, 158, 158, 0.7],
             "style": "solid",
             "outline": {
-              "color": "#e65100",
+              "color": [158, 158, 158],
               "width": 1
             }
-          }
+          },
+          "uniqueValueInfos": [
+            {
+              "value": "1",
+              "symbol": {
+                "type": "simple-fill",
+                "color": [244, 67, 54, 0.7],
+                "style": "solid",
+                "outline": {
+                  "color": [244, 67, 54],
+                  "width": 1
+                }
+              }
+            },
+            {
+              "value": "2",
+              "symbol": {
+                "type": "simple-fill",
+                "color": [76, 175, 80, 0.7],
+                "style": "solid",
+                "outline": {
+                  "color": [76, 175, 80],
+                  "width": 1
+                }
+              }
+            },
+            {
+              "value": "3",
+              "symbol": {
+                "type": "simple-fill",
+                "color": [255, 152, 0, 0.7],
+                "style": "solid",
+                "outline": {
+                  "color": [255, 152, 0],
+                  "width": 1
+                }
+              }
+            }
+          ]
         },
         "popupTemplate": {
           "title": "{name}",
@@ -920,6 +861,485 @@
           ]
         }
       },
+      {
+        "name": "地下水",
+        "include": true,
+        "buttonName": "地下水",
+        "dataType": "Groundwater",
+        "active": false,
+        "geometryType": "point",
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "alias": "名称",
+            "type": "string"
+          },
+          {
+            "name": "siteId",
+            "alias": "编码",
+            "type": "string"
+          },
+          {
+            "name": "cityId",
+            "alias": "城市名称",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "cityName_domain",
+              "codedValues": [
+                {
+                  "name": "郑州市",
+                  "code": "410100000"
+                },
+                {
+                  "name": "洛阳市",
+                  "code": "410300000"
+                },
+                {
+                  "name": "开封市",
+                  "code": "410200000"
+                },
+                {
+                  "name": "安阳市",
+                  "code": "410500000"
+                },
+                {
+                  "name": "许昌市",
+                  "code": "411000000"
+                },
+                {
+                  "name": "新乡市",
+                  "code": "410700000"
+                },
+                {
+                  "name": "漯河市",
+                  "code": "411100000"
+                },
+                {
+                  "name": "商丘市",
+                  "code": "411400000"
+                },
+                {
+                  "name": "信阳市",
+                  "code": "411500000"
+                },
+                {
+                  "name": "南阳市",
+                  "code": "411300000"
+                },
+                {
+                  "name": "焦作市",
+                  "code": "410800000"
+                },
+                {
+                  "name": "三门峡市",
+                  "code": "411200000"
+                },
+                {
+                  "name": "鹤壁市",
+                  "code": "410600000"
+                },
+                {
+                  "name": "平顶山市",
+                  "code": "410400000"
+                },
+                {
+                  "name": "周口市",
+                  "code": "411600000"
+                },
+                {
+                  "name": "驻马店市",
+                  "code": "411700000"
+                },
+                {
+                  "name": "濮阳市",
+                  "code": "410900000"
+                },
+                {
+                  "name": "济源市",
+                  "code": "419001000"
+                }
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "alias": "编号",
+            "type": "string",
+            "editable": false
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "defaultValue": "地下水",
+            "editable": false
+          },
+          {
+            "name": "dataType",
+            "type": "string",
+            "defaultValue": "Groundwater",
+            "editable": false
+          }
+        ],
+        "renderer": {
+          "type": "simple",          
+          "symbol": {
+            "type": "simple-marker",
+            "color": [63, 81, 181, 0.7],
+            "outline": {
+              "color": [63, 81, 181],
+              "width": 1
+            }
+          }
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityId",
+                  "label": "所在城市"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },
+      {
+        "name": "农村农业",
+        "include": true,
+        "buttonName": "农村",
+        "dataType": "Countryside",
+        "active": false,
+        "geometryType": "point",
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "alias": "名称",
+            "type": "string"
+          },
+          {
+            "name": "siteId",
+            "alias": "编码",
+            "type": "string"
+          },
+          {
+            "name": "endDetails",
+            "alias": "起终点",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "endDetails_domain",
+              "codedValues": [
+                {
+                  "name": "起点",
+                  "code": "1"
+                },
+                {
+                  "name": "终点",
+                  "code": "2"
+                }
+              ]
+            }
+          },
+          {
+            "name": "cityId",
+            "alias": "城市名称",
+            "type": "string",
+            "domain": {
+              "type": "coded-value",
+              "name": "cityName_domain",
+              "codedValues": [
+                {
+                  "name": "郑州市",
+                  "code": "410100000"
+                },
+                {
+                  "name": "洛阳市",
+                  "code": "410300000"
+                },
+                {
+                  "name": "开封市",
+                  "code": "410200000"
+                },
+                {
+                  "name": "安阳市",
+                  "code": "410500000"
+                },
+                {
+                  "name": "许昌市",
+                  "code": "411000000"
+                },
+                {
+                  "name": "新乡市",
+                  "code": "410700000"
+                },
+                {
+                  "name": "漯河市",
+                  "code": "411100000"
+                },
+                {
+                  "name": "商丘市",
+                  "code": "411400000"
+                },
+                {
+                  "name": "信阳市",
+                  "code": "411500000"
+                },
+                {
+                  "name": "南阳市",
+                  "code": "411300000"
+                },
+                {
+                  "name": "焦作市",
+                  "code": "410800000"
+                },
+                {
+                  "name": "三门峡市",
+                  "code": "411200000"
+                },
+                {
+                  "name": "鹤壁市",
+                  "code": "410600000"
+                },
+                {
+                  "name": "平顶山市",
+                  "code": "410400000"
+                },
+                {
+                  "name": "周口市",
+                  "code": "411600000"
+                },
+                {
+                  "name": "驻马店市",
+                  "code": "411700000"
+                },
+                {
+                  "name": "濮阳市",
+                  "code": "410900000"
+                },
+                {
+                  "name": "济源市",
+                  "code": "419001000"
+                }
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "alias": "编号",
+            "type": "string",
+            "editable": false
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "defaultValue": "农村农业",
+            "editable": false
+          },
+          {
+            "name": "dataType",
+            "type": "string",
+            "defaultValue": "Countryside",
+            "editable": false
+          }
+        ],
+        "renderer": {
+          "type": "unique-value",
+          "field": "endDetails",
+          "defaultSymbol": {
+            "type": "simple-marker",
+            "color": [158, 158, 158, 0.7],
+            "outline": {
+              "color": [158, 158, 158],
+              "width": 1
+            }
+          },
+          "uniqueValueInfos": [
+            {
+              "value": "1",
+              "symbol": {
+                "type": "simple-marker",
+                "color": [244, 67, 54, 0.7],
+                "outline": {
+                  "color": [244, 67, 54],
+                  "width": 1
+                }
+              }
+            },
+            {
+              "value": "2",
+              "symbol": {
+                "type": "simple-marker",
+                "color": [76, 175, 80, 0.7],
+                "outline": {
+                  "color": [76, 175, 80],
+                  "width": 1
+                }
+              }
+            }
+          ]
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityId",
+                  "label": "所在城市"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },
+      {
+        "name": "污染源企业(4677个)",
+        "include": true,
+        "geometryType": "point",
+        "buttonName": "污染源",
+        "dataType": "PollutantSourceEnterprise",
+        "active": false,
+        "fields": [
+          {
+            "name": "FID",
+            "type": "oid"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "cityName",
+            "type": "string"
+          },
+          {
+            "name": "controlLevelName",
+            "type": "string"
+          },
+          {
+            "name": "point",
+            "type": "string",
+            "alias": "位置"
+          },
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "pollutantSourceTypeName",
+            "type": "string",
+            "alias": "污染源类型"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
+          }
+        ],
+        "renderer": {
+          "type": "unique-value",
+          "field": "pollutantSourceTypeName",
+          "uniqueValueInfos": [
+            {
+              "value": "一般废水",
+              "label": "废水企业(1249个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/corp_water.png",
+                "width": "32px",
+                "height": "38px",
+                "yoffset": "19px"
+              }
+            },
+            {
+              "value": "一般废气",
+              "label": "废气企业(3137个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/corp_air.png",
+                "width": "32px",
+                "height": "38px",
+                "yoffset": "19px"
+              }
+            },
+            {
+              "value": "一般废水,一般废气",
+              "label": "涉水涉气企业(291个)",
+              "symbol": {
+                "type": "picture-marker",
+                "url": "/images/corp_water_air.png",
+                "width": "32px",
+                "height": "38px",
+                "yoffset": "19px"
+              }
+            }
+          ]
+        },
+        "popupTemplate": {
+          "title": "{name}",
+          "content": [
+            {
+              "type": "fields",
+              "fieldInfos": [
+                {
+                  "fieldName": "cityName",
+                  "label": "所在城市"
+                },
+                {
+                  "fieldName": "point",
+                  "label": "地址"
+                },
+                {
+                  "fieldName": "pollutantSourceTypeName",
+                  "label": "污染源类型"
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "title": "详细信息",
+              "id": "DetailPollutantSource",
+              "className": "esri-icon-table"
+            },
+            {
+              "title": "周边搜索",
+              "id": "NearbySearch",
+              "className": "esri-icon-search"
+            }
+          ]
+        }
+      },      
       {
         "name": "医疗固废监测站点",
         "include": false,

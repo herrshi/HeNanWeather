@@ -761,7 +761,8 @@ const actions = {
             siteName: name,
             siteCode,
             property,
-            pointList
+            pointList,
+            colorType
           } = area
           const geometry = pointList.includes('rings')
             ? JSON.parse(pointList)
@@ -787,7 +788,8 @@ const actions = {
             siteCode,
             levelName: property || '省控',
             geometry,
-            type: '土壤污染地块'
+            type: '土壤污染地块',
+            colorType
           }
         })
       commit('setBusinessData', {
@@ -902,8 +904,86 @@ const actions = {
     })
 
     commit('stopFetchData')
-  }
+  },
   /** /.遥感点 */
+
+  /** 农村农业 */
+  async getAllCountryside({ commit }) {
+    commit('startFetchData')
+
+    const result = await axiosGet('area_site/find_black_odor_water_list')
+    if (result.code === 1) {
+      const countrySides = result.data
+        .filter((countrySide) => countrySide.isDelete === 1)
+        .map((countrySide) => {
+          const {
+            objectId: id,
+            cityId,
+            cityName,
+            siteId,
+            siteName: name,
+            x,
+            y
+          } = countrySide
+          return {
+            id,
+            siteId,
+            name,
+            type: '农村农业',
+            cityId,
+            cityName,
+            geometry: { type: 'point', x, y }
+          }
+        })
+
+      console.log(countrySides)
+      commit('setBusinessData', {
+        dataType: 'Countryside',
+        data: countrySides
+      })
+    }
+
+    commit('stopFetchData')
+  },
+  /** /.农村农业 */
+
+  /** 地下水 */
+  async getAllGroundwater({ commit }) {
+    commit('startFetchData')
+
+    const result = await axiosGet('area_site/find_ground_water_list')
+    if (result.code === 1) {
+      const groundwaters = result.data
+        .filter((groundwater) => groundwater.isDelete === 1)
+        .map((groundwater) => {
+          const {
+            objectId: id,
+            cityId,
+            cityName,
+            siteId,
+            siteName: name,
+            x,
+            y
+          } = groundwater
+          return {
+            id,
+            siteId,
+            name,
+            type: '地下水',
+            cityId,
+            cityName,
+            geometry: { type: 'point', x, y }
+          }
+        })
+      commit('setBusinessData', {
+        dataType: 'Groundwater',
+        data: groundwaters
+      })
+    }
+
+    commit('stopFetchData')
+  }
+  /** /.地下水 */
 }
 
 export default {

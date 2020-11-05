@@ -578,6 +578,6 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 800px;
+  width: 900px;
 }
 </style>

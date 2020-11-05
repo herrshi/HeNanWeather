@@ -319,6 +319,10 @@ export default {
     },
 
     $_datatable_rowSelected(index) {
+      if (!this.dataTableData.rows[index]) {
+        return
+      }
+
       const { siteCode } = this.dataTableData.rows[index]
       const graphic = this.featureLayer.source.find(
         (graphic) => graphic.getAttribute('siteCode') === siteCode
