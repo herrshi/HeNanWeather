@@ -312,7 +312,7 @@ export default {
         xAxis: {
           boundaryGap: false,
           data: this.stationHistData.map((data) =>
-            moment(data.TIME_NAME).format('HH')
+            moment(data.TIME_NAME).format('DD-HH')
           )
         },
         yAxis: {
