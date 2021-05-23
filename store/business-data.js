@@ -907,7 +907,7 @@ const actions = {
   },
   /** /.遥感点 */
 
-  /** 农村农业 */
+  /** 农村黑臭水体 */
   async getAllCountryside({ commit }) {
     commit('startFetchData')
 
@@ -923,20 +923,21 @@ const actions = {
             siteId,
             siteName: name,
             x,
-            y
+            y,
+            endDetails
           } = countrySide
           return {
             id,
             siteId,
             name,
-            type: '农村农业',
+            type: '农村黑臭水体',
             cityId,
             cityName,
+            endDetails,
             geometry: { type: 'point', x, y }
           }
         })
 
-      console.log(countrySides)
       commit('setBusinessData', {
         dataType: 'Countryside',
         data: countrySides
@@ -945,7 +946,7 @@ const actions = {
 
     commit('stopFetchData')
   },
-  /** /.农村农业 */
+  /** /.农村黑臭水体 */
 
   /** 地下水 */
   async getAllGroundwater({ commit }) {

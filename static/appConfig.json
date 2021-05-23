@@ -759,7 +759,7 @@
                   "code": "3"
                 }
               ]
-            }         
+            }
           },
           {
             "name": "id",
@@ -783,15 +783,6 @@
         "renderer": {
           "type": "unique-value",
           "field": "colorType",
-          "defaultSymbol": {
-            "type": "simple-fill",
-            "color": [158, 158, 158, 0.7],
-            "style": "solid",
-            "outline": {
-              "color": [158, 158, 158],
-              "width": 1
-            }
-          },
           "uniqueValueInfos": [
             {
               "value": "1",
@@ -986,7 +977,7 @@
           }
         ],
         "renderer": {
-          "type": "simple",          
+          "type": "simple",
           "symbol": {
             "type": "simple-marker",
             "color": [63, 81, 181, 0.7],
@@ -1019,9 +1010,9 @@
         }
       },
       {
-        "name": "农村农业",
+        "name": "农村黑臭水体",
         "include": true,
-        "buttonName": "农村",
+        "buttonName": "农村黑臭水体",
         "dataType": "Countryside",
         "active": false,
         "geometryType": "point",
@@ -1164,14 +1155,6 @@
         "renderer": {
           "type": "unique-value",
           "field": "endDetails",
-          "defaultSymbol": {
-            "type": "simple-marker",
-            "color": [158, 158, 158, 0.7],
-            "outline": {
-              "color": [158, 158, 158],
-              "width": 1
-            }
-          },
           "uniqueValueInfos": [
             {
               "value": "1",
@@ -1339,7 +1322,7 @@
             }
           ]
         }
-      },      
+      },
       {
         "name": "医疗固废监测站点",
         "include": false,
